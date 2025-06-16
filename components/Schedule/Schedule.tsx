@@ -198,11 +198,11 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
               {hallTabs.map((hall, index) => (
                 <div
                   className={cn(
-                    "text-base font-medium px-6 h-full cursor-pointer relative pt-3 transition-all duration-200 hover:bg-muted flex-1 flex items-center justify-center",
+                    "text-base font-medium px-6 h-full cursor-pointer relative pt-3 transition-all duration-200 hover:bg-muted flex-1 flex items-center justify-center rounded-t-md ",
                     dataIndex === index
-                      ? "border-b-[3px] border-google-blue bg-muted/50"
-                      : "border-b-[1px] border-border/60 hover:border-b-[2px] hover:border-google-blue/50",
-                    index === dataIndex && "border-2 border-l-google-green border-t-google-red border-r-google-yellow border-b-google-blue rounded-t-md"
+                      ? "border-b-[3px] border-google-blue bg-muted/50 "
+                      : "border-2 border-border hover:border-b-[2px] hover:border-google-blue",
+                    index === dataIndex && "border-2 border-l-google-green border-t-google-red border-r-google-yellow border-b-google-blue "
                   )}
                   onClick={() => {
                     setPrevIndex(dataIndex);
