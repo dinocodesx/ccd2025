@@ -256,7 +256,7 @@ const SpeakersSection: React.FC = () => {
                   backgroundSize:'cover'
                 }}
               />
-              <div className="text-xl font-bold mb-1 text-center">
+              <div className="text-xl font-bold mb-1 text-center text-black">
                 {dialogSpeaker.fullName}
               </div>
               <div className="text-base text-gray-700 mb-2 text-center">
