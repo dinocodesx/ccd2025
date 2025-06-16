@@ -4,6 +4,7 @@ import { ChevronsDown, ChevronsUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { getSpeakers } from "@/lib/speakers";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 interface Speaker {
   id: string;
@@ -24,7 +25,7 @@ const SpeakersSection: React.FC = () => {
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dialogSpeaker, setDialogSpeaker] = useState<Speaker | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const SpeakersSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 px-3 sm:px-6 lg:px-8">
+    <section className="py-8 sm:py-12 lg:py-16 px-3 sm:px-6 lg:px-8 overflow-hidden">
       {/* Hidden Guest Speaker Section */}
       <div hidden>
         <div className="mb-10">
@@ -93,7 +94,8 @@ const SpeakersSection: React.FC = () => {
           {speakers.map((speaker) => (
             <div
               key={speaker.id}
-              className="bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-2xl p-[2px] flex flex-col min-h-[180px]"
+              className="bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-2xl p-[2px] flex flex-col min-h-[180px] cursor-pointer"
+              onClick={() => setSelectedSpeaker(speaker)}
             >
               <div className="flex flex-col flex-1 bg-white rounded-2xl overflow-hidden">
                 <div className="flex items-center justify-between bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] px-4 py-2">
@@ -123,17 +125,9 @@ const SpeakersSection: React.FC = () => {
                         {speaker.tagLine}
                       </div>
                       <div className="text-sm text-gray-500 mb-1 flex items-end">
-                        <div className="line-clamp-2 overflow-hidden max-w-full ">
+                        <div className="line-clamp-2 overflow-hidden max-w-full no-scrollbar">
                           {speaker.bio}
                         </div>
-                        {speaker.bio && (
-                          <button
-                            className="text-blue-600 text-xs underline whitespace-nowrap flex-shrink-0 mb-1 md:inline-block hidden cursor-pointer"
-                            onClick={() => setDialogSpeaker(speaker)}
-                          >
-                            Read more
-                          </button>
-                        )}
                       </div>
                     </div>
                     {/* Mobile text content (unchanged) */}
@@ -158,6 +152,7 @@ const SpeakersSection: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center border-2 border-black/80 rounded-full p-1"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <img
                                 src={socialIcon(link.linkType) || ""}
@@ -169,9 +164,9 @@ const SpeakersSection: React.FC = () => {
                         )}
                     </div>
                     {/* Mobile bio section (sm and below) */}
-                    <div className="md:hidden bg-gray-200 p-4  px-4 flex flex-col items-center justify-between rounded-t-xl">
+                    <div className="md:hidden bg-gray-200 p-4 px-4 flex flex-col items-center justify-between rounded-t-xl">
                       <div
-                        className={`max-w-full text-black/50 transition-all duration-300 overflow-hidden ${
+                        className={`max-w-full text-black/50 transition-all duration-300 overflow-hidden no-scrollbar ${
                           expandedMobile === speaker.id
                             ? "max-h-96"
                             : "max-h-12 line-clamp-2"
@@ -182,14 +177,20 @@ const SpeakersSection: React.FC = () => {
                       {expandedMobile === speaker.id ? (
                         <button
                           className="text-blue-600 text-xs underline whitespace-nowrap flex-shrink-0"
-                          onClick={() => setExpandedMobile(null)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedMobile(null);
+                          }}
                         >
                           <ChevronsUp className="bg-black text-white w-10 h-6 rounded-full mt-1" />
                         </button>
                       ) : (
                         <button
                           className="text-blue-600 text-xs underline whitespace-nowrap flex-shrink-0"
-                          onClick={() => setExpandedMobile(speaker.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedMobile(speaker.id);
+                          }}
                         >
                           <ChevronsDown className="bg-black text-white w-10 h-6 rounded-full mt-1" />
                         </button>
@@ -208,6 +209,7 @@ const SpeakersSection: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <img
                                 src={socialIcon(link.linkType) || ""}
@@ -226,39 +228,39 @@ const SpeakersSection: React.FC = () => {
         </div>
       )}
 
-      {dialogSpeaker && (
-        <div className="fixed inset-0 flex items-center justify-center  bg-black/40 z-[999]">
-          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative translate-y-5">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
-              onClick={() => setDialogSpeaker(null)}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-            <div className="flex flex-col items-center ">
-              <div
-                className="size-32 rounded-lg bg-gray-200 bg-center bg-cover border-2 border-black/80 mb-4"
-                style={{
-                  backgroundImage: `url(${dialogSpeaker.profilePicture})`,
-                  backgroundSize:'cover'
-                }}
-              />
-              <div className="text-xl font-bold mb-1 text-center text-black">
-                {dialogSpeaker.fullName}
-              </div>
-              <div className="text-base text-gray-700 mb-2 text-center">
-                {dialogSpeaker.tagLine}
-              </div>
-              <ScrollArea className="h-[300px] max-h-[350px] w-full rounded-md p-4">
-              <div className="text-gray-600 text-center whitespace-pre-line ">
-                {dialogSpeaker.bio}
-              </div>
-          </ScrollArea>
-            </div>
-          </div>
-        </div>
-      )}
+      <Dialog
+        open={!!selectedSpeaker}
+        onOpenChange={() => setSelectedSpeaker(null)}
+      >
+        <DialogContent className="max-w-2xl">
+          {selectedSpeaker && (
+            <>
+              <DialogHeader>
+                <div className="flex flex-col items-center">
+                  <div
+                    className="size-32 rounded-lg bg-gray-200 bg-center bg-cover border-2 border-black/80 mb-4"
+                    style={{
+                      backgroundImage: `url(${selectedSpeaker.profilePicture})`,
+                      backgroundSize: "cover",
+                    }}
+                  />
+                  <DialogTitle className="text-xl font-bold text-center">
+                    {selectedSpeaker.fullName}
+                  </DialogTitle>
+                  <p className="text-base mb-2 text-center">
+                    {selectedSpeaker.tagLine}
+                  </p>
+                </div>
+              </DialogHeader>
+              <ScrollArea className="h-[300px] max-h-[350px] w-full rounded-md p-4 " style={{}}>
+                <div className="text-center whitespace-pre-line ">
+                  {selectedSpeaker.bio}
+                </div>
+              </ScrollArea>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
