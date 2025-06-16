@@ -10,13 +10,37 @@ import {
   useState,
 } from "react";
 import "./Schedule.css";
+import { getSpeakers, getSpeakerById } from "@/lib/speakers";
+
+interface Speaker {
+  id: string;
+  fullName: string;
+  tagLine: string;
+  bio: string;
+  profilePicture: string;
+  links?: { title: string; url: string; linkType: string }[];
+}
 
 const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
   const [dataIndex, setDataIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState(0);
   const [containerHeight, setContainerHeight] = useState("auto");
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
+  const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const dataRefs = useRef([]);
+
+  // Fetch speakers data
+  useEffect(() => {
+    const fetchSpeakers = async () => {
+      try {
+        const speakersData = await getSpeakers();
+        setSpeakers(speakersData);
+      } catch (error) {
+        console.error("Error fetching speakers:", error);
+      }
+    };
+    fetchSpeakers();
+  }, []);
 
   const toggleDescription = (eventId: string) => {
     setExpandedDescriptions(prev => {
@@ -169,16 +193,16 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
     <>
       <div className='w-full max-w-7xl items-center justify-center flex flex-col lg:flex-row my-0 mx-auto gap-12'>
         <div className='w-full'>
-          <div className='overflow-auto w-full'>
-            <div className='h-12 min-w-full w-max border-b border-border flex my-5'>
+          <div className='w-full'>
+            <div className='h-12 w-full border-b border-border flex my-5'>
               {hallTabs.map((hall, index) => (
                 <div
                   className={cn(
-                    "text-base font-medium px-6 h-full cursor-pointer relative pt-3 transition-all duration-200 hover:bg-muted",
+                    "text-base font-medium px-6 h-full cursor-pointer relative pt-3 transition-all duration-200 hover:bg-muted flex-1 flex items-center justify-center rounded-t-md ",
                     dataIndex === index
-                      ? "border-b-[3px] border-google-blue bg-muted/50"
-                      : "hover:border-b-[2px] hover:border-google-blue/50",
-                    index === dataIndex && "border-2 border-l-google-green border-t-google-red border-r-google-yellow border-b-google-blue rounded-t-md"
+                      ? "border-b-[3px] border-google-blue bg-muted/50 "
+                      : "border-2 border-border hover:border-b-[2px] hover:border-google-blue",
+                    index === dataIndex && "border-2 border-l-google-green border-t-google-red border-r-google-yellow border-b-google-blue "
                   )}
                   onClick={() => {
                     setPrevIndex(dataIndex);
@@ -262,11 +286,20 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
                           {event.speakers && event.speakers.length > 0 && (
                             <div className='flex items-center gap-2 mt-3 flex-wrap'>
                               {event.speakers?.map((speaker: any) => {
+                                const speakerData = getSpeakerById(speakers, speaker.id);
                                 return (
                                   speaker.name && (
                                     <Link href={"/speakers"} key={speaker.id}>
                                       <div className="bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-full p-[2px]">
-                                        <div className="bg-white dark:bg-background rounded-full px-3 py-1">
+                                        <div className="bg-white dark:bg-background rounded-full px-3 py-1 flex items-center gap-2">
+                                          {speakerData?.profilePicture && (
+                                            <div 
+                                              className="w-6 h-6 rounded-full bg-cover bg-center flex-shrink-0"
+                                              style={{
+                                                backgroundImage: `url(${speakerData.profilePicture})`
+                                              }}
+                                            />
+                                          )}
                                           <span className="text-xs font-medium text-black dark:text-white">
                                             {speaker.name}
                                           </span>

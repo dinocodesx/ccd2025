@@ -3,6 +3,7 @@
 import { ChevronsDown, ChevronsUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
+import { getSpeakers } from "@/lib/speakers";
 
 interface Speaker {
   id: string;
@@ -31,21 +32,8 @@ const SpeakersSection: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
-          "https://sessionize.com/api/v2/pkltj8cb/view/Speakers"
-        );
-        if (!res.ok) throw new Error("Failed to fetch speakers");
-        const data = await res.json();
-        setSpeakers(
-          data.map((s: any) => ({
-            id: s.id,
-            fullName: s.fullName,
-            tagLine: s.tagLine,
-            bio: s.bio,
-            profilePicture: s.profilePicture,
-            links: s.links,
-          }))
-        );
+        const speakersData = await getSpeakers();
+        setSpeakers(speakersData);
       } catch (e: any) {
         setError(e.message || "Failed to load speakers");
       } finally {
