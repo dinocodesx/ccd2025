@@ -90,7 +90,7 @@ const SpeakersSection: React.FC = () => {
       ) : error ? (
         <div className="text-center text-red-500 py-8">{error}</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {speakers.map((speaker) => (
             <div
               key={speaker.id}
@@ -118,10 +118,10 @@ const SpeakersSection: React.FC = () => {
                   <div className="flex-1 flex flex-col min-w-0 h-full w-full justify-between">
                     {/* Desktop text content: name, tagline, bio */}
                     <div className="hidden md:block text-left">
-                      <div className="text-lg font-semibold text-black mb-1 truncate">
+                      <div className="text-lg font-semibold text-black mb-1 ">
                         {speaker.fullName}
                       </div>
-                      <div className="text-sm text-gray-700 mb-1 truncate">
+                      <div className="text-sm text-gray-700 mb-1 ">
                         {speaker.tagLine}
                       </div>
                       <div className="text-sm text-gray-500 mb-1 flex items-end">
@@ -252,7 +252,7 @@ const SpeakersSection: React.FC = () => {
                   </p>
                 </div>
               </DialogHeader>
-              <ScrollArea className="h-[300px] max-h-[350px] w-full rounded-md p-4 " style={{}}>
+              <ScrollArea className="h-[150px] md:h-[300px] max-h-[350px] w-full rounded-md md:p-4 " style={{}}>
                 <div className="text-center whitespace-pre-line ">
                   {selectedSpeaker.bio}
                 </div>
