@@ -16,77 +16,58 @@ interface TicketTemplate {
   height: number;
 }
 
+// Updated to vertical dimensions for ticket templates
 const ticketTemplates: TicketTemplate[] = [
   {
     id: "template1",
     name: "CCD White Themed",
     imageUrl: "/images/tickets/template1.svg",
     description: "White Themed",
-    width: 1000,
-    height: 400,
+    width: 370,
+    height: 800,
   },
   {
     id: "template2",
     name: "CCD Green Themed",
     imageUrl: "/images/tickets/template1.svg",
     description: "Green Themed",
-    width: 1000,
-    height: 400,
+    width: 370,
+    height: 800,
   },
   {
     id: "template3",
     name: "CCD Blue Themed",
     imageUrl: "/images/tickets/template1.svg",
     description: "Blue Themed",
-    width: 1000,
-    height: 400,
+    width: 370,
+    height: 800,
   },
 ];
 
-const getTextFieldCoordinates = (
-  templateId: string,
-  canvasWidth: number,
-  canvasHeight: number
-) => {
-  const baseCoords = {
-    nameX: canvasWidth * 0.07,
-    nameY: canvasHeight * 0.85,
-    ticketIdX: canvasWidth * 0.07,
-    ticketIdY: canvasHeight * 0.95,
-    nameSize: Math.floor(canvasHeight * 0.055),
-    ticketIdSize: Math.floor(canvasHeight * 0.04),
-  };
-
-  switch (templateId) {
-    case "template1":
-      return {
-        ...baseCoords,
-        nameX: canvasWidth * 0.07,
-        ticketIdX: canvasWidth * 0.07,
-      };
-    case "template2":
-      return {
-        ...baseCoords,
-        nameX: canvasWidth * 0.07,
-        ticketIdX: canvasWidth * 0.07,
-      };
-    case "template3":
-      return {
-        ...baseCoords,
-        nameX: canvasWidth * 0.07,
-        ticketIdX: canvasWidth * 0.07,
-      };
-    default:
-      return baseCoords;
-  }
+// Absolute positioning constants
+const LAYOUT = {
+  USER_NAME_TOP_PERCENT: 29,
+  QR_BOTTOM_PERCENT: 8, 
+  QR_SIZE_PERCENT: 45, 
+  TEXT_SIZE_PERCENT: 4.5, 
 };
 
-// Helper function to get responsive text size based on viewport
-const getResponsiveTextSize = () => {
-  const viewportWidth = window.innerWidth;
-  const baseSize = viewportWidth * 0.025; // 2.5% of viewport width
+const calculateLayout = (containerWidth: number, containerHeight: number) => {
+  const qrSize = containerWidth * (LAYOUT.QR_SIZE_PERCENT / 100);
+  const textSize = Math.max(
+    12,
+    containerWidth * (LAYOUT.TEXT_SIZE_PERCENT / 100)
+  );
+
   return {
-    nameSize: Math.max(12, Math.min(18, baseSize)), // Min 12px, Max 18px
+    nameX: containerWidth / 2, // Center X
+    nameY: containerHeight * (LAYOUT.USER_NAME_TOP_PERCENT / 100), // From top
+    nameSize: textSize,
+
+    // QR code
+    qrSize: qrSize,
+    qrX: containerWidth / 2, // Center X
+    qrY: containerHeight * (1 - LAYOUT.QR_BOTTOM_PERCENT / 100), // From bottom edge
   };
 };
 
@@ -97,13 +78,9 @@ export default function Tickets({ session }: { session: Session }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [hasGeneratedQR, setHasGeneratedQR] = useState(false);
-  const [responsiveTextSize, setResponsiveTextSize] = useState({
-    nameSize: 14,
-  });
   const [isMobile, setIsMobile] = useState(false);
   const ticketPreviewRef = useRef<HTMLDivElement>(null);
 
-  // Extract user data directly from session
   const userInfo = useMemo(() => {
     const profile = (session?.user as any)?.profile;
     const uniqueCode = profile?.unique_code || "1234";
@@ -124,8 +101,7 @@ export default function Tickets({ session }: { session: Session }) {
 
   useEffect(() => {
     const updateLayout = () => {
-      setResponsiveTextSize(getResponsiveTextSize());
-      setIsMobile(window.innerWidth < 640); // 640px sm breakpoint 
+      setIsMobile(window.innerWidth < 640);
     };
 
     updateLayout();
@@ -145,8 +121,8 @@ export default function Tickets({ session }: { session: Session }) {
     setIsGenerating(true);
     try {
       const dataURL = await QRCode.toDataURL(userInfo.qrText, {
-        width: 150,
-        margin: 2,
+        width: 400,
+        margin: 1,
         color: {
           dark: "#000000",
           light: "#FFFFFF",
@@ -190,45 +166,27 @@ export default function Tickets({ session }: { session: Session }) {
         const qrImg = new Image();
 
         qrImg.onload = () => {
-          // Calculate QR code size and position
-          let displayedWidth = 400;
-          if (ticketPreviewRef.current) {
-            displayedWidth =
-              ticketPreviewRef.current.getBoundingClientRect().width;
-          }
+          const layout = calculateLayout(canvas.width, canvas.height);
 
-          const viewportWidth = window.innerWidth;
-          const vwSize = (15 * viewportWidth) / 100;
-          const clampedSize = Math.min(200, Math.max(40, vwSize));
-          const scaleFactor = canvas.width / displayedWidth;
-          const qrSize = clampedSize * scaleFactor;
+          const qrDrawX = layout.qrX - layout.qrSize / 2;
+          const qrDrawY = layout.qrY - layout.qrSize; 
 
-          // Position QR code on the ticket
-          const qrX = canvas.width - canvas.width * 0.07 - qrSize;
-          const qrY = canvas.height * 0.2;
-
-          ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+          ctx.drawImage(qrImg, qrDrawX, qrDrawY, layout.qrSize, layout.qrSize);
 
           try {
-            const coords = getTextFieldCoordinates(
-              selectedTemplate.id,
-              canvas.width,
-              canvas.height
-            );
-
-            ctx.textAlign = "left";
+            ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
             if (userInfo.fullName) {
-              ctx.font = `bold ${coords.nameSize}px Arial`;
+              ctx.font = `bold ${layout.nameSize}px Arial`;
               ctx.fillStyle = "#000000";
-              ctx.fillText(userInfo.fullName, coords.nameX, coords.nameY);
+              ctx.fillText(userInfo.fullName, layout.nameX, layout.nameY);
             }
 
             // Download the ticket
-            const dataURL = canvas.toDataURL("image/png", 0.9);
+            const dataURL = canvas.toDataURL("image/png");
             const link = document.createElement("a");
-            link.download = `ccd2025-ticket-${userInfo.uniqueCode}-${selectedTemplate.id}.png`;
+            link.download = `ccd2025-ticket-${userInfo.fullName}-${selectedTemplate.id}.png`;
             link.href = dataURL;
             document.body.appendChild(link);
             link.click();
@@ -239,7 +197,6 @@ export default function Tickets({ session }: { session: Session }) {
             toast.error("Failed to download ticket");
           }
         };
-
         qrImg.onerror = () => toast.error("Failed to load QR code");
         qrImg.src = qrCodeDataURL;
       };
@@ -294,54 +251,112 @@ export default function Tickets({ session }: { session: Session }) {
       <hr className="mb-4 sm:mb-6" />
 
       {/* Template Selection */}
-      <div className="mb-6 sm:mb-8">
-        <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">
+      <div className="mb-4 sm:mb-6">
+        <h4 className="text-base sm:text-lg font-bold mb-2 sm:mb-3">
           Choose Your Ticket Design
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-md mx-auto sm:max-w-lg">
           {ticketTemplates.map((template) => (
             <div
               key={template.id}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-lg rounded-lg ${
+              className={`group cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 ${
                 selectedTemplate?.id === template.id
-                  ? "ring-2 ring-[#076eff] border-[#076eff] shadow-lg"
-                  : "hover:border-gray-300"
+                  ? "scale-105"
+                  : "hover:shadow-lg"
               }`}
               onClick={() => setSelectedTemplate(template)}
             >
-              <Card className="h-full">
-                <CardHeader className="pb-2 sm:pb-3">
-                  <h4 className="text-xs sm:text-sm font-medium">
-                    {template.name}
-                  </h4>
-                </CardHeader>
-                <CardBody className="pt-0">
+              {/* Card Container with Gradient Border Effect */}
+              <div
+                className={`relative rounded-lg p-0.5 transition-all duration-300 ${
+                  selectedTemplate?.id === template.id
+                    ? "bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] shadow-lg"
+                    : "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600"
+                }`}
+              >
+                <div className="bg-white dark:bg-gray-900 rounded-md p-1.5 h-full">
+                  {/* Preview Image Container */}
                   <div
-                    className="relative rounded-lg overflow-hidden mb-2 sm:mb-3"
+                    className="relative rounded-sm overflow-hidden mb-1.5 bg-gray-50 dark:bg-gray-800"
                     style={{
                       aspectRatio: `${template.width}/${template.height}`,
                       width: "100%",
+                      height: "auto",
+                      maxHeight: "80px", // Limit max height
                     }}
                   >
                     <img
                       src={template.imageUrl}
                       alt={template.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain transition-transform duration-300"
                       onError={(e) => {
                         e.currentTarget.src = "/images/placeholder-ticket.svg";
                       }}
                     />
+
+                    {/* Selection Indicator */}
+                    {selectedTemplate?.id === template.id && (
+                      <div className="absolute top-0.5 right-0.5 bg-white dark:bg-gray-900 rounded-full p-0.5 shadow-md">
+                        <div className="w-1.5 h-1.5 bg-gradient-to-r from-[#4285f4] to-[#34a853] rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-1 h-1 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {template.description}
-                  </p>
-                </CardBody>
-              </Card>
+
+                  <div className="text-center">
+                    <h3
+                      className={`font-medium text-xs leading-tight transition-colors duration-300 ${
+                        selectedTemplate?.id === template.id
+                          ? "text-[#4285f4] dark:text-[#4285f4]"
+                          : "text-gray-800 dark:text-gray-200 group-hover:text-[#4285f4] dark:group-hover:text-[#4285f4]"
+                      }`}
+                    >
+                      {template.name.split(" ")[1]}
+                    </h3>
+
+                    {/* Color Indicator - Smaller */}
+                    <div className="flex justify-center mt-1">
+                      <div
+                        className={`w-2 h-0.5 rounded-full transition-all duration-300 ${
+                          template.id === "template1"
+                            ? "bg-gray-400"
+                            : template.id === "template2"
+                            ? "bg-green-500"
+                            : "bg-blue-500"
+                        } ${selectedTemplate?.id === template.id ? "w-3" : ""}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hover Effect Text - Smaller */}
+              <div
+                className={`text-center mt-0.5 transition-all duration-300 ${
+                  selectedTemplate?.id === template.id
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-100"
+                }`}
+              >
+                <span className="text-xs font-medium text-[#4285f4] dark:text-[#4285f4]">
+                  {selectedTemplate?.id === template.id ? "✓" : "Select"}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       </div>
-
       {/* Ticket Preview */}
       {selectedTemplate && (
         <div className="mb-6 sm:mb-8">
@@ -381,132 +396,77 @@ export default function Tickets({ session }: { session: Session }) {
             </div>
 
             <div className="flex justify-center">
-              <div className="relative group w-full max-w-4xl">
-                {/* Mobile horizontal layout */}
-                {isMobile ? (
-                  <div className="w-full">
-                    <div className="w-full">
-                      <div
-                        ref={ticketPreviewRef}
-                        className="relative rounded-xl overflow-hidden shadow-lg border border-border transition-transform duration-300 group-hover:scale-[1.02] w-full"
-                        style={{
-                          aspectRatio: `${selectedTemplate.width}/${selectedTemplate.height}`,
-                          width: "100%", // Full width
-                          height: "auto", // Auto height to maintain aspect ratio
-                        }}
-                      >
-                        <img
-                          src={selectedTemplate.imageUrl}
-                          alt={selectedTemplate.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src =
-                              "/images/placeholder-ticket.svg";
-                          }}
-                        />
-
-                        {/* QR Code Overlay - positioned at top-right with responsive size */}
-                        {qrCodeDataURL && (
-                          <div className="absolute top-[20%] right-[7%]">
-                            <img
-                              src={qrCodeDataURL}
-                              alt="QR Code"
-                              className="object-cover border-2 border-white rounded"
-                              style={{
-                                width: "clamp(30px, 12vw, 80px)", // Responsive size for mobile
-                                height: "clamp(30px, 12vw, 80px)",
-                              }}
-                            />
-                          </div>
-                        )}
-
-                        {userInfo.uniqueCode && (
-                          <div className="absolute bottom-[7%] left-[7%]">
-                            <div className="text-black">
-                              {" "}
-                              {/* Grayish shade */}
-                              {userInfo.fullName && (
-                                <div
-                                  className="font-bold"
-                                  style={{
-                                    fontSize: "clamp(8px, 3vw, 14px)", 
-                                  }}
-                                >
-                                  {userInfo.fullName}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Loading Overlay */}
-                        {isGenerating && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <div className="bg-white rounded-lg p-4 flex items-center gap-3">
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#076eff]"></div>
-                              <span className="text-sm">
-                                Generating QR Code...
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    {/* Mobile info text */}
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      Your personalized ticket preview
-                    </p>
-                  </div>
-                ) : (
+              <div className="relative group w-full">
+                <div className="w-full flex justify-center">
                   <div
                     ref={ticketPreviewRef}
                     className="relative rounded-xl overflow-hidden shadow-lg border border-border transition-transform duration-300 group-hover:scale-[1.02]"
                     style={{
-                      aspectRatio: `${selectedTemplate.width}/${selectedTemplate.height}`,
-                      width: "100%",
+                      width: isMobile ? "300px" : "400px", 
+                      height: isMobile ? "600px" : "800px", 
                     }}
                   >
                     <img
                       src={selectedTemplate.imageUrl}
                       alt={selectedTemplate.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                       onError={(e) => {
                         e.currentTarget.src = "/images/placeholder-ticket.svg";
                       }}
                     />
 
-                    {qrCodeDataURL && (
-                      <div className="absolute top-[20%] right-[7%]">
-                        <img
-                          src={qrCodeDataURL}
-                          alt="QR Code"
-                          className="object-cover border-2 border-white rounded"
-                          style={{
-                            width: `clamp(40px, 15vw, 200px)`,
-                            height: `clamp(40px, 15vw, 200px)`,
-                          }}
-                        />
-                      </div>
-                    )}
+                    {/* User Info Overlay - using percentage-based positioning for consistency */}
                     {userInfo.uniqueCode && (
-                      <div className="absolute bottom-[10%] left-[7%]">
-                        <div
-                          className="text-black"
-                          style={{
-                            width: `clamp(200px, 30vw, 400px)`,
-                          }}
-                        >
+                      <div
+                        className="absolute transform -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                          left: "50%", // Center horizontally
+                          top: `${LAYOUT.USER_NAME_TOP_PERCENT}%`, // From top
+                        }}
+                      >
+                        <div className="text-black text-center">
                           {userInfo.fullName && (
                             <div
                               className="font-bold"
                               style={{
-                                fontSize: `clamp(12px, 2.5vw, 20px)`,
+                                fontSize: isMobile
+                                  ? `${
+                                      300 * (LAYOUT.TEXT_SIZE_PERCENT / 100)
+                                    }px` // 300px container
+                                  : `${
+                                      400 * (LAYOUT.TEXT_SIZE_PERCENT / 100)
+                                    }px`, // 400px container
                               }}
                             >
                               {userInfo.fullName}
                             </div>
                           )}
                         </div>
+                      </div>
+                    )}
+
+                    {/* QR Code Overlay - using percentage-based positioning*/}
+                    {qrCodeDataURL && (
+                      <div
+                        className="absolute transform -translate-x-1/2"
+                        style={{
+                          left: "50%", // Center horizontally
+                          bottom: `${LAYOUT.QR_BOTTOM_PERCENT}%`, // From bottom
+                        }}
+                      >
+                        <img
+                          src={qrCodeDataURL}
+                          alt="QR Code"
+                          className="object-cover border-2 border-white rounded"
+                          style={{
+                            width: isMobile
+                              ? `${300 * (LAYOUT.QR_SIZE_PERCENT / 100)}px` // 300px container
+                              : `${400 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`, // 400px container
+                            height: isMobile
+                              ? `${300 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`
+                              : `${400 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`,
+                          }}
+                        />
                       </div>
                     )}
 
@@ -520,7 +480,7 @@ export default function Tickets({ session }: { session: Session }) {
                       </div>
                     )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
