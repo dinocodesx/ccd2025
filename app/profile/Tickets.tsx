@@ -140,77 +140,90 @@ export default function Tickets({ session }: { session: Session }) {
     }
   };
 
-  const downloadTicket = async () => {
-    if (!selectedTemplate || !qrCodeDataURL) {
-      toast.error("Please select a template and ensure QR code is generated");
-      return;
+const downloadTicket = async () => {
+  if (!selectedTemplate || !qrCodeDataURL) {
+    toast.error("Please select a template and ensure QR code is generated");
+    return;
+  }
+
+  setIsDownloading(true);
+  try {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("Canvas context not available");
     }
 
-    setIsDownloading(true);
-    try {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+    const scaleFactor = 3; 
+    canvas.width = selectedTemplate.width * scaleFactor;
+    canvas.height = selectedTemplate.height * scaleFactor;
+    
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
-      if (!ctx) {
-        throw new Error("Canvas context not available");
-      }
+    const templateImg = new Image();
+    templateImg.crossOrigin = "anonymous";
 
-      canvas.width = selectedTemplate.width;
-      canvas.height = selectedTemplate.height;
-
-      const templateImg = new Image();
-
-      templateImg.onload = () => {
-        ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
-
-        const qrImg = new Image();
-
-        qrImg.onload = () => {
-          const layout = calculateLayout(canvas.width, canvas.height);
-
-          const qrDrawX = layout.qrX - layout.qrSize / 2;
-          const qrDrawY = layout.qrY - layout.qrSize; 
-
-          ctx.drawImage(qrImg, qrDrawX, qrDrawY, layout.qrSize, layout.qrSize);
-
-          try {
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-
-            if (userInfo.fullName) {
-              ctx.font = `bold ${layout.nameSize}px Arial`;
-              ctx.fillStyle = "#000000";
-              ctx.fillText(userInfo.fullName, layout.nameX, layout.nameY);
-            }
-
-            // Download the ticket
-            const dataURL = canvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.download = `ccd2025-ticket-${userInfo.fullName}-${selectedTemplate.id}.png`;
-            link.href = dataURL;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            toast.success("Ticket downloaded successfully!");
-          } catch (error) {
-            console.error("Download error:", error);
-            toast.error("Failed to download ticket");
-          }
-        };
-        qrImg.onerror = () => toast.error("Failed to load QR code");
-        qrImg.src = qrCodeDataURL;
-      };
-
-      templateImg.onerror = () => toast.error("Failed to load template image");
+    // Wait for template to fully load before proceeding
+    await new Promise((resolve, reject) => {
+      templateImg.onload = resolve;
+      templateImg.onerror = reject;
       templateImg.src = selectedTemplate.imageUrl;
-    } catch (error) {
-      toast.error("Failed to download ticket");
-      console.error("Download error:", error);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+    });
 
+    ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+
+    const qrImg = new Image();
+    qrImg.crossOrigin = "anonymous";
+
+    // Wait for QR code to fully load
+    await new Promise((resolve, reject) => {
+      qrImg.onload = resolve;
+      qrImg.onerror = reject;
+      qrImg.src = qrCodeDataURL;
+    });
+
+    // Calculate layout using scaled dimensions
+    const layout = calculateLayout(canvas.width, canvas.height);
+    
+    const qrDrawX = layout.qrX - (layout.qrSize / 2);
+    const qrDrawY = layout.qrY - layout.qrSize;
+
+    // Draw QR code at scaled dimensions
+    ctx.drawImage(qrImg, qrDrawX, qrDrawY, layout.qrSize, layout.qrSize);
+
+    if (userInfo.fullName) {
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      
+      // Enhanced font rendering
+      ctx.font = `bold ${layout.nameSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      ctx.fillStyle = "#000000";
+      
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = layout.nameSize * 0.05; // Proportional stroke width
+      ctx.strokeText(userInfo.fullName, layout.nameX, layout.nameY);
+      
+      ctx.fillText(userInfo.fullName, layout.nameX, layout.nameY);
+    }
+
+    const dataURL = canvas.toDataURL("image/png", 1.0);
+    const link = document.createElement("a");
+    link.download = `ccd2025-ticket-${userInfo.fullName}-${selectedTemplate.id}.png`;
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Ticket downloaded successfully!");
+
+  } catch (error) {
+    toast.error("Failed to download ticket");
+    console.error("Download error:", error);
+  } finally {
+    setIsDownloading(false);
+  }
+};
   // Show loading state if session is not available
   if (!session) {
     return (
