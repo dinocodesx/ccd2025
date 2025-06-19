@@ -123,24 +123,24 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
     });
 
     // Add ending note to Hall 1
-    const endingNote = {
-      id: "ending-note",
-      title: "Closing Note",
-      description:
-        "We hope you had an incredible experience at the Cloud Computing Days 2025 conference. Thank you to all our speakers, sponsors, and attendees for making this event truly special. We look forward to seeing you again next year with even more exciting sessions, workshops, and networking opportunities. Stay connected with us for updates on future events and continue the conversation on our community platforms.",
-      startsAt:
-        hall1Sessions.length > 0
-          ? hall1Sessions[hall1Sessions.length - 1].endsAt
-          : "2025-01-15T18:00:00Z",
-      endsAt:
-        hall1Sessions.length > 0
-          ? hall1Sessions[hall1Sessions.length - 1].endsAt
-          : "2025-01-15T18:30:00Z",
-      room: "Hall 1",
-      speakers: [],
-    };
+    // const endingNote = {
+    //   id: "ending-note",
+    //   title: "Closing Note",
+    //   description:
+    //     "We hope you had an incredible experience at the Cloud Computing Days 2025 conference. Thank you to all our speakers, sponsors, and attendees for making this event truly special. We look forward to seeing you again next year with even more exciting sessions, workshops, and networking opportunities. Stay connected with us for updates on future events and continue the conversation on our community platforms.",
+    //   startsAt:
+    //     hall1Sessions.length > 0
+    //       ? hall1Sessions[hall1Sessions.length - 1].endsAt
+    //       : "2025-01-15T18:00:00Z",
+    //   endsAt:
+    //     hall1Sessions.length > 0
+    //       ? hall1Sessions[hall1Sessions.length - 1].endsAt
+    //       : "2025-01-15T18:30:00Z",
+    //   room: "Hall 1",
+    //   speakers: [],
+    // };
 
-    hall1Sessions.push(endingNote);
+    // hall1Sessions.push(endingNote);
 
     return [
       { name: "Hall 1", sessions: hall1Sessions },
@@ -251,14 +251,29 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
                   const hallInfo = getHallInfo(event.room);
                   const isEndingNote = event.id === "ending-note";
 
+                  // Make the whole session block clickable for toggling description
+                  const handleSessionClick = (e: React.MouseEvent) => {
+                    // Prevent toggling when clicking on speaker chips or links
+                    const target = e.target as HTMLElement;
+                    if (
+                      target.closest("button") ||
+                      target.closest("a") ||
+                      target.closest(".speaker-chip")
+                    ) {
+                      return;
+                    }
+                    toggleDescription(event.id);
+                  };
+
                   return (
                     <div
                       className={cn(
-                        "flex w-full lg:w-auto hover:bg-muted/20 transition-colors group",
+                        "flex w-full lg:w-auto hover:bg-muted/20 transition-colors group cursor-pointer",
                         isEndingNote &&
                           "bg-gradient-to-r from-google-blue/5 to-google-green/5 border-l-4 border-l-google-blue"
                       )}
                       key={event.id}
+                      onClick={handleSessionClick}
                     >
                       <div className="w-3/10 lg:w-1/5 border-b lg:border-r-0 border-border flex flex-col items-end px-3 py-3 text-right lg:text-start">
                         <div className="text-base lg:text-xl font-medium text-foreground">
@@ -306,7 +321,10 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
                           {event.description &&
                             event.description.length > 150 && (
                               <button
-                                onClick={() => toggleDescription(event.id)}
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  toggleDescription(event.id);
+                                }}
                                 className="mt-2 text-sm text-google-blue hover:text-google-blue/80 font-medium transition-colors w-full text-left"
                               >
                                 {expandedDescriptions.has(event.id)
@@ -325,11 +343,11 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
                                   speaker.name && (
                                     <div
                                       key={speaker.id}
-                                      onClick={() =>
-                                        speakerData &&
-                                        setSelectedSpeaker(speakerData)
-                                      }
-                                      className="cursor-pointer"
+                                      onClick={e => {
+                                        e.stopPropagation();
+                                        speakerData && setSelectedSpeaker(speakerData);
+                                      }}
+                                      className="cursor-pointer speaker-chip"
                                     >
                                       <div className="bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-full p-[2px]">
                                         <div className="bg-white dark:bg-background rounded-full px-3 py-1 flex items-center gap-2">
@@ -404,7 +422,7 @@ const Sessions = ({ sessions }: { sessions: SessionRespsonse[] }) => {
                   </p>
                 </div>
               </DialogHeader>
-              <ScrollArea className="h-[300px] max-h-[350px] w-full rounded-md p-4">
+              <ScrollArea className="h-[200px] max-h-[350px] w-full rounded-md p-4">
                 <div className="text-center whitespace-pre-line">
                   {selectedSpeaker.bio}
                 </div>
