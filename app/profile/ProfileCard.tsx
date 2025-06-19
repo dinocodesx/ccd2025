@@ -40,6 +40,7 @@ import { UserProfile } from "@/types/login";
 import { SubmitHandler } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import YourBadge from "./YourBadge";
+import Tickets from "./Tickets";
 
 type FormValues = {
   firstName: string;
@@ -69,29 +70,45 @@ export default function ProfileCard({
   const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { update } = useSession();
-  
+
   // Get initial tab from URL or default to "My Profile"
   const getInitialTab = () => {
-    const tabFromUrl = searchParams.get('tab');
-    const validTabs = ["My Profile", "Points", "Leaderboard", "Frame Studio"];
+    const tabFromUrl = searchParams.get("tab");
+    const validTabs = [
+      "My Profile",
+      "Points",
+      "Leaderboard",
+      "Frame Studio",
+      "Tickets",
+    ];
     return validTabs.includes(tabFromUrl || "") ? tabFromUrl : "My Profile";
   };
-  
+
   const [activeTab, setActiveTab] = useState(getInitialTab);
 
   // Update URL when tab changes
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', tab);
+    params.set("tab", tab);
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
   // Sync with URL changes
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab');
-    const validTabs = ["My Profile", "Points", "Leaderboard", "Frame Studio"];
-    if (tabFromUrl && validTabs.includes(tabFromUrl) && tabFromUrl !== activeTab) {
+    const tabFromUrl = searchParams.get("tab");
+    const validTabs = [
+      "My Profile",
+      "Points",
+      "Leaderboard",
+      "Frame Studio",
+      "Tickets",
+    ];
+    if (
+      tabFromUrl &&
+      validTabs.includes(tabFromUrl) &&
+      tabFromUrl !== activeTab
+    ) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams, activeTab]);
@@ -328,7 +345,13 @@ export default function ProfileCard({
 
           {/* Navigation tabs */}
           <div className="mb-8 flex flex-wrap gap-2 sm:gap-6">
-            {["My Profile", "Frame Studio","Points", "Leaderboard"].map((tab) => (
+            {[
+              "My Profile",
+              "Frame Studio",
+              "Tickets",
+              "Points",
+              "Leaderboard",
+            ].map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
@@ -666,11 +689,13 @@ export default function ProfileCard({
               </form>
             </Form>
           )}
-
           {activeTab === "Points" && <Points />}
 
           {activeTab === "Leaderboard" && <LeaderBoard />}
-           {activeTab === "Frame Studio" && <YourBadge />}
+
+          {activeTab === "Frame Studio" && <YourBadge />}
+
+          {activeTab === "Tickets" && <Tickets session={session} />}
         </div>
       </CardContainer>
     </div>
