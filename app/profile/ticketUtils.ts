@@ -31,7 +31,7 @@ export const fallbackShare = async (toast: any) => {
   const shareData = {
     title: "Cloud Community Days Kolkata 2025",
     text: "🎟️ I'm attending CCD Kolkata 2025 on 19 July ! Join me at Taal Kutir By Taj.",
-    url: "https://ccd.gdgcloud.kolkata.dev?utm_source=native&utm_medium=share&utm_campaign=ccd2025",
+    url: "https://ccd2025.gdgcloudkol.org/apply",
   };
 
   try {

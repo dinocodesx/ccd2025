@@ -1,4 +1,11 @@
-import { Twitter, Linkedin, Facebook, Instagram, Share2 } from "lucide-react";
+import {
+  Twitter,
+  Linkedin,
+  Facebook,
+  Instagram,
+  Share2,
+  Clipboard,
+} from "lucide-react";
 import { isMobileDevice, fallbackShare } from "./ticketUtils";
 
 // WhatsAppIcon is a string identifier for SocialShareButtons to render
@@ -9,10 +16,11 @@ export const SOCIAL_CONFIGS = [
     bgColor: "hover:bg-black",
     iconColor: "group-hover:text-white",
     getShareUrl: () => {
-      const text = `🎟️ Excited to be part of Cloud Community Days Kolkata 2025!\n\nJoin me on March 30, 2025 at Biswa Bangla Convention Centre for the largest cloud conference in Eastern India.\n\n@gdgcloudkol\n#CCDKol2025`;
-      const url = "https://ccd.gdgcloud.kolkata.dev?utm_source=twitter&utm_medium=social&utm_campaign=ccd2025";
-      return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    }
+      const text = `🎟️ Excited to be part of Cloud Community Days Kolkata 2025!\n\nJoin me on 19th July 2025 at Taj Taal Kutir, Newtown for the largest cloud conference in Eastern India.\n\n@gdgcloudkol\n#CCDKol2025\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply`;
+      return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        text
+      )}`;
+    },
   },
   {
     platform: "LinkedIn",
@@ -20,11 +28,11 @@ export const SOCIAL_CONFIGS = [
     bgColor: "hover:bg-[#0077b5]",
     iconColor: "group-hover:text-white",
     getShareUrl: () => {
-      const url = "https://ccd.gdgcloud.kolkata.dev?utm_source=linkedin&utm_medium=social&utm_campaign=ccd2025";
-      const title = "Cloud Community Days Kolkata 2025 - March 30, 2025";
-      const summary = "🎟️ Thrilled to announce that I'll be attending Cloud Community Days Kolkata 2025! Join me at Biswa Bangla Convention Centre for a day of cloud computing, networking, and learning from industry experts. Don't miss Eastern India's largest cloud conference! #CCDKol2025 #GDGCloudKolkata";
-      return `https://www.linkedin.com/sharing/share-offsite/?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(summary)}`;
-    }
+      const url = "https://ccd2025.gdgcloudkol.org/apply";
+      return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+        url
+      )}`;
+    },
   },
   {
     platform: "Facebook",
@@ -32,10 +40,13 @@ export const SOCIAL_CONFIGS = [
     bgColor: "hover:bg-[#1877f2]",
     iconColor: "group-hover:text-white",
     getShareUrl: () => {
-      const url = "https://ccd.gdgcloud.kolkata.dev?utm_source=facebook&utm_medium=social&utm_campaign=ccd2025";
-      const quote = "🎟️ Just secured my spot at Cloud Community Days Kolkata 2025! Join me on March 30, 2025 at Biswa Bangla Convention Centre for Eastern India's largest cloud conference. A full day of tech talks, workshops, and amazing networking opportunities awaits! 🚀";
-      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(quote)}`;
-    }
+      const url = "https://ccd2025.gdgcloudkol.org/apply";
+      const quote =
+        "🎟️ Just secured my spot at Cloud Community Days Kolkata 2025! Join me on 19th July 2025 at Taj Taal Kutir, Newtown for Eastern India's largest cloud conference.";
+      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        url
+      )}&quote=${encodeURIComponent(quote)}`;
+    },
   },
   {
     platform: "WhatsApp",
@@ -43,9 +54,9 @@ export const SOCIAL_CONFIGS = [
     bgColor: "hover:bg-[#25D366]",
     iconColor: "group-hover:text-white",
     getShareUrl: () => {
-      const text = `🎟️ Hey! I'm going to Cloud Community Days Kolkata 2025!\n\n📅 March 30, 2025\n📍 Biswa Bangla Convention Centre\n\nJoin me at Eastern India's largest cloud conference for a day of learning and networking!\n\nRegister now: https://ccd.gdgcloud.kolkata.dev?utm_source=whatsapp&utm_medium=social&utm_campaign=ccd2025\n\n#CCDKol2025`;
+      const text = `🎟️ Hey! I'm going to Cloud Community Days Kolkata 2025!\n\n📅 19th July 2025\n📍 Taj Taal Kutir, Newtown\n\nJoin me at Eastern India's largest cloud conference for a day of learning and networking!\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply\n\n#CCDKol2025`;
       return `https://wa.me/?text=${encodeURIComponent(text)}`;
-    }
+    },
   },
   {
     platform: "Instagram",
@@ -53,27 +64,69 @@ export const SOCIAL_CONFIGS = [
     bgColor: "hover:bg-[#e4405f]",
     iconColor: "group-hover:text-white",
     onClick: (toast: any) => {
-      if (isMobileDevice()) {
-        try {
-          window.open("instagram://camera", "_blank");
-        } catch (err) {
-          toast.error("Couldn't open Instagram app. Try downloading and sharing your ticket manually.", {
-            duration: 5000,
+      const text =
+        "🎟️ Attending Cloud Community Days Kolkata 2025 on 19th July at Taj Taal Kutir, Newtown! Eastern India's largest cloud conference. #CCDKol2025 @gdgcloudkol\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply";
+
+      try {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            if (isMobileDevice()) {
+              toast.success("Caption copied! Open Instagram to share.", {
+                duration: 3000,
+              });
+              setTimeout(() => {
+                try {
+                  window.open("instagram://camera", "_blank");
+                } catch (err) {
+                  window.open("https://www.instagram.com/", "_blank");
+                }
+              }, 1000);
+            } else {
+              toast.success(
+                "Caption copied to clipboard! You can paste it in Instagram.",
+                { duration: 4000 }
+              );
+              setTimeout(() => {
+                window.open("https://www.instagram.com/", "_blank");
+              }, 1000);
+            }
+          })
+          .catch((err) => {
+            console.error("Clipboard error:", err);
+            toast.info(
+              "Copy this text for your Instagram post:\n\n🎟️ Attending Cloud Community Days Kolkata 2025 on 19th July at Taj Taal Kutir, Newtown! Eastern India's largest cloud conference. #CCDKol2025 @gdgcloudkol\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply",
+              { duration: 8000 }
+            );
           });
-        }
-      } else {
+      } catch (err) {
         toast.info(
-          "Download your ticket and share it as a post on Instagram! Tag @gdgcloudkol and use #CCDKol2025. Join us on March 30, 2025 at Biswa Bangla Convention Centre!", 
-          { duration: 6000 }
+          "Copy this text for your Instagram post:\n\n🎟️ Attending Cloud Community Days Kolkata 2025 on 19th July at Taj Taal Kutir, Newtown! Eastern India's largest cloud conference. #CCDKol2025 @gdgcloudkol\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply",
+          { duration: 8000 }
         );
       }
-    }
+    },
+  },
+  {
+    platform: "Copy Text",
+    icon: Clipboard,
+    bgColor: "hover:bg-purple-600",
+    iconColor: "group-hover:text-white",
+    onClick: (toast: any) => {
+      const text =
+        "🎟️ Excited to be part of Cloud Community Days Kolkata 2025!\n\nJoin me on 19th July 2025 at Taj Taal Kutir, Newtown for the largest cloud conference in Eastern India.\n\n#CCDKol2025\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply";
+
+      navigator.clipboard
+        .writeText(text)
+        .then(() => toast.success("Text copied to clipboard!"))
+        .catch(() => toast.error("Failed to copy text"));
+    },
   },
   {
     platform: "More",
     icon: Share2,
     bgColor: "hover:bg-gray-200 dark:hover:bg-gray-700",
     iconColor: "group-hover:text-black dark:group-hover:text-white",
-    onClick: (toast: any) => fallbackShare(toast)
-  }
-]; 
+    onClick: (toast: any) => fallbackShare(toast),
+  },
+];

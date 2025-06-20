@@ -11,19 +11,19 @@ export const ticketTemplates = [
   {
     id: "template2",
     name: "CCD Dark Themed",
-    imageUrl: "/images/tickets/template-dark.svg",
+    imageUrl: "/images/tickets/template2.svg",
     description: "Dark Themed",
     width: 370,
     height: 800,
   },
-  {
-    id: "template3",
-    name: "CCD Blue Themed",
-    imageUrl: "/images/tickets/template1.svg",
-    description: "Blue Themed",
-    width: 370,
-    height: 800,
-  },
+  // {
+  //   id: "template3",
+  //   name: "CCD Blue Themed",
+  //   imageUrl: "/images/tickets/template1.svg",
+  //   description: "Blue Themed",
+  //   width: 370,
+  //   height: 800,
+  // },
 ];
 
 // Layout constants
