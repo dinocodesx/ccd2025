@@ -186,7 +186,7 @@ const loadGoogleFont=async()=>{
         }
       }
       const link = document.createElement("a");
-      link.download = `ccd2025-ticket-${userInfo.fullName}-${selectedTemplate.id}.png`;
+      link.download = `CCD2025-ticket-${userInfo.fullName}.png`;
       link.href = dataURL;
       document.body.appendChild(link);
       link.click();
