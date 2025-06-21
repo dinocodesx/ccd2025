@@ -5,10 +5,12 @@
     "navbarSpatialModeratorLoggedIn": true,
     "navbarSpatialNotLoggedIn": true,
     "navbarSpatialLoggedInBT": true,
-    "navShowProfile":true
+    "navShowProfile": true
   },
-  "disabledRoutes": ["/dashboard", "/termsAndCondition"],
- 
+  "disabledRoutes": [
+    "/dashboard",
+    "/termsAndCondition"
+  ],
   "disabledPartnerTitles": [],
   "disabledPartners": [],
   "disabledCommunityPartners": [],
@@ -16,7 +18,9 @@
     "ticketButtonStateNotLogin": "mcd",
     "ticketButtonStateLogin": "mcd",
     "ticketButtonBought": "bt",
-    "disabledTicketButton": ["rt"],
+    "disabledTicketButton": [
+      "rt"
+    ],
     "cfsButtonStateNotLogin": "cfsc",
     "cfsButtonStateLogin": "cfsc",
     "disabledCfsButton": [],
@@ -39,6 +43,10 @@
   "disabledContestContent": {
     "contests": true,
     "maxApproved": 3
+  },
+  "profile": {
+    "edit": false,
+    "editTshirt": true
   },
   "disabledFooterContent": {
     "footer": true,
