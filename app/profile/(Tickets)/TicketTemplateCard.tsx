@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import SocialShareButtons from "./SocialShareButtons";
 
 interface TicketTemplate {
   id: string;
@@ -58,7 +59,7 @@ const TicketTemplateCard: React.FC<Props> = ({
       >
         <div className="mt-1">{themeSwitch[template.id as keyof typeof themeSwitch]}</div>
         <span className={cn(
-          "font-semibold text-base ml-2",
+          "font-semibold text-xs lg:text-base ml-2",
           selectedTemplate?.id === template.id ? "text-google-blue" : "text-gray-800 dark:text-gray-200"
         )}>
           {template.description}
@@ -66,6 +67,13 @@ const TicketTemplateCard: React.FC<Props> = ({
 
       </Button>
     ))}
+     <hr className="my-4"/>
+    <div className="hidden md:flex flex-col items-center justify-center  gap-y-4">
+   <span>Share your ticket</span>
+      <div className="w-full items-center justify-center">
+        <SocialShareButtons />
+      </div>
+    </div>
   </div>
 );
 

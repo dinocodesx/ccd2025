@@ -54,7 +54,7 @@ const TicketPreview: React.FC<Props> = ({
   <div
     className={cn(
       !isDialogView &&
-        "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4" 
+        "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-11/12"  
     )}
   >
     {!isDialogView && (
@@ -100,7 +100,7 @@ const TicketPreview: React.FC<Props> = ({
               src={selectedTemplate.imageUrl}
               alt={selectedTemplate.name}
               // className="w-full h-full object-contain rounded-lg mx-auto shadow-[0_6px_24px_0_rgba(0,0,0,0.18)]"
-              className="w-auto h-full object-contain rounded-lg mx-auto border"
+              className="w-auto h-full object-contain rounded-3xl mx-auto border"
               onError={(e) => {
                 e.currentTarget.src = "/images/placeholder-ticket.svg";
               }}

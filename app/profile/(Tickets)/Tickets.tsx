@@ -233,7 +233,7 @@ export default function Tickets({ session }: { session: Session }) {
           {/* Choose Your Ticket Design */}
         </h4>
         <div className="flex flex-col md:flex-row gap-6 w-full">
-          <div className="md:w-1/4 w-full">
+          <div className="md:w-2/9 w-full">
             <TicketTemplateCard
               ticketTemplates={ticketTemplates}
               selectedTemplate={selectedTemplate}
@@ -287,7 +287,7 @@ export default function Tickets({ session }: { session: Session }) {
           <div className="absolute inset-0 bg-gradient-to-r from-[#4285f4]/10 via-[#34a853]/10 to-[#ea4335]/10 animate-gradient-x"></div>
           <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-[#4285f4]/20 rounded-xl p-6">
             <h4 className="font-bold text-lg text-[#4285f4] dark:text-[#4285f4] mb-4 flex items-center gap-2">
-              🎉 Share Your CCD Ticket
+              🎉 Share Your CCD Kolkata Ticket
               <div className="h-1 w-1 rounded-full bg-[#34a853]"></div>
               <div className="h-1 w-1 rounded-full bg-[#ea4335]"></div>
               <div className="h-1 w-1 rounded-full bg-[#fbbc04]"></div>
@@ -296,20 +296,26 @@ export default function Tickets({ session }: { session: Session }) {
               <p className="text-gray-700 dark:text-gray-200">
                 Show your excitement for CCD Kolkata 2025! Share your ticket on social media and tag us:
               </p>
+
               <div className="flex flex-wrap gap-2">
                 <span className="bg-[#4285f4]/10 text-[#4285f4] px-3 py-1.5 rounded-full text-sm font-medium">@gdgcloudkol</span>
                 <span className="bg-[#34a853]/10 text-[#34a853] px-3 py-1.5 rounded-full text-sm font-medium">#CCDKol2025</span>
                 <span className="bg-google-yellow/10 text-google-yellow px-3 py-1.5 rounded-full text-sm font-medium">#GDGCloudKolkata</span>
+              </div>
+
+              <div className=" items-center justify-center  flex md:hidden mx-auto w-full">
+                <SocialShareButtons />
               </div>
               <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-3">
                 <p className="text-blue-800 dark:text-blue-200 text-sm">
                   <span className="font-semibold">Note:</span> Your QR code is secure and tamper-proof. Feel free to show it in your social media posts!
                 </p>
               </div>
+            
             </div>
           </div>
         </div>
-        <SocialShareButtons toast={toast} />
+       
       </div>
       <TicketInstructions />
     </div>
