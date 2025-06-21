@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import ProfileForm from "./profileForm";
+
 import Layout from "@/components/layout/Layout";
 import ProfileCard from "./ProfileCard";
 import { Suspense } from "react";
