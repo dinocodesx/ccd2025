@@ -242,7 +242,7 @@ const SpeakersSection: React.FC = () => {
         open={!!selectedSpeaker}
         onOpenChange={() => setSelectedSpeaker(null)}
       >
-        <DialogContent className="max-w-2xl z-999 max-h-[700px] md:h-full">
+        <DialogContent className="max-w-2xl z-999 max-h-[700px] md:h-auto">
           {selectedSpeaker && (
             <>
               <DialogHeader>
