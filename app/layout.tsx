@@ -24,15 +24,37 @@ const googleSans = localFont({
   variable: "--font-google",
 });
 export const metadata: Metadata = {
-  title: "Cloud Community Day 2025",
+  title: "Cloud Community Day Kolkata 2025",
   description:
-    "Cloud Community Day 2025 - The flagship annual gathering of cloud professionals",
+    "Cloud Community Day Kolkata 2025 - The flagship annual gathering of cloud professionals",
   keywords:
     "Cloud, Community, Day, 2025, Conference, Technology, CCD, GCCD, CCD 2025, GDG, Google Developer Groups, GDGCK, GDG Cloud, GDG India, GDG Cloud Kolkata",
   authors: [{ name: "GDG Cloud Kolkata" }],
+  
   icons: {
     icon: "/favicon.ico",
   },
+  openGraph: {
+    title: "Cloud Community Day Kolkata 2025",
+    description: "Cloud Community Day Kolkata 2025 - The flagship annual gathering of cloud professionals",
+    images: [
+      {
+        url: "https://res.cloudinary.com/da3zav192/image/upload/v1750510435/Og_image_rkwwwu.png",
+        width: 1200,
+        height: 630,
+        alt: "Cloud Community Day Kolkata 2025 OG Image"
+      }
+    ],
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cloud Community Day Kolkata 2025",
+    description: "Cloud Community Day Kolkata 2025 - The flagship annual gathering of cloud professionals",
+    images: [
+      "https://res.cloudinary.com/da3zav192/image/upload/v1750510435/Og_image_rkwwwu.png"
+    ]
+  }
 };
 
 export default function RootLayout({

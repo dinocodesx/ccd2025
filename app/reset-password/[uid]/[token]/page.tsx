@@ -7,8 +7,8 @@ import { Metadata } from "next";
 import AuthLayout from "@/components/auth/AuthLayout";
 
 export const metadata: Metadata = {
-  title: "Reset Password - Cloud Community Day 2025",
-  description: "Set a new password for your Cloud Community Day 2025 account",
+  title: "Reset Password - Cloud Community Day Kolkata 2025",
+  description: "Set a new password for your Cloud Community Day Kolkata 2025 account",
 };
 
 const Page = async ({ searchParams }: { searchParams: Promise<{ onboarding: string }> }) => {

@@ -7,8 +7,8 @@ import { Metadata } from "next";
 import AuthLayout from "@/components/auth/AuthLayout";
 
 export const metadata: Metadata = {
-  title: "Forgot Password - Cloud Community Day 2025",
-  description: "Reset your Cloud Community Day 2025 account password",
+  title: "Forgot Password - Cloud Community Day Kolkata 2025",
+  description: "Reset your Cloud Community Day Kolkata 2025 account password",
 };
 
 const Page = async () => {

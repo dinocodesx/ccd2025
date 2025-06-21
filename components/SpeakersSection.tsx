@@ -95,7 +95,7 @@ const SpeakersSection: React.FC = () => {
       ) : error ? (
         <div className="text-center text-red-500 py-8">{error}</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {speakers.map((speaker) => (
             <div
               key={speaker.id}
@@ -103,7 +103,7 @@ const SpeakersSection: React.FC = () => {
               onClick={() => setSelectedSpeaker(speaker)}
             >
               <div className="flex flex-col flex-1 bg-white rounded-2xl overflow-hidden">
-                <div className="flex items-center justify-between bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] px-4 py-2">
+                <div className="flex  justify-between bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] px-4 py-2">
                   <span className="text-white text-base font-medium">
                     Speaker
                   </span>
@@ -115,7 +115,7 @@ const SpeakersSection: React.FC = () => {
                     className="w-5 h-5 "
                   />
                 </div>
-                <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4 md:p-4 pt-4 rounded-t-2xl">
+                <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-1 md:gap-4 md:p-4 pt-4 rounded-t-2xl">
                   <div
                     className="w-40 h-40 rounded-lg bg-gray-200 flex-shrink-0 bg-center bg-cover border-2 border-black/80 mb-4 md:mb-0"
                     style={{
