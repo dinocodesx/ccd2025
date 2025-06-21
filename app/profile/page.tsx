@@ -10,8 +10,8 @@ import bkFetch from "@/services/backend.services";
 import { USERS_DJANGO_URL } from "@/lib/constants/be";
 
 export const metadata: Metadata = {
-  title: "Profile - Cloud Community Day 2025",
-  description: "Manage your Cloud Community Day 2025 account profile",
+  title: "Profile - Cloud Community Day Kolkata 2025",
+  description: "Manage your Cloud Community Day Kolkata 2025 account profile",
 };
 
 const Page = async () => {

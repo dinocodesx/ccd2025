@@ -357,7 +357,7 @@ const YourFrame = () => {
                     </h1>
                     <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
                       Upload your profile picture and generate a social media
-                      Frame for Cloud Community Day 2025
+                      Frame for Cloud Community Day Kolkata 2025
                     </p>
                   </div>
                   <div className="flex-shrink-0 flex justify-center md:justify-end">
