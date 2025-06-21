@@ -170,25 +170,40 @@ export default function ProfileCard({
   };
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     setIsSubmitting(true);
-
-    const data = {
-      first_name: values.firstName || "",
-      last_name: values.lastName || "",
-      email: values.email || "",
-      company: values.company,
-      role: values.role || "",
-      pronoun: values.pronoun || "",
-      phone: values.phone || "",
-      college: values.college || "",
-      course: values.course || "",
-      graduation_year: values.graduation_year || undefined,
-      student: values.student ?? false,
-      socials: {
-        twitter: values.twitter || "",
-        linkedin: values.linkedin || "",
-        github: values.github || "",
-      },
-    };
+    const data =
+      FeatureRuleContent.profile.edit ?
+        {
+          first_name: values.firstName || "",
+          last_name: values.lastName || "",
+          email: values.email || "",
+          company: values.company,
+          role: values.role || "",
+          pronoun: values.pronoun || "",
+          phone: values.phone || "",
+          college: values.college || "",
+          course: values.course || "",
+          graduation_year: values.graduation_year || undefined,
+          student: values.student ?? false,
+          tsize: values.tshirt || "",
+          socials: {
+            twitter: values.twitter || "",
+            linkedin: values.linkedin || "",
+            github: values.github || "",
+          },
+        } : FeatureRuleContent.profile.editTshirt ? {
+          tshirt: values.tshirt || "",
+          socials: {
+            twitter: values.twitter || "",
+            linkedin: values.linkedin || "",
+            github: values.github || "",
+          },
+        } : {
+          socials: {
+            twitter: values.twitter || "",
+            linkedin: values.linkedin || "",
+            github: values.github || "",
+          }
+        };
 
     try {
       const response = await fetch("/api/users", {
@@ -565,15 +580,6 @@ export default function ProfileCard({
                         <FormLabel className="text-xs sm:text-sm text-muted-foreground">
                           T-shirt Size
                         </FormLabel>
-                        {/* <FormControl>
-                          <Input
-                            disabled={!FeatureRuleContent.profile.editTshirt}
-                            placeholder="T-shirt Size"
-                            className="border-input focus:border-[#076eff] text-sm"
-                            {...field}
-                          />
-                        </FormControl> */}
-
                         <Select
                           disabled={!FeatureRuleContent.profile.editTshirt}
                           onValueChange={field.onChange}
