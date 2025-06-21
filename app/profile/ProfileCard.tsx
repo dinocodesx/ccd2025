@@ -1,32 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/UserAvatar";
 import Button from "@/components/ui/Button";
-import { Input } from "@/components/ui/input";
 import CardContainer from "@/components/ui/CardContainer";
-import Points from "./Points";
-import LeaderBoard from "./LeaderBoard";
-import { Session } from "next-auth";
-import {
-  Select,
-  SelectLabel,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { extractGithubUsername } from "@/lib/utils";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -35,12 +10,36 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/UserAvatar";
+import { extractGithubUsername } from "@/lib/utils";
 import { UserProfile } from "@/types/login";
-import { SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import LeaderBoard from "./LeaderBoard";
+import Points from "./Points";
 import YourBadge from "./YourBadge";
 import Tickets from "./Tickets";
+import FeatureRuleContent from "@/public/content/feature.rule.json";
 
 type FormValues = {
   firstName: string;
@@ -52,6 +51,7 @@ type FormValues = {
   phone?: string;
   college?: string;
   course?: string;
+  tshirt?: string;
   graduation_year?: number;
   student?: boolean;
   twitter?: string;
@@ -173,6 +173,7 @@ export default function ProfileCard({
       phone: user?.phone || "",
       college: user?.college || "",
       course: user?.course || "",
+      tshirt: user?.tsize || "",
       graduation_year: user?.graduation_year || undefined,
       student: user?.student ?? false,
       twitter: user?.socials?.twitter || "",
@@ -181,30 +182,45 @@ export default function ProfileCard({
     },
   });
 
-  const onError = (errors: any) => {
+  const onError = (errors: FieldErrors<FormValues>) => {
     console.error("Validation Errors:", errors);
   };
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     setIsSubmitting(true);
-
-    const data = {
-      first_name: values.firstName || "",
-      last_name: values.lastName || "",
-      email: values.email || "",
-      company: values.company,
-      role: values.role || "",
-      pronoun: values.pronoun || "",
-      phone: values.phone || "",
-      college: values.college || "",
-      course: values.course || "",
-      graduation_year: values.graduation_year || undefined,
-      student: values.student ?? false,
-      socials: {
-        twitter: values.twitter || "",
-        linkedin: values.linkedin || "",
-        github: values.github || "",
-      },
-    };
+    const data =
+      FeatureRuleContent.profile.edit ?
+        {
+          first_name: values.firstName || "",
+          last_name: values.lastName || "",
+          email: values.email || "",
+          company: values.company,
+          role: values.role || "",
+          pronoun: values.pronoun || "",
+          phone: values.phone || "",
+          college: values.college || "",
+          course: values.course || "",
+          graduation_year: values.graduation_year || undefined,
+          student: values.student ?? false,
+          tsize: values.tshirt || "",
+          socials: {
+            twitter: values.twitter || "",
+            linkedin: values.linkedin || "",
+            github: values.github || "",
+          },
+        } : FeatureRuleContent.profile.editTshirt ? {
+          tshirt: values.tshirt || "",
+          socials: {
+            twitter: values.twitter || "",
+            linkedin: values.linkedin || "",
+            github: values.github || "",
+          },
+        } : {
+          socials: {
+            twitter: values.twitter || "",
+            linkedin: values.linkedin || "",
+            github: values.github || "",
+          }
+        };
 
     try {
       const response = await fetch("/api/users", {
@@ -262,9 +278,17 @@ export default function ProfileCard({
                     {user?.last_name[0] || "W"}
                   </AvatarFallback>
                 </Avatar>
-                <img
-                  src="/images/profile/smile.png"
+                <Image
+                  src={`/images/cfs/smile${user.event_role === "attendee" ?
+                    'b'
+                    : user.event_role === "organizer" ?
+                      'r'
+                      : user.event_role === "volunteer" ?
+                        'y'
+                        : ''}.svg`}
                   alt="Smile"
+                  width={24}
+                  height={24}
                   className="absolute -bottom-0 -right-1 h-5 w-5 sm:h-6 sm:w-6 rounded-full border-2 border-white dark:border-black"
                 />
               </div>
@@ -286,59 +310,31 @@ export default function ProfileCard({
               </div>
             </div>
             <div className="flex items-center gap-4 flex-wrap-reverse">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Professional
-                </span>
-                <Switch
-                  checked={form.watch("student")}
-                  onCheckedChange={(checked: boolean) => {
-                    // Store current values before changing anything
-                    const currentCompany = form.getValues("company");
-                    const currentCollege = form.getValues("college");
-                    form.setValue("student", checked, {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                      shouldValidate: true,
-                    });
-
-                    if (checked) {
-                      // Switching to student mode
-                      form.setValue("company", "", { shouldDirty: true });
-                      form.setValue("role", "", { shouldDirty: true });
-
-                      // If we have a value from the user object and current field is empty, restore it
-                      if (user.college && !currentCollege) {
-                        form.setValue("college", user.college, {
-                          shouldDirty: true,
-                        });
-                      }
-                    } else {
-                      // Switching to professional mode
-                      form.setValue("college", "", { shouldDirty: true });
-                      form.setValue("course", "", { shouldDirty: true });
-                      form.setValue("graduation_year", undefined, {
-                        shouldDirty: true,
-                      });
-
-                      // If we have a value from the user object and current field is empty, restore it
-                      if (user.company && !currentCompany) {
-                        form.setValue("company", user.company, {
-                          shouldDirty: true,
-                        });
-                      }
-                    }
-                  }}
-                />
-                <span className="text-sm text-muted-foreground">Student</span>
-              </div>
-              <div className="bg-[#076eff] hover:bg-[#076eff]/90 text-white px-4 sm:px-6 flex items-center gap-2 text-sm sm:text-base p-2 rounded-4xl">
-                <img
+              <div
+                style={{
+                  backgroundColor: `${user.event_role === "attendee" ?
+                    'var(--google-blue)'
+                    : user.event_role === "organizer" ?
+                      'var(--google-red)'
+                      : user.event_role === "volunteer" ?
+                        'var(--google-yellow)'
+                        : ''}`
+                }}
+                className={`hover:bg-[${user.event_role === "attendee" ?
+                  '#4285f4'
+                  : user.event_role === "organizer" ?
+                    '#ea4336'
+                    : user.event_role === "volunteer" ?
+                      '#faab00'
+                      : ''}]/90 text-white px-4 sm:px-6 flex items-center gap-2 text-sm sm:text-base p-2 rounded-4xl`}>
+                <Image
                   src="/images/cfs/circleStar.svg"
                   alt="attendee badge"
+                  width={16}
+                  height={16}
                   className="h-3 w-3 sm:h-4 sm:w-4"
                 />
-                <span>Attendee</span>
+                <span className="capitalize">{user.event_role}</span>
               </div>
             </div>
           </div>
@@ -355,11 +351,19 @@ export default function ProfileCard({
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
-                className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors border border-gray-200 dark:border-muted cursor-pointer ${
-                  activeTab === tab
-                    ? "bg-[#076eff] text-white dark:bg-[#076eff] dark:text-white border-0"
-                    : "text-[#676c72] hover:text-[#000000] dark:text-[#e5e7eb] dark:hover:text-white"
-                }`}
+                style={activeTab === tab ? {
+                  backgroundColor: `${user.event_role === "attendee" ?
+                    'var(--google-blue)'
+                    : user.event_role === "organizer" ?
+                      'var(--google-red)'
+                      : user.event_role === "volunteer" ?
+                        'var(--google-yellow)'
+                        : ''}`
+                } : {}}
+                className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors border border-gray-200 dark:border-muted cursor-pointer ${activeTab === tab
+                  ? `text-white dark:text-white border-0`
+                  : "text-[#676c72] hover:text-[#000000] dark:text-[#e5e7eb] dark:hover:text-white"
+                  }`}
               >
                 {tab}
               </button>
@@ -383,6 +387,7 @@ export default function ProfileCard({
                         </FormLabel>
                         <FormControl>
                           <Input
+                            disabled={!FeatureRuleContent.profile.edit}
                             placeholder="gdgcloudkol"
                             className="border-input focus:border-[#076eff] text-sm"
                             {...field}
@@ -402,6 +407,7 @@ export default function ProfileCard({
                         </FormLabel>
                         <FormControl>
                           <Input
+                            disabled={!FeatureRuleContent.profile.edit}
                             placeholder="Doe"
                             className="border-input focus:border-[#076eff] text-sm"
                             {...field}
@@ -423,6 +429,7 @@ export default function ProfileCard({
                           Pronouns
                         </FormLabel>
                         <Select
+                          disabled={!FeatureRuleContent.profile.edit}
                           onValueChange={field.onChange}
                           value={field.value}
                         >
@@ -464,6 +471,7 @@ export default function ProfileCard({
                         </FormLabel>
                         <FormControl>
                           <Input
+                            disabled={!FeatureRuleContent.profile.edit}
                             placeholder="+91 98765 43210"
                             className="border-input focus:border-[#076eff] text-sm"
                             {...field}
@@ -487,6 +495,7 @@ export default function ProfileCard({
                           </FormLabel>
                           <FormControl>
                             <Input
+                              disabled={!FeatureRuleContent.profile.edit}
                               placeholder="Your College"
                               className="border-input focus:border-[#076eff] text-sm"
                               {...field}
@@ -506,6 +515,7 @@ export default function ProfileCard({
                           </FormLabel>
                           <FormControl>
                             <Input
+                              disabled={!FeatureRuleContent.profile.edit}
                               type="number"
                               placeholder="2024"
                               className="border-input focus:border-[#076eff] text-sm"
@@ -529,6 +539,7 @@ export default function ProfileCard({
                           </FormLabel>
                           <FormControl>
                             <Input
+                              disabled={!FeatureRuleContent.profile.edit}
                               placeholder={"Your Course"}
                               className="border-input focus:border-[#076eff] text-sm"
                               {...field}
@@ -551,6 +562,7 @@ export default function ProfileCard({
                           </FormLabel>
                           <FormControl>
                             <Input
+                              disabled={!FeatureRuleContent.profile.edit}
                               placeholder="Your Company"
                               className="border-input focus:border-[#076eff] text-sm"
                               {...field}
@@ -570,6 +582,7 @@ export default function ProfileCard({
                           </FormLabel>
                           <FormControl>
                             <Input
+                              disabled={!FeatureRuleContent.profile.edit}
                               placeholder={"Your Role"}
                               className="border-input focus:border-[#076eff] text-sm"
                               {...field}
@@ -581,7 +594,52 @@ export default function ProfileCard({
                     />
                   </div>
                 )}
-
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <FormField
+                    control={form.control}
+                    name="tshirt"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel className="text-xs sm:text-sm text-muted-foreground">
+                          T-shirt Size
+                        </FormLabel>
+                        <Select
+                          disabled={!FeatureRuleContent.profile.editTshirt}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select your t-shirt size" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectGroup>
+                              {[
+                                {
+                                  value: "S",
+                                  display_name: "Small",
+                                },
+                                { value: "M", display_name: "Medium" },
+                                { value: "L", display_name: "Large" },
+                                { value: "XL", display_name: "X-Large" },
+                                { value: "2XL", display_name: "2X-Large" },
+                                { value: "3XL", display_name: "3X-Large" },
+                                { value: "4XL", display_name: "4X-Large" },
+                                { value: "5XL", display_name: "5X-Large" },
+                              ].map((e) => (
+                                <SelectItem key={e.value} value={e.value}>
+                                  {e.display_name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-xs text-red-500" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
@@ -653,35 +711,20 @@ export default function ProfileCard({
                     type="submit"
                     disabled={isSubmitting}
                     className="bg-primary hover:bg-primary/90 text-white dark:text-black px-6 sm:px-8 text-sm sm:text-base flex items-center gap-2"
-                    onClick={() => {
-                      console.log({
-                        college: form.getValues("college"),
-                        company: form.getValues("company"),
-                        course: form.getValues("course"),
-                        email: form.getValues("email"),
-                        firstName: form.getValues("firstName"),
-                        lastName: form.getValues("lastName"),
-                        github: form.getValues("github"),
-                        graduation_year: form.getValues("graduation_year"),
-                        linkedin: form.getValues("linkedin"),
-
-                        phone: form.getValues("phone"),
-                        pronoun: form.getValues("pronoun"),
-                        role: form.getValues("role"),
-                        student: form.getValues("student"),
-                        twitter: form.getValues("twitter"),
-                      });
-                    }}
                   >
-                    <img
+                    <Image
                       src="/images/cfs/gemini.svg"
                       alt=""
+                      width={16}
+                      height={16}
                       className="size-4 dark:invert"
                     />
                     {isSubmitting ? "Saving..." : "Save"}
-                    <img
+                    <Image
                       src="/images/cfs/gemini.svg"
                       alt=""
+                      width={16}
+                      height={16}
                       className="size-4 dark:invert"
                     />
                   </Button>
