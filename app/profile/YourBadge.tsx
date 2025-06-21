@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Button from "@/components/ui/Button";
+import GeminiIcon from "@/components/GeminiIcon";
 
 type FrameType = "attendee" | "team" | "speaker";
 
@@ -26,7 +27,7 @@ const YourFrame = () => {
         borderClass: "border-google-blue",
       },
       team: {
-        title: "Team Member",
+        title: "Volunteer",
         color: "#34a853",
         bgClass: "bg-google-green",
         textClass: "text-google-green",
@@ -476,17 +477,9 @@ const YourFrame = () => {
                       size="sm"
                       className="bg-black hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-200 dark:text-black font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <img
-                        src="/images/elements/gemini.svg"
-                        alt="gemini"
-                        className="w-4 h-4 mr-2 dark:invert"
-                      />
+                      <GeminiIcon className="dark:invert"/>
                       Download
-                      <img
-                        src="/images/elements/gemini.svg"
-                        alt="gemini"
-                        className="w-4 h-4 ml-2 dark:invert"
-                      />
+                     <GeminiIcon className="dark:invert"/>
                     </Button>
                   </div>
 

@@ -38,7 +38,8 @@ import { z } from "zod";
 import LeaderBoard from "./LeaderBoard";
 import Points from "./Points";
 import YourBadge from "./YourBadge";
-import Tickets from "./Tickets";
+import Tickets from "./(Tickets)/Tickets";
+import GeminiIcon from "@/components/GeminiIcon";
 import FeatureRuleContent from "@/public/content/feature.rule.json";
 
 type FormValues = {
@@ -51,7 +52,7 @@ type FormValues = {
   phone?: string;
   college?: string;
   course?: string;
-  tshirt?: string;
+  tsize?: string;
   graduation_year?: number;
   student?: boolean;
   twitter?: string;
@@ -128,6 +129,7 @@ export default function ProfileCard({
     course: z.string().optional(),
     graduation_year: z.number().optional(),
     student: z.boolean().default(false),
+    tsize:z.string().optional(),
     twitter: z
       .string()
       .trim()
@@ -173,12 +175,13 @@ export default function ProfileCard({
       phone: user?.phone || "",
       college: user?.college || "",
       course: user?.course || "",
-      tshirt: user?.tsize || "",
+      tsize: user?.tsize || "",
       graduation_year: user?.graduation_year || undefined,
       student: user?.student ?? false,
       twitter: user?.socials?.twitter || "",
       linkedin: user?.socials?.linkedin || "",
       github: user?.socials?.github || "",
+      
     },
   });
 
@@ -187,6 +190,7 @@ export default function ProfileCard({
   };
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     setIsSubmitting(true);
+
     const data =
       FeatureRuleContent.profile.edit ?
         {
@@ -201,14 +205,14 @@ export default function ProfileCard({
           course: values.course || "",
           graduation_year: values.graduation_year || undefined,
           student: values.student ?? false,
-          tsize: values.tshirt || "",
+          tsize: values.tsize || "",
           socials: {
             twitter: values.twitter || "",
             linkedin: values.linkedin || "",
             github: values.github || "",
           },
         } : FeatureRuleContent.profile.editTshirt ? {
-          tshirt: values.tshirt || "",
+          tsize: values.tsize || "",
           socials: {
             twitter: values.twitter || "",
             linkedin: values.linkedin || "",
@@ -223,6 +227,7 @@ export default function ProfileCard({
         };
 
     try {
+
       const response = await fetch("/api/users", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -597,22 +602,23 @@ export default function ProfileCard({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name="tshirt"
+                    name="tsize"
                     render={({ field }) => (
                       <FormItem className="space-y-2">
                         <FormLabel className="text-xs sm:text-sm text-muted-foreground">
                           T-shirt Size
                         </FormLabel>
+                        <FormControl>
                         <Select
                           disabled={!FeatureRuleContent.profile.editTshirt}
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <FormControl>
+                         
                             <SelectTrigger>
                               <SelectValue placeholder="Select your t-shirt size" />
                             </SelectTrigger>
-                          </FormControl>
+                         
                           <SelectContent>
                             <SelectGroup>
                               {[
@@ -635,6 +641,7 @@ export default function ProfileCard({
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                        </FormControl>
                         <FormMessage className="text-xs text-red-500" />
                       </FormItem>
                     )}
@@ -720,13 +727,7 @@ export default function ProfileCard({
                       className="size-4 dark:invert"
                     />
                     {isSubmitting ? "Saving..." : "Save"}
-                    <Image
-                      src="/images/cfs/gemini.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                      className="size-4 dark:invert"
-                    />
+                    <GeminiIcon className="dark:invert"/>
                   </Button>
                 </div>
               </form>
