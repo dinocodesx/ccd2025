@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { getSpeakers } from "@/lib/speakers";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import Image from "next/image";
 
 interface Speaker {
   id: string;
@@ -35,8 +36,12 @@ const SpeakersSection: React.FC = () => {
       try {
         const speakersData = await getSpeakers();
         setSpeakers(speakersData);
-      } catch (e: any) {
-        setError(e.message || "Failed to load speakers");
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError("Failed to load speakers");
+        }
       } finally {
         setLoading(false);
       }
@@ -102,9 +107,11 @@ const SpeakersSection: React.FC = () => {
                   <span className="text-white text-base font-medium">
                     Speaker
                   </span>
-                  <img
+                  <Image
                     src="/images/elements/resources-speaker.svg"
                     alt=""
+                    width={20}
+                    height={20}
                     className="w-5 h-5 "
                   />
                 </div>
@@ -144,8 +151,8 @@ const SpeakersSection: React.FC = () => {
                       {speaker.links &&
                         speaker.links.map((link) =>
                           link.linkType === "LinkedIn" ||
-                          link.linkType === "Twitter" ||
-                          link.linkType === "X" ? (
+                            link.linkType === "Twitter" ||
+                            link.linkType === "X" ? (
                             <a
                               key={link.url}
                               href={link.url}
@@ -154,9 +161,11 @@ const SpeakersSection: React.FC = () => {
                               className="inline-flex items-center border-2 border-black/80 rounded-full p-1"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <img
+                              <Image
                                 src={socialIcon(link.linkType) || ""}
                                 alt={link.linkType}
+                                width={16}
+                                height={16}
                                 className="w-4 h-4"
                               />
                             </a>
@@ -166,11 +175,10 @@ const SpeakersSection: React.FC = () => {
                     {/* Mobile bio section (sm and below) */}
                     <div className="md:hidden bg-gray-200 p-4 px-4 flex flex-col items-center justify-between rounded-t-xl">
                       <div
-                        className={`max-w-full text-black/50 transition-all duration-300 overflow-hidden no-scrollbar ${
-                          expandedMobile === speaker.id
-                            ? "max-h-96"
-                            : "max-h-12 line-clamp-2"
-                        }`}
+                        className={`max-w-full text-black/50 transition-all duration-300 overflow-hidden no-scrollbar ${expandedMobile === speaker.id
+                          ? "max-h-96"
+                          : "max-h-12 line-clamp-2"
+                          }`}
                       >
                         {speaker.bio}
                       </div>
@@ -201,8 +209,8 @@ const SpeakersSection: React.FC = () => {
                       {speaker.links &&
                         speaker.links.map((link) =>
                           link.linkType === "LinkedIn" ||
-                          link.linkType === "Twitter" ||
-                          link.linkType === "X" ? (
+                            link.linkType === "Twitter" ||
+                            link.linkType === "X" ? (
                             <a
                               key={link.url}
                               href={link.url}
@@ -211,9 +219,11 @@ const SpeakersSection: React.FC = () => {
                               className="inline-flex items-center"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <img
+                              <Image
                                 src={socialIcon(link.linkType) || ""}
                                 alt={link.linkType}
+                                width={16}
+                                height={16}
                                 className="w-4 h-4"
                               />
                             </a>
@@ -232,7 +242,7 @@ const SpeakersSection: React.FC = () => {
         open={!!selectedSpeaker}
         onOpenChange={() => setSelectedSpeaker(null)}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl z-999 max-h-[700px] md:h-full">
           {selectedSpeaker && (
             <>
               <DialogHeader>
@@ -252,11 +262,11 @@ const SpeakersSection: React.FC = () => {
                   </p>
                 </div>
               </DialogHeader>
-              <ScrollArea className="h-[150px] md:h-[300px] max-h-[350px] w-full rounded-md md:p-4 " style={{}}>
-                <div className="text-center whitespace-pre-line ">
+              <div className="my-2">
+                <div className="text-center whitespace-pre-line scroll-auto mb-2">
                   {selectedSpeaker.bio}
                 </div>
-              </ScrollArea>
+              </div>
             </>
           )}
         </DialogContent>
