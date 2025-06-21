@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 import SocialShareButtons from "./SocialShareButtons";
+import SocialShare from "./SocialShare";
 
 interface TicketTemplate {
   id: string;
@@ -37,7 +38,8 @@ const TicketTemplateCard: React.FC<Props> = ({
   setSelectedTemplate,
 
 }) => (
-  <div className="flex flex-row md:flex-col gap-3 w-full max-w-lg mx-auto">
+  <div className="flex flex-col  gap-3 w-full max-w-lg mx-auto">
+    <div className="flex items-center justify-center gap-4">
     {ticketTemplates.map((template) => (
       <Button
         key={template.id}
@@ -67,12 +69,9 @@ const TicketTemplateCard: React.FC<Props> = ({
 
       </Button>
     ))}
-     <hr className="my-4"/>
-    <div className="hidden md:flex flex-col items-center justify-center  gap-y-4">
-   <span>Share your ticket</span>
-      <div className="w-full items-center justify-center">
-        <SocialShareButtons />
-      </div>
+    </div>
+    <div className="hidden md:flex flex-col items-center justify-center  gap-y-4 mt-2">
+    <SocialShare/>
     </div>
   </div>
 );

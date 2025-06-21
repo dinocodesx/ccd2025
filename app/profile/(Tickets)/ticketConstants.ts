@@ -16,14 +16,7 @@ export const ticketTemplates = [
     width: 370,
     height: 800,
   },
-  // {
-  //   id: "template3",
-  //   name: "CCD Blue Themed",
-  //   imageUrl: "/images/tickets/template1.svg",
-  //   description: "Blue Themed",
-  //   width: 370,
-  //   height: 800,
-  // },
+
 ];
 
 // Layout constants
@@ -35,6 +28,3 @@ export const LAYOUT = {
 };
 
 export const DOWNLOAD_QR_CENTER_Y_PERCENT = 80;
-
-// Social configs will be imported from a separate file due to dependencies
-// (e.g. icons, functions). 

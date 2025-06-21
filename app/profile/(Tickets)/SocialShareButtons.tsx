@@ -12,7 +12,7 @@ const WhatsAppIcon = () => (
 
 // Note: WhatsAppIcon is referenced by string in SOCIAL_CONFIGS
 const SocialShareButtons = ({className}:{className?:string}) => (
-  <div className={cn("grid grid-cols-4 sm:grid-cols-4 gap-3 mx-auto",className)}>
+  <div className={cn("grid grid-cols-4 sm:grid-cols-5 gap-2",className)}>
     {SOCIAL_CONFIGS.map((social: any) => (
       <button
         key={social.platform}
@@ -25,7 +25,7 @@ const SocialShareButtons = ({className}:{className?:string}) => (
         }}
         className={
           cn(
-          "group flex items-center justify-center rounded-xl size-10",
+          "group flex items-center justify-center rounded-lg size-10",
           "bg-white dark:bg-gray-800",
           "border-2 border-gray-200 dark:border-gray-700",
           "transition-all duration-300",
@@ -34,7 +34,7 @@ const SocialShareButtons = ({className}:{className?:string}) => (
 }
         title={`Share on ${social.platform}`}
       >
- 
+        
         <social.icon className={cn("size-5",social.iconColor)} />  
       </button>
     ))}

@@ -90,16 +90,7 @@ export const SOCIAL_CONFIGS = [
       }
     },
   },
-  // {
-  //   platform: "WhatsApp",
-  //   icon: "WhatsAppIcon",
-  //   bgColor: "hover:bg-[#25D366]",
-  //   iconColor: "group-hover:text-white",
-  //   getShareUrl: () => {
-  //     const text = `🎟️ Hey! I'm going to Cloud Community Days Kolkata 2025!\n\n📅 19th July 2025\n📍 Taj Taal Kutir, Newtown\n\nJoin me at Eastern India's largest cloud conference for a day of learning and networking!\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply\n\n#CCDKol2025`;
-  //     return `https://wa.me/?text=${encodeURIComponent(text)}`;
-  //   },
-  // },
+
   {
     platform: "Instagram",
     icon: Instagram,
@@ -147,6 +138,25 @@ export const SOCIAL_CONFIGS = [
           { duration: 8000 }
         );
       }
+    },
+  },
+
+  {
+    platform: "Copy Caption",
+    icon: Clipboard,
+    bgColor: "hover:bg-purple-500",
+    iconColor: "group-hover:text-white",
+    onClick: (toast: any) => {
+      const caption =
+        "🎟️ Excited to be part of Cloud Community Days Kolkata 2025! Join me on 19th July 2025 at Taj Taal Kutir, Newtown for the largest cloud conference in Eastern India. @gdgcloudkol #CCDKol2025\n\nApply For Tickets: https://ccd2025.gdgcloudkol.org/apply";
+      navigator.clipboard.writeText(caption).then(
+        () => {
+          toast.success("Caption copied to clipboard!", { duration: 3000 });
+        },
+        (err: any) => {
+          toast.error("Failed to copy caption. Please try again.", { duration: 3000 });
+        }
+      );
     },
   },
 

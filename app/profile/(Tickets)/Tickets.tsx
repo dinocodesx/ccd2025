@@ -229,11 +229,9 @@ export default function Tickets({ session }: { session: Session }) {
       </div>
       <hr className="mb-4 sm:mb-6" />
       <div className="mb-4 sm:mb-6">
-        <h4 className="text-base sm:text-lg font-bold mb-2 sm:mb-3">
-          {/* Choose Your Ticket Design */}
-        </h4>
-        <div className="flex flex-col md:flex-row gap-6 w-full">
-          <div className="md:w-2/9 w-full">
+
+        <div className="flex flex-col items-stretch justify-stretch md:flex-row gap-6 w-full h-full">
+          <div className="md:w-2/5 w-full h-full self-stretch">
             <TicketTemplateCard
               ticketTemplates={ticketTemplates}
               selectedTemplate={selectedTemplate}
@@ -267,7 +265,7 @@ export default function Tickets({ session }: { session: Session }) {
             )}
           </div>
           {!isMobile && selectedTemplate && (
-            <div className="md:w-3/4 w-full">
+            <div className="md:w-3/5 w-full h-full self-stretch">
               <TicketPreview
                 selectedTemplate={selectedTemplate}
                 userInfo={userInfo}
@@ -282,7 +280,7 @@ export default function Tickets({ session }: { session: Session }) {
           )}
         </div>
       </div>
-      <div className="mt-6 space-y-4 animate-fade-in">
+      <div className="mt-6 space-y-4 animate-fade-in inline-block lg:hidden">
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-[#4285f4]/10 via-[#34a853]/10 to-[#ea4335]/10 animate-gradient-x"></div>
           <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-[#4285f4]/20 rounded-xl p-6">
@@ -317,7 +315,9 @@ export default function Tickets({ session }: { session: Session }) {
         </div>
        
       </div>
+
       <TicketInstructions />
+
     </div>
   );
 }

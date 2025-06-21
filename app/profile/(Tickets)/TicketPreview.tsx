@@ -54,7 +54,7 @@ const TicketPreview: React.FC<Props> = ({
   <div
     className={cn(
       !isDialogView &&
-        "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-11/12"  
+        "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-11/12 h-full"  
     )}
   >
     {!isDialogView && (
@@ -85,7 +85,7 @@ const TicketPreview: React.FC<Props> = ({
         </div>
       </div>
     )}
-    <div className="flex justify-center">
+    <div className="flex justify-center mt-6">
       <div className="relative group w-full">
         <div className="w-full flex justify-center">
           <div
@@ -105,7 +105,7 @@ const TicketPreview: React.FC<Props> = ({
                 e.currentTarget.src = "/images/placeholder-ticket.svg";
               }}
             />
-            {/* User Info Overlay */}
+
             {userInfo.uniqueCode && (
               <div
                 className="absolute transform -translate-x-1/2 -translate-y-1/2"
@@ -130,7 +130,7 @@ const TicketPreview: React.FC<Props> = ({
                 </div>
               </div>
             )}
-            {/* QR Code Overlay */}
+
             {qrCodeDataURL && (
               <div
                 className="absolute transform -translate-x-1/2"
@@ -154,7 +154,7 @@ const TicketPreview: React.FC<Props> = ({
                 />
               </div>
             )}
-            {/* Loading Overlay */}
+
             {isGenerating && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                 <div className="bg-white rounded-lg p-4 flex items-center gap-3">
@@ -167,7 +167,7 @@ const TicketPreview: React.FC<Props> = ({
         </div>
       </div>
     </div>
-    {/* Download Button - only visible below ticket on mobile */}
+
    
   </div>
 );

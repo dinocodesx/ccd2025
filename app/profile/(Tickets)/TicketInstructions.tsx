@@ -3,10 +3,10 @@ const TicketInstructions = () => (
     <h4 className="font-semibold text-green-900 dark:text-white mb-3">
       📋 How to use your ticket:
     </h4>
-    <ul className="text-sm text-green-800 dark:text-white space-y-2">
+    <ul className="text-base text-green-800 dark:text-white space-y-2">
       <li className="flex items-start gap-2">
         <span className="text-green-600 dark:text-green-400">•</span>
-        Select your preferred ticket design from the 3 available themes.
+        Select your preferred ticket design from 2 available themes.
       </li>
       <li className="flex items-start gap-2">
         <span className="text-green-600 dark:text-green-400">•</span>
@@ -14,7 +14,13 @@ const TicketInstructions = () => (
       </li>
       <li className="flex items-start gap-2">
         <span className="text-green-600 dark:text-green-400">•</span>
-        Present this ticket and your Govt. Id card at CCD Kolkata 2025 for entry verification.
+        Present this ticket and your Govt. Photo ID card at CCD Kolkata 2025 for entry verification.
+      </li>
+      <li className="flex items-start gap-2">
+        <span className="text-green-600 dark:text-green-400">•</span>
+        <span>
+        Only physical copies of Govt. Photo ID cards <strong>(Aadhaar Card, Voter Card, Passport, Driving License)</strong> would be accepted.  
+        </span>
       </li>
     </ul>
   </div>
