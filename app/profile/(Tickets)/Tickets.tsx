@@ -13,14 +13,8 @@ import SocialShareButtons from "./SocialShareButtons";
 import TicketInstructions from "./TicketInstructions";
 import { ticketTemplates, LAYOUT, DOWNLOAD_QR_CENTER_Y_PERCENT } from "./ticketConstants";
 import { calculateLayout } from "./ticketUtils";
-import {
-  Dialog,
-  DialogContent,
-
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import GeminiIcon from "@/components/GeminiIcon";
-import { EyeIcon } from "lucide-react";
+
 
 export default function Tickets({ session }: { session: Session }) {
   const [selectedTemplate, setSelectedTemplate] =
@@ -52,8 +46,17 @@ export default function Tickets({ session }: { session: Session }) {
         console.error(`Failed to load template image: ${template.id}`);
       };
     });
+  loadGoogleFont()
   }, []);
+const loadGoogleFont=async()=>{
+  const font = new FontFace(
+    "GoogleFont",
+    "url(/fonts/GoogleSans-Medium.ttf)"
+  );
 
+  await font.load();
+  document.fonts.add(font);
+}
   useEffect(() => {
     ticketTemplates.forEach(template => {
       const img = document.querySelector(`img[data-template-id='${template.id}']`) as HTMLImageElement | null;
@@ -158,11 +161,14 @@ export default function Tickets({ session }: { session: Session }) {
       const qrDrawY = layout.qrY - (layout.qrSize / 2);
       ctx.drawImage(qrImg, qrDrawX, qrDrawY, layout.qrSize, layout.qrSize);
       if (userInfo.fullName) {
+
+        if(userInfo.fullName.length>19)
+          layout.nameSize=80
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = `bold ${layout.nameSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-        ctx.fillStyle = "#000000";
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.font = `bold ${layout.nameSize}px GoogleFont, serif`;
+        ctx.fillStyle = selectedTemplate.id=="template2"?"#ffffff":"#000000";
+        ctx.strokeStyle = selectedTemplate.id=="template2"? "rgba(255, 255, 255)":"rgba(0,0,0,0)";
         ctx.lineWidth = layout.nameSize * 0.05;
         ctx.strokeText(userInfo.fullName, layout.nameX, layout.nameY);
         ctx.fillText(userInfo.fullName, layout.nameX, layout.nameY);
@@ -180,7 +186,7 @@ export default function Tickets({ session }: { session: Session }) {
         }
       }
       const link = document.createElement("a");
-      link.download = `ccd2025-ticket-${userInfo.fullName}-${selectedTemplate.id}.png`;
+      link.download = `CCD2025-ticket-${userInfo.fullName}.png`;
       link.href = dataURL;
       document.body.appendChild(link);
       link.click();

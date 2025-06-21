@@ -2,7 +2,7 @@
 export const calculateLayout = (containerWidth: number, containerHeight: number, LAYOUT: any, qrCenterYPercent?: number) => {
   const qrSize = containerWidth * (LAYOUT.QR_SIZE_PERCENT / 100);
   const textSize = Math.max(
-    12,
+    20,
     containerWidth * (LAYOUT.TEXT_SIZE_PERCENT / 100)
   );
 

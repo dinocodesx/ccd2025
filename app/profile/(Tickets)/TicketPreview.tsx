@@ -8,6 +8,7 @@ interface TicketTemplate {
   id: string;
   name: string;
   imageUrl: string;
+  previewUrl: string;
   description: string;
   width: number;
   height: number;
@@ -38,7 +39,7 @@ const LAYOUT = {
   USER_NAME_TOP_PERCENT: 29,
   QR_BOTTOM_PERCENT: 8,
   QR_SIZE_PERCENT: 34,
-  TEXT_SIZE_PERCENT: 4.5,
+  TEXT_SIZE_PERCENT: 5.5,
 };
 
 const TicketPreview: React.FC<Props> = ({
@@ -111,7 +112,7 @@ const TicketPreview: React.FC<Props> = ({
             >
               {/* Ticket Image */}
               <Image
-                src={hasImageError ? "/images/placeholder-ticket.svg" : selectedTemplate.imageUrl}
+                src={hasImageError ? "/images/placeholder-ticket.svg" : selectedTemplate.previewUrl}
                 alt={selectedTemplate.name}
                 width={1080}
                 height={1920}
@@ -141,19 +142,23 @@ const TicketPreview: React.FC<Props> = ({
                   style={{
                     left: "50%",
                     top: `${LAYOUT.USER_NAME_TOP_PERCENT}%`,
+                    width: "100%",
                   }}
                 >
-                  <div className="text-black text-center">
+                  <div className={cn(selectedTemplate.id=="template1" && "text-black", selectedTemplate.id=="template2"&&"text-white","text-center px-3")}>
                     {userInfo.fullName && (
                       <div
-                        className="font-bold"
-                        style={{
-                          fontSize: isMobile
-                            ? `calc(min(90vw, 350px) * ${LAYOUT.TEXT_SIZE_PERCENT / 100})`
-                            : `${250 * (LAYOUT.TEXT_SIZE_PERCENT / 100)}px`,
-                        }}
+                        className={
+                        cn(
+                          "font-bold text-[13px]",
+                           userInfo.fullName.length>16 && userInfo.fullName.length<19 && "text-[17px]",
+                           userInfo.fullName.length>19 &&"text-[13px]",
+                        )
+                        }
+                     
                       >
                         {userInfo.fullName}
+
                       </div>
                     )}
                   </div>

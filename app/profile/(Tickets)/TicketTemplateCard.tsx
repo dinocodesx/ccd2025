@@ -8,6 +8,7 @@ interface TicketTemplate {
   id: string;
   name: string;
   imageUrl: string;
+  previewUrl:string;
   description: string;
   width: number;
   height: number;
