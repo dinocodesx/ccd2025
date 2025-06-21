@@ -38,6 +38,8 @@ import { z } from "zod";
 import LeaderBoard from "./LeaderBoard";
 import Points from "./Points";
 import YourBadge from "./YourBadge";
+import Tickets from "./(Tickets)/Tickets";
+import GeminiIcon from "@/components/GeminiIcon";
 import FeatureRuleContent from "@/public/content/feature.rule.json";
 
 type FormValues = {
@@ -50,7 +52,7 @@ type FormValues = {
   phone?: string;
   college?: string;
   course?: string;
-  tshirt?: string;
+  tsize?: string;
   graduation_year?: number;
   student?: boolean;
   twitter?: string;
@@ -72,8 +74,14 @@ export default function ProfileCard({
 
   // Get initial tab from URL or default to "My Profile"
   const getInitialTab = () => {
-    const tabFromUrl = searchParams.get('tab');
-    const validTabs = ["My Profile", "Points", "Leaderboard", "Frame Studio"];
+    const tabFromUrl = searchParams.get("tab");
+    const validTabs = [
+      "My Profile",
+      "Points",
+      "Leaderboard",
+      "Frame Studio",
+      "Tickets",
+    ];
     return validTabs.includes(tabFromUrl || "") ? tabFromUrl : "My Profile";
   };
 
@@ -83,15 +91,25 @@ export default function ProfileCard({
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', tab);
+    params.set("tab", tab);
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
   // Sync with URL changes
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab');
-    const validTabs = ["My Profile", "Points", "Leaderboard", "Frame Studio"];
-    if (tabFromUrl && validTabs.includes(tabFromUrl) && tabFromUrl !== activeTab) {
+    const tabFromUrl = searchParams.get("tab");
+    const validTabs = [
+      "My Profile",
+      "Points",
+      "Leaderboard",
+      "Frame Studio",
+      "Tickets",
+    ];
+    if (
+      tabFromUrl &&
+      validTabs.includes(tabFromUrl) &&
+      tabFromUrl !== activeTab
+    ) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams, activeTab]);
@@ -111,6 +129,7 @@ export default function ProfileCard({
     course: z.string().optional(),
     graduation_year: z.number().optional(),
     student: z.boolean().default(false),
+    tsize:z.string().optional(),
     twitter: z
       .string()
       .trim()
@@ -156,12 +175,13 @@ export default function ProfileCard({
       phone: user?.phone || "",
       college: user?.college || "",
       course: user?.course || "",
-      tshirt: user?.tsize || "",
+      tsize: user?.tsize || "",
       graduation_year: user?.graduation_year || undefined,
       student: user?.student ?? false,
       twitter: user?.socials?.twitter || "",
       linkedin: user?.socials?.linkedin || "",
       github: user?.socials?.github || "",
+      
     },
   });
 
@@ -170,6 +190,7 @@ export default function ProfileCard({
   };
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     setIsSubmitting(true);
+
     const data =
       FeatureRuleContent.profile.edit ?
         {
@@ -184,14 +205,14 @@ export default function ProfileCard({
           course: values.course || "",
           graduation_year: values.graduation_year || undefined,
           student: values.student ?? false,
-          tsize: values.tshirt || "",
+          tsize: values.tsize || "",
           socials: {
             twitter: values.twitter || "",
             linkedin: values.linkedin || "",
             github: values.github || "",
           },
         } : FeatureRuleContent.profile.editTshirt ? {
-          tshirt: values.tshirt || "",
+          tsize: values.tsize || "",
           socials: {
             twitter: values.twitter || "",
             linkedin: values.linkedin || "",
@@ -206,6 +227,7 @@ export default function ProfileCard({
         };
 
     try {
+
       const response = await fetch("/api/users", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -324,7 +346,13 @@ export default function ProfileCard({
 
           {/* Navigation tabs */}
           <div className="mb-8 flex flex-wrap gap-2 sm:gap-6">
-            {["My Profile", "Frame Studio", "Points", "Leaderboard"].map((tab) => (
+            {[
+              "My Profile",
+              "Frame Studio",
+              "Tickets",
+              "Points",
+              "Leaderboard",
+            ].map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
@@ -574,22 +602,23 @@ export default function ProfileCard({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
-                    name="tshirt"
+                    name="tsize"
                     render={({ field }) => (
                       <FormItem className="space-y-2">
                         <FormLabel className="text-xs sm:text-sm text-muted-foreground">
                           T-shirt Size
                         </FormLabel>
+                        <FormControl>
                         <Select
                           disabled={!FeatureRuleContent.profile.editTshirt}
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <FormControl>
+                         
                             <SelectTrigger>
                               <SelectValue placeholder="Select your t-shirt size" />
                             </SelectTrigger>
-                          </FormControl>
+                         
                           <SelectContent>
                             <SelectGroup>
                               {[
@@ -612,6 +641,7 @@ export default function ProfileCard({
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                        </FormControl>
                         <FormMessage className="text-xs text-red-500" />
                       </FormItem>
                     )}
@@ -697,23 +727,19 @@ export default function ProfileCard({
                       className="size-4 dark:invert"
                     />
                     {isSubmitting ? "Saving..." : "Save"}
-                    <Image
-                      src="/images/cfs/gemini.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                      className="size-4 dark:invert"
-                    />
+                    <GeminiIcon className="dark:invert"/>
                   </Button>
                 </div>
               </form>
             </Form>
           )}
-
           {activeTab === "Points" && <Points />}
 
           {activeTab === "Leaderboard" && <LeaderBoard />}
+
           {activeTab === "Frame Studio" && <YourBadge />}
+
+          {activeTab === "Tickets" && <Tickets session={session} />}
         </div>
       </CardContainer>
     </div>

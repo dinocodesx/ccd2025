@@ -36,7 +36,7 @@ export default function Footer() {
                     About
                   </span>
 
-                  <div className="flex flex-col text-[var(--muted-foreground)] text-base space-y-3 mt-4 z-[99]">
+                  <div className="flex flex-col text-[var(--muted-foreground)] text-base space-y-3 mt-4">
                     {footerData.about.map((item) => (
                       <Link
                         key={item.link}
@@ -61,7 +61,7 @@ export default function Footer() {
                   <span className="font-semibold text-[var(--foreground)]">
                     Resources
                   </span>
-                  <div className="flex flex-col text-[var(--muted-foreground)] text-base space-y-3 mt-4 z-[99]">
+                  <div className="flex flex-col text-[var(--muted-foreground)] text-base space-y-3 mt-4 ">
                     {footerData.resources.map((item) => (
                       <Link
                         key={item.link}
@@ -86,7 +86,7 @@ export default function Footer() {
                   <span className="font-semibold text-[var(--foreground)]">
                     Legal
                   </span>
-                  <div className="flex flex-col text-[var(--muted-foreground)] text-base space-y-3 mt-4 z-[99]">
+                  <div className="flex flex-col text-[var(--muted-foreground)] text-base space-y-3 mt-4">
                     {footerData.legal.map((item) => (
                       <Link
                         key={item.link}

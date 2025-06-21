@@ -9,10 +9,6 @@ import scheduleData from "../../public/content/schedule.json";
 import { Suspense } from "react";
 import ScheduleLoading from "./loading";
 
-export const metadata: Metadata = {
-  title: "Schedule - CCD 2025",
-  description: "View the complete schedule for CCD 2025 conference",
-};
 
 export default async function Page() {
   interface ScheduleData {
