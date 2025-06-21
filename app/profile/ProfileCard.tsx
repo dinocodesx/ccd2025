@@ -565,14 +565,47 @@ export default function ProfileCard({
                         <FormLabel className="text-xs sm:text-sm text-muted-foreground">
                           T-shirt Size
                         </FormLabel>
-                        <FormControl>
+                        {/* <FormControl>
                           <Input
                             disabled={!FeatureRuleContent.profile.editTshirt}
                             placeholder="T-shirt Size"
                             className="border-input focus:border-[#076eff] text-sm"
                             {...field}
                           />
-                        </FormControl>
+                        </FormControl> */}
+
+                        <Select
+                          disabled={!FeatureRuleContent.profile.editTshirt}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select your t-shirt size" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectGroup>
+                              {[
+                                {
+                                  value: "S",
+                                  display_name: "Small",
+                                },
+                                { value: "M", display_name: "Medium" },
+                                { value: "L", display_name: "Large" },
+                                { value: "XL", display_name: "X-Large" },
+                                { value: "2XL", display_name: "2X-Large" },
+                                { value: "3XL", display_name: "3X-Large" },
+                                { value: "4XL", display_name: "4X-Large" },
+                                { value: "5XL", display_name: "5X-Large" },
+                              ].map((e) => (
+                                <SelectItem key={e.value} value={e.value}>
+                                  {e.display_name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                         <FormMessage className="text-xs text-red-500" />
                       </FormItem>
                     )}
