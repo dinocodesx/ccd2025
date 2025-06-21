@@ -45,7 +45,6 @@
   --color-google-red: #ea4336;
   --color-google-yellow: #faab00;
   --color-google-green: #34a853;
-  
 }
 
 :root {
@@ -96,15 +95,15 @@
   --google-green: #34a853;
   --marquee-backgroundBlue: #428eff;
   --marquee-backgroundYellow: #ffbb01;
-   --white: #fff;
-    --black: #000;
-     --gray20: #e5e7eb;
-    --gray: #676c72;
-    --gray60: #4b5563;
-    --blue50: #4285f4;
-    --red50: #ea4336;
-    --green50: #34a853;
-    --yellow50: #faab00;
+  --white: #fff;
+  --black: #000;
+  --gray20: #e5e7eb;
+  --gray: #676c72;
+  --gray60: #4b5563;
+  --blue50: #4285f4;
+  --red50: #ea4336;
+  --green50: #34a853;
+  --yellow50: #faab00;
 }
 
 .dark {
@@ -141,15 +140,15 @@
   --sidebar-ring: oklch(0.556 0 0);
   --marquee-backgroundBlue: #428eff;
   --marquee-backgroundYellow: #ffbb01;
-   --white: #fff;
-    --black: #000;
-     --gray20: #e5e7eb;
-    --gray: #676c72;
-    --gray60: #4b5563;
-    --blue50: #4285f4;
-    --red50: #ea4336;
-    --green50: #34a853;
-    --yellow50: #faab00;
+  --white: #fff;
+  --black: #000;
+  --gray20: #e5e7eb;
+  --gray: #676c72;
+  --gray60: #4b5563;
+  --blue50: #4285f4;
+  --red50: #ea4336;
+  --green50: #34a853;
+  --yellow50: #faab00;
 }
 
 @layer base {
@@ -266,4 +265,9 @@
     #34a853 84.92%,
     #faab00 126.11%
   );
+}
+
+.no-scrollbar {
+  scrollbar-width: 0;
+  scrollbar-color: transparent;
 }

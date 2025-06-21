@@ -2,6 +2,10 @@
 
 import { ChevronsDown, ChevronsUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { ScrollArea } from "./ui/scroll-area";
+import { getSpeakers } from "@/lib/speakers";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import Image from "next/image";
 
 interface Speaker {
   id: string;
@@ -22,7 +26,7 @@ const SpeakersSection: React.FC = () => {
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dialogSpeaker, setDialogSpeaker] = useState<Speaker | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,23 +34,14 @@ const SpeakersSection: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(
-          "https://sessionize.com/api/v2/pkltj8cb/view/Speakers"
-        );
-        if (!res.ok) throw new Error("Failed to fetch speakers");
-        const data = await res.json();
-        setSpeakers(
-          data.map((s: any) => ({
-            id: s.id,
-            fullName: s.fullName,
-            tagLine: s.tagLine,
-            bio: s.bio,
-            profilePicture: s.profilePicture,
-            links: s.links,
-          }))
-        );
-      } catch (e: any) {
-        setError(e.message || "Failed to load speakers");
+        const speakersData = await getSpeakers();
+        setSpeakers(speakersData);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError("Failed to load speakers");
+        }
       } finally {
         setLoading(false);
       }
@@ -55,7 +50,7 @@ const SpeakersSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 px-3 sm:px-6 lg:px-8">
+    <section className="py-8 sm:py-12 lg:py-16 px-3 sm:px-6 lg:px-8 overflow-hidden">
       {/* Hidden Guest Speaker Section */}
       <div hidden>
         <div className="mb-10">
@@ -100,21 +95,24 @@ const SpeakersSection: React.FC = () => {
       ) : error ? (
         <div className="text-center text-red-500 py-8">{error}</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {speakers.map((speaker) => (
             <div
               key={speaker.id}
-              className="bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-2xl p-[2px] flex flex-col min-h-[180px]"
+              className="bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-2xl p-[2px] flex flex-col min-h-[180px] cursor-pointer"
+              onClick={() => setSelectedSpeaker(speaker)}
             >
               <div className="flex flex-col flex-1 bg-white rounded-2xl overflow-hidden">
                 <div className="flex items-center justify-between bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] px-4 py-2">
                   <span className="text-white text-base font-medium">
                     Speaker
                   </span>
-                  <img
+                  <Image
                     src="/images/elements/resources-speaker.svg"
                     alt=""
-                    className="w-5 h-5 dark:invert"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 "
                   />
                 </div>
                 <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4 md:p-4 pt-4 rounded-t-2xl">
@@ -127,24 +125,16 @@ const SpeakersSection: React.FC = () => {
                   <div className="flex-1 flex flex-col min-w-0 h-full w-full justify-between">
                     {/* Desktop text content: name, tagline, bio */}
                     <div className="hidden md:block text-left">
-                      <div className="text-lg font-semibold text-black mb-1 truncate">
+                      <div className="text-lg font-semibold text-black mb-1 ">
                         {speaker.fullName}
                       </div>
-                      <div className="text-sm text-gray-700 mb-1 truncate">
+                      <div className="text-sm text-gray-700 mb-1 ">
                         {speaker.tagLine}
                       </div>
                       <div className="text-sm text-gray-500 mb-1 flex items-end">
-                        <div className="line-clamp-2 overflow-hidden max-w-full ">
+                        <div className="line-clamp-2 overflow-hidden max-w-full no-scrollbar">
                           {speaker.bio}
                         </div>
-                        {speaker.bio && (
-                          <button
-                            className="text-blue-600 text-xs underline whitespace-nowrap flex-shrink-0 mb-1 md:inline-block hidden cursor-pointer"
-                            onClick={() => setDialogSpeaker(speaker)}
-                          >
-                            Read more
-                          </button>
-                        )}
                       </div>
                     </div>
                     {/* Mobile text content (unchanged) */}
@@ -161,18 +151,21 @@ const SpeakersSection: React.FC = () => {
                       {speaker.links &&
                         speaker.links.map((link) =>
                           link.linkType === "LinkedIn" ||
-                          link.linkType === "Twitter" ||
-                          link.linkType === "X" ? (
+                            link.linkType === "Twitter" ||
+                            link.linkType === "X" ? (
                             <a
                               key={link.url}
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center border-2 border-black/80 rounded-full p-1"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <img
+                              <Image
                                 src={socialIcon(link.linkType) || ""}
                                 alt={link.linkType}
+                                width={16}
+                                height={16}
                                 className="w-4 h-4"
                               />
                             </a>
@@ -180,27 +173,32 @@ const SpeakersSection: React.FC = () => {
                         )}
                     </div>
                     {/* Mobile bio section (sm and below) */}
-                    <div className="md:hidden bg-gray-200 p-4  px-4 flex flex-col items-center justify-between rounded-t-xl">
+                    <div className="md:hidden bg-gray-200 p-4 px-4 flex flex-col items-center justify-between rounded-t-xl">
                       <div
-                        className={`max-w-full text-black/50 transition-all duration-300 overflow-hidden ${
-                          expandedMobile === speaker.id
-                            ? "max-h-96"
-                            : "max-h-12 line-clamp-2"
-                        }`}
+                        className={`max-w-full text-black/50 transition-all duration-300 overflow-hidden no-scrollbar ${expandedMobile === speaker.id
+                          ? "max-h-96"
+                          : "max-h-12 line-clamp-2"
+                          }`}
                       >
                         {speaker.bio}
                       </div>
                       {expandedMobile === speaker.id ? (
                         <button
                           className="text-blue-600 text-xs underline whitespace-nowrap flex-shrink-0"
-                          onClick={() => setExpandedMobile(null)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedMobile(null);
+                          }}
                         >
                           <ChevronsUp className="bg-black text-white w-10 h-6 rounded-full mt-1" />
                         </button>
                       ) : (
                         <button
                           className="text-blue-600 text-xs underline whitespace-nowrap flex-shrink-0"
-                          onClick={() => setExpandedMobile(speaker.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedMobile(speaker.id);
+                          }}
                         >
                           <ChevronsDown className="bg-black text-white w-10 h-6 rounded-full mt-1" />
                         </button>
@@ -211,18 +209,21 @@ const SpeakersSection: React.FC = () => {
                       {speaker.links &&
                         speaker.links.map((link) =>
                           link.linkType === "LinkedIn" ||
-                          link.linkType === "Twitter" ||
-                          link.linkType === "X" ? (
+                            link.linkType === "Twitter" ||
+                            link.linkType === "X" ? (
                             <a
                               key={link.url}
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <img
+                              <Image
                                 src={socialIcon(link.linkType) || ""}
                                 alt={link.linkType}
+                                width={16}
+                                height={16}
                                 className="w-4 h-4"
                               />
                             </a>
@@ -237,39 +238,39 @@ const SpeakersSection: React.FC = () => {
         </div>
       )}
 
-      {dialogSpeaker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
-              onClick={() => setDialogSpeaker(null)}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-            <div className="flex flex-col items-center ">
-              <div
-                className="size-32 rounded-lg bg-gray-200 bg-center bg-cover border-2 border-black/80 mb-4"
-                style={{
-                  backgroundImage: `url(${dialogSpeaker.profilePicture})`,
-                  backgroundSize:'cover'
-                }}
-              />
-              <div className="text-xl font-bold mb-1 text-center">
-                {dialogSpeaker.fullName}
+      <Dialog
+        open={!!selectedSpeaker}
+        onOpenChange={() => setSelectedSpeaker(null)}
+      >
+        <DialogContent className="max-w-2xl z-999 max-h-[700px] md:h-auto">
+          {selectedSpeaker && (
+            <>
+              <DialogHeader>
+                <div className="flex flex-col items-center">
+                  <div
+                    className="size-32 rounded-lg bg-gray-200 bg-center bg-cover border-2 border-black/80 mb-4"
+                    style={{
+                      backgroundImage: `url(${selectedSpeaker.profilePicture})`,
+                      backgroundSize: "cover",
+                    }}
+                  />
+                  <DialogTitle className="text-xl font-bold text-center">
+                    {selectedSpeaker.fullName}
+                  </DialogTitle>
+                  <p className="text-base mb-2 text-center">
+                    {selectedSpeaker.tagLine}
+                  </p>
+                </div>
+              </DialogHeader>
+              <div className="my-2">
+                <div className="text-center whitespace-pre-line scroll-auto mb-2">
+                  {selectedSpeaker.bio}
+                </div>
               </div>
-              <div className="text-base text-gray-700 mb-2 text-center">
-                {dialogSpeaker.tagLine}
-              </div>
-              <div className="max-h-[40dvh] overflow-y-scroll">
-              <div className="text-gray-600 text-center whitespace-pre-line ">
-                {dialogSpeaker.bio}
-              </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

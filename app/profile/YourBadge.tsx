@@ -89,8 +89,8 @@ const YourFrame = () => {
 
   const drawSquareFrame = useCallback(
     (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-      canvas.width = 500;
-      canvas.height = 500;
+      canvas.width = 1080;
+      canvas.height = 1080;
 
       if (!image) {
         const gradient = ctx.createLinearGradient(
@@ -112,7 +112,7 @@ const YourFrame = () => {
       
       // Define the clipping area - adjust these values based on your SVG frame
       // You may need to adjust these margins to match your actual frame design
-      const margin = 5; // Reduced margin for better fit
+      const margin = 11; // Scaled margin for 1080px (was 5 for 500px)
       const clipX = margin;
       const clipY = margin;
       const clipWidth = canvas.width - (margin * 2);
@@ -147,8 +147,8 @@ const YourFrame = () => {
 
   const drawCircleFrame = useCallback(
     (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-      canvas.width = 500;
-      canvas.height = 500;
+      canvas.width = 1080;
+      canvas.height = 1080;
 
       if (!image) {
         const gradient = ctx.createLinearGradient(
