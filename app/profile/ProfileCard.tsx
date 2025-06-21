@@ -40,7 +40,8 @@ import { UserProfile } from "@/types/login";
 import { SubmitHandler } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import YourBadge from "./YourBadge";
-import Tickets from "./Tickets";
+import Tickets from "./(Tickets)/Tickets";
+import GeminiIcon from "@/components/GeminiIcon";
 
 type FormValues = {
   firstName: string;
@@ -673,17 +674,9 @@ export default function ProfileCard({
                       });
                     }}
                   >
-                    <img
-                      src="/images/cfs/gemini.svg"
-                      alt=""
-                      className="size-4 dark:invert"
-                    />
+                    <GeminiIcon className="dark:invert"/>
                     {isSubmitting ? "Saving..." : "Save"}
-                    <img
-                      src="/images/cfs/gemini.svg"
-                      alt=""
-                      className="size-4 dark:invert"
-                    />
+                    <GeminiIcon className="dark:invert"/>
                   </Button>
                 </div>
               </form>

@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { Session } from "next-auth";
-import GeminiIcon from "@/components/GeminiIcon";
+
 import React from "react";
 import TicketTemplateCard from "./TicketTemplateCard";
 import TicketPreview from "./TicketPreview";
@@ -13,6 +13,14 @@ import SocialShareButtons from "./SocialShareButtons";
 import TicketInstructions from "./TicketInstructions";
 import { ticketTemplates, LAYOUT, DOWNLOAD_QR_CENTER_Y_PERCENT } from "./ticketConstants";
 import { calculateLayout } from "./ticketUtils";
+import {
+  Dialog,
+  DialogContent,
+
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import GeminiIcon from "@/components/GeminiIcon";
+import { EyeIcon } from "lucide-react";
 
 export default function Tickets({ session }: { session: Session }) {
   const [selectedTemplate, setSelectedTemplate] =
@@ -29,6 +37,7 @@ export default function Tickets({ session }: { session: Session }) {
     ticketTemplates.forEach(t => { initial[t.id] = true; });
     return initial;
   });
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   useEffect(() => {
     ticketTemplates.forEach(template => {
@@ -206,11 +215,10 @@ export default function Tickets({ session }: { session: Session }) {
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-2xl">
               Welcome {userInfo.fullName || userInfo.username}! Select a design
-              and generate your personalized CCD 2025 ticket with QR code
-              authentication.
+              and generate your personalized CCD 2025 ticket.
             </p>
           </div>
-          <div className="flex-shrink-0 flex justify-center md:justify-end">
+          <div className="flex-shrink-0 justify-center hidden md:flex md:justify-end">
             <img
               src="/images/elements/2025-black.svg"
               alt="CCD 2025"
@@ -222,34 +230,58 @@ export default function Tickets({ session }: { session: Session }) {
       <hr className="mb-4 sm:mb-6" />
       <div className="mb-4 sm:mb-6">
         <h4 className="text-base sm:text-lg font-bold mb-2 sm:mb-3">
-          Choose Your Ticket Design
+          {/* Choose Your Ticket Design */}
         </h4>
-        <TicketTemplateCard
-          ticketTemplates={ticketTemplates}
-          selectedTemplate={selectedTemplate}
-          templateLoading={templateLoading}
-          setSelectedTemplate={setSelectedTemplate}
-          setTemplateLoading={setTemplateLoading}
-          setTemplateImages={setTemplateImages}
-        />
-      </div>
-      {selectedTemplate && (
-        <div className="mb-6 sm:mb-8">
-          <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">
-            Preview Ticket
-          </h4>
-          <TicketPreview
-            selectedTemplate={selectedTemplate}
-            userInfo={userInfo}
-            qrCodeDataURL={qrCodeDataURL}
-            isMobile={isMobile}
-            isGenerating={isGenerating}
-            ticketPreviewRef={ticketPreviewRef}
-            onDownload={downloadTicket}
-            isDownloading={isDownloading}
-          />
+        <div className="flex flex-col md:flex-row gap-6 w-full">
+          <div className="md:w-1/4 w-full">
+            <TicketTemplateCard
+              ticketTemplates={ticketTemplates}
+              selectedTemplate={selectedTemplate}
+              templateLoading={templateLoading}
+              setSelectedTemplate={setSelectedTemplate}
+              setTemplateLoading={setTemplateLoading}
+              setTemplateImages={setTemplateImages}
+            />
+            {isMobile && selectedTemplate && (
+              <div className="mt-4 flex flex-col items-center gap-4">
+                <TicketPreview
+                  selectedTemplate={selectedTemplate}
+                  userInfo={userInfo}
+                  qrCodeDataURL={qrCodeDataURL}
+                  isMobile={isMobile}
+                  isGenerating={isGenerating}
+                  ticketPreviewRef={ticketPreviewRef}
+                  onDownload={downloadTicket}
+                  isDownloading={isDownloading}
+                />
+                <Button
+                  onClick={downloadTicket}
+                  disabled={!qrCodeDataURL || isDownloading}
+                  className="bg-foreground  text-background px-6 py-2 rounded-lg font-semibold"
+                >
+                  <GeminiIcon className="dark:invert"/>
+                  {isDownloading ? "Downloading..." : "Download"}
+                  <GeminiIcon className="dark:invert"/>
+                </Button>
+              </div>
+            )}
+          </div>
+          {!isMobile && selectedTemplate && (
+            <div className="md:w-3/4 w-full">
+              <TicketPreview
+                selectedTemplate={selectedTemplate}
+                userInfo={userInfo}
+                qrCodeDataURL={qrCodeDataURL}
+                isMobile={isMobile}
+                isGenerating={isGenerating}
+                ticketPreviewRef={ticketPreviewRef}
+                onDownload={downloadTicket}
+                isDownloading={isDownloading}
+              />
+            </div>
+          )}
         </div>
-      )}
+      </div>
       <div className="mt-6 space-y-4 animate-fade-in">
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-[#4285f4]/10 via-[#34a853]/10 to-[#ea4335]/10 animate-gradient-x"></div>

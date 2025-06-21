@@ -2,17 +2,17 @@
 export const ticketTemplates = [
   {
     id: "template1",
-    name: "CCD Light Themed",
+    name: "CCD Light Theme",
     imageUrl: "/images/tickets/template1.svg",
-    description: "Light Themed",
+    description: "Light Theme",
     width: 370,
     height: 800,
   },
   {
     id: "template2",
-    name: "CCD Dark Themed",
+    name: "CCD Dark Theme",
     imageUrl: "/images/tickets/template2.svg",
-    description: "Dark Themed",
+    description: "Dark Theme",
     width: 370,
     height: 800,
   },

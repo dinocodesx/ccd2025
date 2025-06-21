@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@/components/ui/Button";
 import GeminiIcon from "@/components/GeminiIcon";
+import { cn } from "@/lib/utils";
 
 interface TicketTemplate {
   id: string;
@@ -29,12 +30,13 @@ type Props = {
   ticketPreviewRef: React.RefObject<HTMLDivElement | null>;
   onDownload: () => void;
   isDownloading: boolean;
+  isDialogView?: boolean;
 };
 
 const LAYOUT = {
   USER_NAME_TOP_PERCENT: 29,
   QR_BOTTOM_PERCENT: 8,
-  QR_SIZE_PERCENT: 45,
+  QR_SIZE_PERCENT: 34,
   TEXT_SIZE_PERCENT: 4.5,
 };
 
@@ -47,35 +49,58 @@ const TicketPreview: React.FC<Props> = ({
   ticketPreviewRef,
   onDownload,
   isDownloading,
+  isDialogView = false,
 }) => (
-  <div className="border border-border rounded-lg bg-background p-3 sm:p-4">
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
-      <div className="flex items-center gap-2">
-        <img
-          src="/images/elements/legal.svg"
-          alt="Ticket preview"
-          className="w-5 h-5 sm:w-6 sm:h-6"
-        />
-        <span className="font-bold text-foreground text-sm sm:text-base">
-          {selectedTemplate.name}
-        </span>
+  <div
+    className={cn(
+      !isDialogView &&
+        "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4" 
+    )}
+  >
+    {!isDialogView && (
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+        <div className="flex items-center gap-2">
+          <img
+            src="/images/elements/legal.svg"
+            alt="Ticket preview"
+            className="w-5 h-5 sm:w-6 sm:h-6"
+          />
+          <span className="font-bold text-foreground text-sm sm:text-base">
+            {selectedTemplate.name}
+          </span>
+        </div>
+        {/* Download button for desktop (hidden on mobile) */}
+        <div className="hidden sm:flex ml-auto">
+          <Button
+            onClick={onDownload}
+            disabled={!qrCodeDataURL || isDownloading}
+            size="md"
+            className="bg-black hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-200 dark:text-black font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <GeminiIcon className="dark:invert" />
+            {isDownloading ? "Downloading..." : "Download Ticket"}
+            <GeminiIcon className="dark:invert" />
+          </Button>
+  
+        </div>
       </div>
-    </div>
+    )}
     <div className="flex justify-center">
       <div className="relative group w-full">
         <div className="w-full flex justify-center">
           <div
             ref={ticketPreviewRef}
-            className="relative rounded-xl overflow-hidden  transition-transform duration-300 group-hover:scale-[1.02]"
+            className="relative rounded-xl overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]"
             style={{
-              width: isMobile ? "200px" : "250px",
-              height: isMobile ? "400px" : "500px",
+              width: isMobile ? "min(90vw, 300px)" : "250px",
+              height: isMobile ? "calc(min(90vw, 350px) * 8 / 5)" : "400px",
             }}
           >
             <img
               src={selectedTemplate.imageUrl}
               alt={selectedTemplate.name}
-              className="w-full h-full object-contain"
+              // className="w-full h-full object-contain rounded-lg mx-auto shadow-[0_6px_24px_0_rgba(0,0,0,0.18)]"
+              className="w-auto h-full object-contain rounded-lg mx-auto border"
               onError={(e) => {
                 e.currentTarget.src = "/images/placeholder-ticket.svg";
               }}
@@ -95,7 +120,7 @@ const TicketPreview: React.FC<Props> = ({
                       className="font-bold"
                       style={{
                         fontSize: isMobile
-                          ? `${200 * (LAYOUT.TEXT_SIZE_PERCENT / 100)}px`
+                          ? `calc(min(90vw, 350px) * ${LAYOUT.TEXT_SIZE_PERCENT / 100})`
                           : `${250 * (LAYOUT.TEXT_SIZE_PERCENT / 100)}px`,
                       }}
                     >
@@ -120,10 +145,10 @@ const TicketPreview: React.FC<Props> = ({
                   className="object-cover border-2 border-white rounded"
                   style={{
                     width: isMobile
-                      ? `${200 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`
+                      ? `calc(min(90vw, 350px) * ${LAYOUT.QR_SIZE_PERCENT / 100})`
                       : `${250 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`,
                     height: isMobile
-                      ? `${200 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`
+                      ? `calc(min(90vw, 350px) * ${LAYOUT.QR_SIZE_PERCENT / 100})`
                       : `${250 * (LAYOUT.QR_SIZE_PERCENT / 100)}px`,
                   }}
                 />
@@ -142,19 +167,8 @@ const TicketPreview: React.FC<Props> = ({
         </div>
       </div>
     </div>
-    {/* Download Button - always visible, prominent, inside card */}
-    <div className="flex justify-center mt-6">
-      <Button
-        onClick={onDownload}
-        disabled={!qrCodeDataURL || isDownloading}
-        size="lg"
-        className="bg-[#076eff] hover:bg-[#065acc] text-white font-bold shadow-lg border-2 border-[#076eff] rounded-xl px-6 py-3 flex items-center gap-2 text-base sm:text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[220px]"
-      >
-        <GeminiIcon />
-        {isDownloading ? "Downloading..." : "Download Ticket"}
-        <GeminiIcon />
-      </Button>
-    </div>
+    {/* Download Button - only visible below ticket on mobile */}
+   
   </div>
 );
 
