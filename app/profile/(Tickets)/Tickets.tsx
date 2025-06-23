@@ -70,13 +70,11 @@ const loadGoogleFont=async()=>{
   const userInfo = useMemo(() => {
     const profile = (session?.user as any)?.profile;
     const uniqueCode = profile?.unique_code || "-1000";
-    let firstName:string|undefined = profile?.first_name || "";
-    let lastName: string|undefined = profile?.last_name || "";
+    const firstName:string|undefined = profile?.first_name || "";
+    const lastName: string|undefined = profile?.last_name || "";
     let fullName = `${firstName} ${lastName}`.trim()
     if(fullName.length>28 && lastName)
     fullName= `${firstName} ${lastName.charAt(0).toUpperCase()}.`.trim()
-    
-    // const fullName = `${firstName} ${lastName}`.trim();
     const username = (session?.user as any)?.username || "";
     return {
       uniqueCode,
