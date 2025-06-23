@@ -16,8 +16,8 @@ interface TicketTemplate {
 
 type UserInfo = {
   uniqueCode: string;
-  firstName: string;
-  lastName: string;
+  firstName: string|undefined;
+  lastName: string|undefined;
   fullName: string;
   username: string;
   qrText: string;
@@ -66,7 +66,7 @@ const TicketPreview: React.FC<Props> = ({
     <div
       className={cn(
         !isDialogView &&
-          "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-11/12 h-full"  
+          "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-full h-full"  
       )}
     >
       {!isDialogView && (
@@ -152,7 +152,7 @@ const TicketPreview: React.FC<Props> = ({
                         cn(
                           "font-bold text-[13px]",
                            userInfo.fullName.length>16 && userInfo.fullName.length<19 && "text-[17px]",
-                           userInfo.fullName.length>19 &&"text-[13px]",
+                           userInfo.fullName.length>19 &&"text-[8px]",
                         )
                         }
                      
