@@ -69,10 +69,12 @@ const loadGoogleFont=async()=>{
 
   const userInfo = useMemo(() => {
     const profile = (session?.user as any)?.profile;
-    const uniqueCode = profile?.unique_code || "1234";
-    const firstName = profile?.first_name || "";
-    const lastName = profile?.last_name || "";
-    const fullName = `${firstName} ${lastName}`.trim();
+    const uniqueCode = profile?.unique_code || "-1000";
+    const firstName:string|undefined = profile?.first_name || "";
+    const lastName: string|undefined = profile?.last_name || "";
+    let fullName = `${firstName} ${lastName}`.trim()
+    if(fullName.length>28 && lastName)
+    fullName= `${firstName} ${lastName.charAt(0).toUpperCase()}.`.trim()
     const username = (session?.user as any)?.username || "";
     return {
       uniqueCode,
@@ -161,12 +163,11 @@ const loadGoogleFont=async()=>{
       const qrDrawY = layout.qrY - (layout.qrSize / 2);
       ctx.drawImage(qrImg, qrDrawX, qrDrawY, layout.qrSize, layout.qrSize);
       if (userInfo.fullName) {
-
         if(userInfo.fullName.length>19)
           layout.nameSize=80
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = `bold ${layout.nameSize}px GoogleFont, serif`;
+        ctx.font = `${layout.nameSize}px GoogleFont, serif`;
         ctx.fillStyle = selectedTemplate.id=="template2"?"#ffffff":"#000000";
         ctx.strokeStyle = selectedTemplate.id=="template2"? "rgba(255, 255, 255)":"rgba(0,0,0,0)";
         ctx.lineWidth = layout.nameSize * 0.05;
