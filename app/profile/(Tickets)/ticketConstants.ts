@@ -3,8 +3,10 @@ export const ticketTemplates = [
   {
     id: "template1",
     name: "CCD Light Theme",
-    imageUrl: "/images/tickets/template1.png",
-    previewUrl:"/images/tickets/ticket-light-large.png",
+    imageUrl: "/images/tickets/download-attendee-light.png",
+    imageUrl2: "/images/tickets/download-volunteer-light.png",
+    previewUrl:"/images/tickets/ticket-attendee-light.png",
+    previewUrl2:"/images/tickets/ticket-volunteer-light.png",
     description: "Light Theme",
     width: 370,
     height: 800,
@@ -12,14 +14,18 @@ export const ticketTemplates = [
   {
     id: "template2",
     name: "CCD Dark Theme",
-    imageUrl: "/images/tickets/template2.svg",
-    previewUrl:"/images/tickets/ticket-dark-large.png",
+    imageUrl: "/images/tickets/download-attendee-dark.png",
+    imageUrl2:"/images/tickets/download-volunteer-dark.png",
+    previewUrl:"/images/tickets/ticket-attendee-dark.png",
+    previewUrl2:"/images/tickets/ticket-volunteer-dark.png",
     description: "Dark Theme",
     width: 370,
     height: 800,
   },
 
 ];
+
+
 
 // Layout constants
 export const LAYOUT = {

@@ -14,7 +14,17 @@ import TicketInstructions from "./TicketInstructions";
 import { ticketTemplates, LAYOUT, DOWNLOAD_QR_CENTER_Y_PERCENT } from "./ticketConstants";
 import { calculateLayout } from "./ticketUtils";
 import GeminiIcon from "@/components/GeminiIcon";
-
+export interface TicketTemplate {
+  id: string;
+  name: string;
+  imageUrl: string;
+  imageUrl2: string;
+  previewUrl: string;
+  previewUrl2: string;
+  description: string;
+  width: number;
+  height: number;
+}
 
 export default function Tickets({ session }: { session: Session }) {
   const [selectedTemplate, setSelectedTemplate] =
@@ -46,17 +56,17 @@ export default function Tickets({ session }: { session: Session }) {
         console.error(`Failed to load template image: ${template.id}`);
       };
     });
-  loadGoogleFont()
+    loadGoogleFont()
   }, []);
-const loadGoogleFont=async()=>{
-  const font = new FontFace(
-    "GoogleFont",
-    "url(/fonts/GoogleSans-Medium.ttf)"
-  );
+  const loadGoogleFont = async () => {
+    const font = new FontFace(
+      "GoogleFont",
+      "url(/fonts/GoogleSans-Medium.ttf)"
+    );
 
-  await font.load();
-  document.fonts.add(font);
-}
+    await font.load();
+    document.fonts.add(font);
+  }
   useEffect(() => {
     ticketTemplates.forEach(template => {
       const img = document.querySelector(`img[data-template-id='${template.id}']`) as HTMLImageElement | null;
@@ -70,11 +80,11 @@ const loadGoogleFont=async()=>{
   const userInfo = useMemo(() => {
     const profile = (session?.user as any)?.profile;
     const uniqueCode = profile?.unique_code || "-1000";
-    const firstName:string|undefined = profile?.first_name || "";
-    const lastName: string|undefined = profile?.last_name || "";
+    const firstName: string | undefined = profile?.first_name || "";
+    const lastName: string | undefined = profile?.last_name || "";
     let fullName = `${firstName} ${lastName}`.trim()
-    if(fullName.length>28 && lastName)
-    fullName= `${firstName} ${lastName.charAt(0).toUpperCase()}.`.trim()
+    if (fullName.length > 28 && lastName)
+      fullName = `${firstName} ${lastName.charAt(0).toUpperCase()}.`.trim()
     const username = (session?.user as any)?.username || "";
     return {
       uniqueCode,
@@ -135,7 +145,10 @@ const loadGoogleFont=async()=>{
       await new Promise((resolve, reject) => {
         templateImg.onload = resolve;
         templateImg.onerror = reject;
-        templateImg.src = selectedTemplate.imageUrl;
+        if (session.user.profile?.event_role == "attendee")
+          templateImg.src = selectedTemplate.imageUrl;
+        else
+          templateImg.src = selectedTemplate.imageUrl2
       });
       const imgWidth = templateImg.naturalWidth || selectedTemplate.width;
       const imgHeight = templateImg.naturalHeight || selectedTemplate.height;
@@ -163,13 +176,13 @@ const loadGoogleFont=async()=>{
       const qrDrawY = layout.qrY - (layout.qrSize / 2);
       ctx.drawImage(qrImg, qrDrawX, qrDrawY, layout.qrSize, layout.qrSize);
       if (userInfo.fullName) {
-        if(userInfo.fullName.length>19)
-          layout.nameSize=80
+        if (userInfo.fullName.length > 19)
+          layout.nameSize = 80
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.font = `${layout.nameSize}px GoogleFont, serif`;
-        ctx.fillStyle = selectedTemplate.id=="template2"?"#ffffff":"#000000";
-        ctx.strokeStyle = selectedTemplate.id=="template2"? "rgba(255, 255, 255)":"rgba(0,0,0,0)";
+        ctx.fillStyle = selectedTemplate.id == "template2" ? "#ffffff" : "#000000";
+        ctx.strokeStyle = selectedTemplate.id == "template2" ? "rgba(255, 255, 255)" : "rgba(0,0,0,0)";
         ctx.lineWidth = layout.nameSize * 0.05;
         ctx.strokeText(userInfo.fullName, layout.nameX, layout.nameY);
         ctx.fillText(userInfo.fullName, layout.nameX, layout.nameY);
@@ -264,9 +277,9 @@ const loadGoogleFont=async()=>{
                   disabled={!qrCodeDataURL || isDownloading}
                   className="bg-foreground  text-background px-6 py-2 rounded-lg font-semibold"
                 >
-                  <GeminiIcon className="dark:invert"/>
+                  <GeminiIcon className="dark:invert" />
                   {isDownloading ? "Downloading..." : "Download"}
-                  <GeminiIcon className="dark:invert"/>
+                  <GeminiIcon className="dark:invert" />
                 </Button>
               </div>
             )}
@@ -316,11 +329,11 @@ const loadGoogleFont=async()=>{
                   <span className="font-semibold">Note:</span> Your QR code is secure and tamper-proof. Feel free to show it in your social media posts!
                 </p>
               </div>
-            
+
             </div>
           </div>
         </div>
-       
+
       </div>
 
       <TicketInstructions />

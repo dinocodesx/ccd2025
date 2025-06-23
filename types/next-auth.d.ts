@@ -24,7 +24,7 @@ declare module "next-auth" {
         graduation_year: number,
         company: string,
         role: string,
-
+        event_role:string
         tsize: string,
         profile_lock: boolean,
         student: boolean,
@@ -50,6 +50,7 @@ declare module "next-auth" {
       last_name: string;
       profile: {
         active_role: string;
+        event_role:string;
         active_organization: {
           id: number;
           name: string;

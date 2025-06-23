@@ -85,7 +85,7 @@ const SpeakersSection: React.FC = () => {
           Our Amazing Speakers
         </h2>
         <p className="text-base text-gray-500 max-w-2xl">
-          Discover our amazing speakers for the final day of GCCD Kolkata 2025
+          Discover our amazing speakers for the final day of CCD Kolkata 2025
         </p>
       </div>
       {loading ? (
