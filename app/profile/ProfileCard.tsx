@@ -37,7 +37,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import LeaderBoard from "./LeaderBoard";
 import Points from "./Points";
-import YourBadge from "./YourBadge";
+import Frame, { FrameType } from "./Frames";
 import Tickets from "./(Tickets)/Tickets";
 import GeminiIcon from "@/components/GeminiIcon";
 import FeatureRuleContent from "@/public/content/feature.rule.json";
@@ -289,7 +289,7 @@ export default function ProfileCard({
                     : user.event_role === "organizer" ?
                       'r'
                       : user.event_role === "volunteer" ?
-                        'y'
+                        'g'
                         : ''}.svg`}
                   alt="Smile"
                   width={24}
@@ -322,7 +322,7 @@ export default function ProfileCard({
                     : user.event_role === "organizer" ?
                       'var(--google-red)'
                       : user.event_role === "volunteer" ?
-                        'var(--google-yellow)'
+                        'var(--google-green)'
                         : ''}`
                 }}
                 className={`hover:bg-[${user.event_role === "attendee" ?
@@ -330,7 +330,7 @@ export default function ProfileCard({
                   : user.event_role === "organizer" ?
                     '#ea4336'
                     : user.event_role === "volunteer" ?
-                      '#faab00'
+                      '#0f9d58'
                       : ''}]/90 text-white px-4 sm:px-6 flex items-center gap-2 text-sm sm:text-base p-2 rounded-4xl`}>
                 <Image
                   src="/images/cfs/circleStar.svg"
@@ -362,7 +362,7 @@ export default function ProfileCard({
                     : user.event_role === "organizer" ?
                       'var(--google-red)'
                       : user.event_role === "volunteer" ?
-                        'var(--google-yellow)'
+                        'var(--google-green)'
                         : ''}`
                 } : {}}
                 className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors border border-gray-200 dark:border-muted cursor-pointer ${activeTab === tab
@@ -737,7 +737,7 @@ export default function ProfileCard({
 
           {activeTab === "Leaderboard" && <LeaderBoard />}
 
-          {activeTab === "Frame Studio" && <YourBadge />}
+          {activeTab === "Frame Studio" && <Frame frameType={user.event_role.toLowerCase() as FrameType}/>}
 
           {activeTab === "Tickets" && <Tickets session={session} />}
         </div>

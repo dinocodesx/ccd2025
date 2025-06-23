@@ -12,7 +12,7 @@ const WhatsAppIcon = () => (
 
 // Note: WhatsAppIcon is referenced by string in SOCIAL_CONFIGS
 const SocialShareButtons = ({className}:{className?:string}) => (
-  <div className={cn("grid grid-cols-4 sm:grid-cols-5 gap-2",className)}>
+  <div className={cn("grid grid-cols-5 gap-2",className)}>
     {SOCIAL_CONFIGS.map((social: any) => (
       <button
         key={social.platform}

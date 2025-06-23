@@ -137,11 +137,18 @@ const Sponsors: React.FC = () => {
           >
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
-              {communityPartners.filter(partner=>!FeatureRule.disabledCommunityPartners.includes(partner.name)).map((partner, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center justify-center h-40 sm:h-32 p-3"
-                >
+              {communityPartners
+                .filter(
+                  (partner) =>
+                    !(FeatureRule.disabledCommunityPartners as string[]).includes(
+                      partner.name 
+                    )
+                )
+                .map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center justify-center h-40 sm:h-32 p-3"
+                  >
                   {partner.logo ? (
                     // If logo is available, will be displayed with gradient border
                     <a

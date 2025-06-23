@@ -1,18 +1,12 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
-import SocialShareButtons from "./SocialShareButtons";
+
 import SocialShare from "./SocialShare";
 
-interface TicketTemplate {
-  id: string;
-  name: string;
-  imageUrl: string;
-  previewUrl:string;
-  description: string;
-  width: number;
-  height: number;
-}
+import { TicketTemplate } from "./Tickets";
+
+
 
 type Props = {
   ticketTemplates: TicketTemplate[];
@@ -38,7 +32,8 @@ const TicketTemplateCard: React.FC<Props> = ({
   templateLoading,
   setSelectedTemplate,
 
-}) => (
+}) => {
+  return (
   <div className="flex flex-col  gap-3 w-full max-w-lg mx-auto">
     <div className="flex items-center justify-center gap-4">
     {ticketTemplates.map((template) => (
@@ -75,6 +70,6 @@ const TicketTemplateCard: React.FC<Props> = ({
     <SocialShare/>
     </div>
   </div>
-);
+)};
 
 export default TicketTemplateCard; 

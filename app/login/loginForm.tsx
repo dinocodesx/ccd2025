@@ -9,6 +9,7 @@ import { signIn } from "next-auth/react";
 import LoadLink from "@/components/blocks/LoadLink";
 import { useSearchParams } from "next/navigation";
 import AuthForm from "@/components/auth/AuthForm";
+import { convertEmail } from "@/lib/utils";
 
 const formSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),
@@ -32,7 +33,7 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     await signIn("ccd2025", {
-      username: values.username,
+      username: convertEmail(values.username),
       password: values.password,
     });
     setIsLoading(false);
@@ -70,7 +71,7 @@ export default function LoginForm() {
         fields={[
           {
             name: "username",
-            label: "Username",
+            label: "Username or Email",
             placeholder: "gdglcoudkol",
           },
           {
