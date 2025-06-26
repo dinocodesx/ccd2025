@@ -1,7 +1,7 @@
 import React from "react";
 import CardContainer from "./ui/CardContainer";
 import sponsorsData from "../public/content/sponsors.json";
-
+import FeatureRule from '../public/content/feature.rule.json'
 const Sponsors: React.FC = () => {
   const {
     title,
@@ -135,12 +135,23 @@ const Sponsors: React.FC = () => {
             }
             maxWidth="max-w-4xl"
           >
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
-              {communityPartners.map((partner, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center justify-center h-40 sm:h-32 p-3"
-                >
+
+              {communityPartners
+                .filter(
+                  (partner) =>
+                    !(FeatureRule.disabledCommunityPartners as string[]).includes(
+                      partner.name 
+                    )
+                )
+                .map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center justify-center h-40 sm:h-32 p-3"
+                  >
+
+
                   {partner.logo ? (
                     // If logo is available, will be displayed with gradient border
                     <a

@@ -3,21 +3,16 @@ import Button from "@/components/ui/Button";
 import GeminiIcon from "@/components/GeminiIcon";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { TicketTemplate } from "./Tickets";
+import { useSession } from "next-auth/react";
 
-interface TicketTemplate {
-  id: string;
-  name: string;
-  imageUrl: string;
-  previewUrl: string;
-  description: string;
-  width: number;
-  height: number;
-}
 
 type UserInfo = {
   uniqueCode: string;
-  firstName: string;
-  lastName: string;
+  firstName: string|undefined;
+  lastName: string|undefined;
   fullName: string;
   username: string;
   qrText: string;
@@ -42,7 +37,7 @@ const LAYOUT = {
   TEXT_SIZE_PERCENT: 5.5,
 };
 
-const TicketPreview: React.FC<Props> = ({
+const TicketPreview: React.FC<Props> =  ({
   selectedTemplate,
   userInfo,
   qrCodeDataURL,
@@ -55,7 +50,7 @@ const TicketPreview: React.FC<Props> = ({
 }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [hasImageError, setHasImageError] = useState(false);
-
+  const session =useSession()
   // Reset image loaded state if template changes
   React.useEffect(() => {
     setIsImageLoaded(false);
@@ -66,7 +61,7 @@ const TicketPreview: React.FC<Props> = ({
     <div
       className={cn(
         !isDialogView &&
-          "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-11/12 h-full"  
+          "border border-border rounded-lg  dark:bg-[#111] p-3 sm:p-4 w-full h-full"  
       )}
     >
       {!isDialogView && (
@@ -112,7 +107,13 @@ const TicketPreview: React.FC<Props> = ({
             >
               {/* Ticket Image */}
               <Image
-                src={hasImageError ? "/images/placeholder-ticket.svg" : selectedTemplate.previewUrl}
+                src={
+                  hasImageError
+                    ? "/images/placeholder-ticket.svg"
+                    : (session?.data?.user?.profile?.event_role === "attendee"
+                        ? selectedTemplate.previewUrl
+                        : selectedTemplate.previewUrl2)
+                }
                 alt={selectedTemplate.name}
                 width={1080}
                 height={1920}
@@ -152,7 +153,7 @@ const TicketPreview: React.FC<Props> = ({
                         cn(
                           "font-bold text-[13px]",
                            userInfo.fullName.length>16 && userInfo.fullName.length<19 && "text-[17px]",
-                           userInfo.fullName.length>19 &&"text-[13px]",
+                           userInfo.fullName.length>19 &&"text-[8px]",
                         )
                         }
                      

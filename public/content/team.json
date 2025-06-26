@@ -1,7 +1,14 @@
 {
   "title": "Meet the team",
   "description": "The passionate organizers and volunteers behind Cloud Community Day Kolkata 2025.",
-  "leadId": [0, 5, 12, 16, 21, 28],
+  "leadId": [
+    0,
+    5,
+    12,
+    16,
+    21,
+    28
+  ],
   "allPeople": [
     {
       "title": "Organizing Team",
@@ -121,7 +128,7 @@
         {
           "id": 12,
           "title": "Shubham Tribedi",
-          "content": "Head of Marketing @ Callchimp.ai",
+          "content": "Head of Marketing @ Blackspektro",
           "linkedin": "https://www.linkedin.com/in/shubhamtribedi/",
           "twitter": "https://x.com/shubham_tribedi",
           "image": "https://github.com/CoderShubham2000.png"
@@ -206,11 +213,11 @@
       "people": [
         {
           "id": 21,
-          "title": "Debanita Roy Bhowmick",
-          "content": "Imagineer @ Fractal Analytics",
-          "linkedin": "www.linkedin.com/in/debanita-roy-bhowmick",
-          "twitter": "https://twitter.com/DebanitaRB",
-          "image": "https://github.com/debanitaroy.png"
+          "title": "Arpan Sinha",
+          "content": "Organiser @ GDGoC MAKAUT, WB",
+          "linkedin": "https://www.linkedin.com/in/arpansinhaaaa/",
+          "twitter" :"https://x.com/mr_sinhaaaa",
+          "image": "https://github.com/arpansinhaaaa.png"
         },
         {
           "id": 22,
@@ -247,7 +254,7 @@
         {
           "id": 26,
           "title": "Debarshee Chakraborty",
-          "content": "Student @ Academy of Technology",
+          "content": "GDG on Campus Lead Organizer @AOT",
           "linkedin": "https://www.linkedin.com/in/debarshee-chakraborty-dc2004",
           "twitter": "https://x.com/dinocodes69",
           "image": "https://github.com/debarshee2004.png"
@@ -283,7 +290,6 @@
           "twitter": "https://x.com/himangshuji",
           "image": "https://github.com/himangshumishra.png"
         },
-
         {
           "id": 31,
           "title": "Rudramadhaba Mishra",

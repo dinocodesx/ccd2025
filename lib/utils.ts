@@ -42,6 +42,18 @@ export function maskEmail(email: string): string {
   // Combine the masked username with the domain
   return `${maskedUsername}@${domain}`;
 }
+export function convertEmail(input:string):string {
+
+  const [local_part, domain_part] = input.split('@')
+
+  if(!domain_part)
+  {
+    return input
+  }
+  const domain_with_underscores = domain_part.replace('.', '_')
+  const username = `${local_part}_${domain_with_underscores}`
+  return username
+}
 
 export function getPronoun(dbPronoun: string, fallback?: string | undefined) {
   if (Pronouns.hasOwnProperty(dbPronoun)) {
