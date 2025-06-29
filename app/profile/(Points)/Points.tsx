@@ -1,0 +1,25 @@
+import Points from "@/components/profile/Points";
+import { GOODIES_URL, TRANSACTION_URL } from "@/lib/constants/be";
+import bkFetch from "@/services/backend.services";
+import { GoodiesResult, TransactionResult } from "@/types/goodies";
+
+export default async function PointsPage() {
+    // Execute both fetch requests in parallel
+    const [goodiesRes, transactionRes] = await Promise.all([
+        bkFetch(GOODIES_URL, { method: "GET" }),
+        bkFetch(TRANSACTION_URL, { method: "GET" })
+    ]);
+
+    // Parse JSON responses in parallel
+    const [goodies, transactions] = await Promise.all([
+        goodiesRes.json(),
+        transactionRes.json()
+    ]);
+
+    return (
+        <Points 
+            goodies={goodies as GoodiesResult} 
+            transactions={transactions as TransactionResult} 
+        />
+    );
+}

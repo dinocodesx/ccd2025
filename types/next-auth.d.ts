@@ -28,9 +28,9 @@ declare module "next-auth" {
         tsize: string,
         profile_lock: boolean,
         student: boolean,
-        bio: string;
+        bio: string,
+        points: number,
         socials: {
-
           twitter?: string;
           github?: string;
           linkedin?: string;
@@ -51,6 +51,7 @@ declare module "next-auth" {
       profile: {
         active_role: string;
         event_role:string;
+        points:number;
         active_organization: {
           id: number;
           name: string;

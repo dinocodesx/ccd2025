@@ -94,6 +94,7 @@ export type UserProfile = {
     graduation_year: number | null;
     company: string | null;
     role: string;
+    points:number;
     socials: {
       github: string;
       twitter: string;

@@ -8,13 +8,15 @@ import ProfileCard from "./ProfileCard";
 import { Suspense } from "react";
 import bkFetch from "@/services/backend.services";
 import { USERS_DJANGO_URL } from "@/lib/constants/be";
+import Loader from "@/components/Loader";
 
 export const metadata: Metadata = {
   title: "Profile - Cloud Community Day Kolkata 2025",
   description: "Manage your Cloud Community Day Kolkata 2025 account profile",
 };
 
-const Page = async () => {
+const Page = async ({ searchParams }: { searchParams: Promise<{ tab: string }> }) => {
+  const {tab}= await searchParams;
   const session = await getServerSession(authOptions);
   if (!session?.access) redirect("/login");
   const response = await bkFetch(USERS_DJANGO_URL, {
@@ -26,8 +28,8 @@ const user = await response.json();
   return (
     <Layout>
     <section className="min-h-[calc(100vh-4rem)] w-full container mx-auto py-20 relative">
-      <Suspense fallback={<>Loading profile...</>}>
-        <ProfileCard user={user} session={session}/>
+      <Suspense fallback={<Loader name="profile"/>}>
+        <ProfileCard user={user} session={session} activeTab={tab||"My Profile"}/>
       </Suspense>
     </section>
     </Layout>

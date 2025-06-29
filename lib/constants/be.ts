@@ -31,6 +31,10 @@ export const EVENT_ATTENDEE_INFORM_ALL_URL = ATTENDEES_DJANGO_URL + 'inform_all/
 export const EVENT_ATTENDEE_CHECKIN_SUFFIX = '/checkin/'
 export const EVENT_ATTENDEE_CONTEST_AUTH_TOKEN_URL = ATTENDEES_DJANGO_URL + 'get_contest_start_token/';
 
-export const MAINDAYCONTEST_URL = CCD2025_BE_BASE_URL + '/maindaycontest/';
+export const GOODIES_URL = CCD2025_BE_BASE_URL + '/goodies/';
+export const TRANSACTION_URL = CCD2025_BE_BASE_URL + '/point-transactions/';
+export const REDEMPTION_URL = CCD2025_BE_BASE_URL + '/redemption-requests/';
+
+
 
 
