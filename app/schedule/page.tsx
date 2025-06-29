@@ -60,7 +60,7 @@ async function SchedulePage() {
       const res = await fetch(
         "https://sessionize.com/api/v2/pkltj8cb/view/Sessions",
         {
-          // next: { revalidate: 3600 }, // Revalidate every hour
+          next: { revalidate: 0 }, // Revalidate every hour
           headers: {
             'Content-Type': 'application/json',
           },
