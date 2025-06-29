@@ -39,6 +39,7 @@ import LeaderBoard from "./LeaderBoard";
 import Points from "./Points";
 import Frame, { FrameType } from "./Frames";
 import Tickets from "./(Tickets)/Tickets";
+import Jobs from "./Jobs";
 import GeminiIcon from "@/components/GeminiIcon";
 import FeatureRuleContent from "@/public/content/feature.rule.json";
 
@@ -81,6 +82,7 @@ export default function ProfileCard({
       "Leaderboard",
       "Frame Studio",
       "Tickets",
+      "Jobs",
     ];
     return validTabs.includes(tabFromUrl || "") ? tabFromUrl : "My Profile";
   };
@@ -104,6 +106,7 @@ export default function ProfileCard({
       "Leaderboard",
       "Frame Studio",
       "Tickets",
+      "Jobs",
     ];
     if (
       tabFromUrl &&
@@ -350,6 +353,7 @@ export default function ProfileCard({
               "My Profile",
               "Frame Studio",
               "Tickets",
+              "Jobs",
               "Points",
               "Leaderboard",
             ].map((tab) => (
@@ -740,6 +744,8 @@ export default function ProfileCard({
           {activeTab === "Frame Studio" && <Frame frameType={user.event_role.toLowerCase() as FrameType}/>}
 
           {activeTab === "Tickets" && <Tickets session={session} />}
+
+          {activeTab === "Jobs" && <Jobs />}
         </div>
       </CardContainer>
     </div>

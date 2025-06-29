@@ -9,5 +9,6 @@
   "profile": {
     "edit": false,
     "editTshirt": true
-  }
+  },
+  "jobs":false
 }

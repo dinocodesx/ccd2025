@@ -33,4 +33,7 @@ export const EVENT_ATTENDEE_CONTEST_AUTH_TOKEN_URL = ATTENDEES_DJANGO_URL + 'get
 
 export const MAINDAYCONTEST_URL = CCD2025_BE_BASE_URL + '/maindaycontest/';
 
+export const JOBS_DJANGO_URL = CCD2025_BE_BASE_URL + '/jobs/';
+export const RECRUITERS_DJANGO_URL = CCD2025_BE_BASE_URL + '/recruiters/';
+
 
