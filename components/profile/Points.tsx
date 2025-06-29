@@ -1,21 +1,14 @@
 import React from "react";
 import {
-  TrendingUp,
-  TrendingDown,
-  Plus,
-  Minus,
-  Gift,
   ShoppingCart,
-  Trophy,
-  Sparkles,
+  Trophy
 } from "lucide-react";
-import { GoodiesResult, Goodie, TransactionResult, Transaction as ServerTransaction, RedemptionRequest, RedemptionResult } from "@/types/goodies";
+import { GoodiesResult, TransactionResult, Transaction as ServerTransaction, RedemptionResult } from "@/types/goodies";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PointsOverview from "./PointsOverview";
 import GoodiesRedeem from "./GoodiesRedeem";
 import bkFetch from "@/services/backend.services";
 import { REDEMPTION_URL } from "@/lib/constants/be";
-import type { GoodiesRedeemProps } from "./GoodiesRedeem";
 
 
 interface PointsProps {

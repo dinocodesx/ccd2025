@@ -524,15 +524,9 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
             disabled={isSubmitting}
             className="bg-primary hover:bg-primary/90 text-white dark:text-black px-6 sm:px-8 text-sm sm:text-base flex items-center gap-2"
           >
-            <Image
-              src="/images/cfs/gemini.svg"
-              alt=""
-              width={16}
-              height={16}
-              className="size-4 dark:invert"
-            />
-            {isSubmitting ? "Saving..." : "Save"}
             <GeminiIcon className="dark:invert"/>
+            {isSubmitting ? "Saving..." : "Save"}
+            <GeminiIcon className="dark:invert ml-0"/>
           </Button>
         </div>
       </form>

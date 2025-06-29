@@ -40,12 +40,7 @@ export default function ProfileCard({
     { value: "Points", link: "?tab=Points" },
     { value: "Leaderboard", link: "?tab=Leaderboard" },
   ];
-  const tabColors: Record<string, string> = {
-    attendee: 'var(--google-blue)',
-    organizer: 'var(--google-red)',
-    volunteer: 'var(--google-green)',
-  };
-  const tabBg = tabColors[user.event_role] || '';
+
 
   return (
     <div className="min-h-screen p-2 sm:p-4 w-full mx-auto">
@@ -119,7 +114,7 @@ export default function ProfileCard({
                 user.points >= 100 && "border-google-green bg-google-green/20 text-google-green"
               )}>
                 <Image src={Coin} alt="coin" width={24} height={24}/>
-                {user.points}
+                {user.points.toLocaleString()}
               </div>
             </div>
           </div>

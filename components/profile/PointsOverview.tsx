@@ -133,7 +133,7 @@ const TransactionCard: React.FC<TransactionCardProps> = ({
         </div>
         <div className="text-right w-full sm:w-auto mt-2 sm:mt-0 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-end gap-2 sm:gap-0">
           <div className={`text-lg sm:text-xl font-bold ${colors.text}`}>
-            {transaction.points > 0 ? "+" : "-"}
+            {transaction.points > 0 ? "+" : ""}
             {transaction.points.toLocaleString()}
           </div>
           <div className="text-xs text-muted-foreground">points</div>
