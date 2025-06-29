@@ -18,13 +18,15 @@ interface RedeemItem {
 interface RedeemCardProps {
   item: RedeemItem;
   totalPoints: number;
+  redeemedItem:RedemptionRequest|undefined|null;
+  
 }
 
-const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints }) => {
+const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints,redeemedItem }) => {
   const [loading, setLoading] = React.useState(false);
   const isAvailable = item.status === 'available' && totalPoints >= item.points;
-  const isRequested = item.status === 'requested';
-  const isRedeemed = item.status === 'redeemed';
+  const isRequested = redeemedItem?true:false;
+  const isRedeemed = redeemedItem?.is_approved;
   const isOutOfStock = item.status === 'out_of_stock';
 
   const redeemGoodie = async () => {
@@ -157,9 +159,12 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
         {redeemItems.length === 0 ? (
           <div className="text-muted-foreground">No goodies available.</div>
         ) : (
-          redeemItems.map((item) => (
-            <RedeemCard key={item.id} item={item} totalPoints={totalPoints} />
-          ))
+          redeemItems.map((item) => {
+          const redeemItem= redeemedGoodies.results.find(g=>g.goodie==item.id)
+            return (
+            <RedeemCard key={item.id} item={item} totalPoints={totalPoints} redeemedItem={redeemItem} />
+          )
+        })
         )}
       </div>
     </div>
