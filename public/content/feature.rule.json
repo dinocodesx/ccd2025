@@ -8,6 +8,9 @@
   },
   "profile": {
     "edit": false,
-    "editTshirt": true
+    "editTshirt": true,
+    "points":true,
+    "redeem":true
   }
+
 }
