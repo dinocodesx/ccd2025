@@ -8,6 +8,10 @@
   },
   "profile": {
     "edit": false,
-    "editTshirt": true
+    "editTshirt": true,
+    "points":true,
+    "redeem":false,
+    "notTakingRequestsMessage":"Currently unavailable"
   }
+
 }
