@@ -60,17 +60,18 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
   };
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] ${item.available
-          ? "border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 bg-background hover:shadow-lg"
+      className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300  ${item.available
+          ? "border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 bg-background hover:shadow-lg hover:scale-[1.02]"
           : "border-gray-300 bg-gray-50 dark:bg-gray-800/50 opacity-60"
         }`}
     >
       <div className="p-6 text-center">
-        <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center p-3">
+        {/* <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center p-3"> */}
+        <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-black to-[#151515] dark:from-google-blue dark:to-google-blue/50 rounded-2xl flex items-center justify-center p-2">
           <img
             src={item.image}
             alt={item.name}
-            className="w-full h-full object-contain rounded-2xl"
+            className="w-full h-full object-contain rounded-xl"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = "none";
@@ -88,7 +89,7 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
             isRedeemed
               ? "bg-green-200 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default"
               : isAvailable
-              ? "bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
+              ? "bg-google-blue hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
               : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
           }`}
         >
