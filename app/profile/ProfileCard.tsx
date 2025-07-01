@@ -146,6 +146,7 @@ export default function ProfileCard({
             <div className="mb-6 sm:mb-8">
               <TabsList className="h-auto flex flex-wrap bg-transparent p-0 items-start justify-start gap-2 w-full">
                 {validTabs.map((tab) => (
+                  <LoadLink href={tab.link} scroll={false} className="block">
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
@@ -166,10 +167,10 @@ export default function ProfileCard({
                           : "",
                     }}
                   >
-                    <LoadLink href={tab.link} scroll={false} className="block">
+                    
                       {tab.value}
-                    </LoadLink>
                   </TabsTrigger>
+                    </LoadLink>
                 ))}
               </TabsList>
             </div>
