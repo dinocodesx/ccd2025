@@ -5,6 +5,9 @@ import { GoodiesResult, Goodie, RedemptionResult, RedemptionRequest } from "@/ty
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import FeatureRule from '@/public/content/feature.rule.json'
+import GeminiIcon from "../GeminiIcon";
+import { AlertTriangle } from "lucide-react";
+
 interface RedeemItem {
   id: number;
   name: string;
@@ -28,8 +31,14 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
   const isRequested = redeemedItem ? true : false;
   const isRedeemed = redeemedItem?.is_approved;
   const isOutOfStock = item.status === 'out_of_stock';
+  const isDisabled = !FeatureRule.profile.redeem || !isAvailable || isRedeemed || isOutOfStock;
+  console.log("showing for ",item.id,redeemedItem)
 
   const redeemGoodie = async () => {
+    if(isDisabled){
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch('/api/goodies/redeem', {
@@ -73,12 +82,15 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
         <h4 className="font-bold text-foreground mb-2">{item.name}</h4>
         <p className="text-sm text-muted-foreground mb-6">{item.description}</p>
         <Button
-          disabled={!FeatureRule.profile.redeem || !isAvailable || loading || isRequested || isRedeemed || isOutOfStock}
+          disabled={isDisabled}
           onClick={!FeatureRule.profile.redeem && isAvailable ? redeemGoodie : undefined}
-          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${isAvailable
+          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+            isRedeemed
+              ? "bg-green-200 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default"
+              : isAvailable
               ? "bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
               : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-            }`}
+          }`}
         >
           {loading ? (
             <span>Processing...</span>
@@ -101,7 +113,7 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
               <span>{item.points.toLocaleString()}</span>
               <span>points</span>
             </>
-            :<>Not taking requests</>
+            :<>{FeatureRule.profile.notTakingRequestsMessage}</>
           )}
         </Button>
       </div>
@@ -156,18 +168,30 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
         <p className="text-muted-foreground">Request to exchange your points for awesome rewards</p>
       </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {redeemItems.length === 0 ? (
-            <div className="text-muted-foreground">No goodies available.</div>
-          ) : (
-            redeemItems.map((item) => {
-              const redeemItem = redeemedGoodies.results.find(g => g.goodie == item.id)
-              return (
-                <RedeemCard key={item.id} item={item} totalPoints={totalPoints} redeemedItem={redeemItem} />
-              )
-            })
-          )}
-        </div>
+      {/* Disclaimer Section */}
+      <div className=" flex-col md:flex-row bg-yellow-100 dark:bg-yellow-900/40 border-2 border-yellow-500 dark:border-yellow-400 p-4 rounded-lg mb-4 flex items-start gap-3">
+        <span className="flex-shrink-0 flex items-center">
+          {/* <GeminiIcon className="w-6 h-6 sm:w-7 sm:h-7 drop-shadow-md invert dark:invert-0" /> */}
+          <AlertTriangle className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-500 dark:text-yellow-300 ml-1" />
+        </span>
+        <p className="text-yellow-900 dark:text-yellow-200 font-semibold gap-y-4">
+          <span className="block mb-1">Images shown are for representation purposes only. Actual products may vary.</span>
+          <span className="block">All goodies must be collected in person at the event venue on the event day. Uncollected items cannot be claimed or collected at a later date.</span>
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {redeemItems.length === 0 ? (
+          <div className="text-muted-foreground">No goodies available.</div>
+        ) : (
+          redeemItems.map((item) => {
+            const redeemItem = redeemedGoodies.results.find(g => g.goodie == item.id)
+            return (
+              <RedeemCard key={item.id} item={item} totalPoints={totalPoints} redeemedItem={redeemItem} />
+            )
+          })
+        )}
+      </div>
       
       
     </div>

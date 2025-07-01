@@ -10,7 +10,8 @@
     "edit": false,
     "editTshirt": true,
     "points":true,
-    "redeem":true
+    "redeem":false,
+    "notTakingRequestsMessage":"Currently unavailable"
   }
 
 }

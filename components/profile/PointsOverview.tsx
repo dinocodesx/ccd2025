@@ -37,11 +37,11 @@ const STAT_VARIANTS = {
     labelColor: "text-emerald-600 dark:text-emerald-400",
   },
   redeemed: {
-    bg: "bg-rose-50 dark:bg-rose-950/30",
-    border: "border-rose-200 dark:border-rose-800",
-    iconBg: "bg-rose-100 dark:bg-rose-900/50",
-    textColor: "text-rose-700 dark:text-rose-300",
-    labelColor: "text-rose-600 dark:text-rose-400",
+    bg: "bg-zinc-50 dark:bg-zinc-900/30",
+    border: "border-zinc-200 dark:border-zinc-700",
+    iconBg: "bg-zinc-100 dark:bg-zinc-800/50",
+    textColor: "text-zinc-700 dark:text-zinc-300",
+    labelColor: "text-zinc-600 dark:text-zinc-400",
   },
   available: {
     bg: "bg-sky-50 dark:bg-sky-950/30",
@@ -60,10 +60,10 @@ const TRANSACTION_COLORS = {
     icon: "bg-emerald-100 dark:bg-emerald-900/50",
   },
   redeemed: {
-    bg: "bg-rose-50 dark:bg-rose-950/30",
-    border: "border-rose-200 dark:border-rose-800",
-    text: "text-rose-700 dark:text-rose-300",
-    icon: "bg-rose-100 dark:bg-rose-900/50",
+    bg: "bg-zinc-50 dark:bg-zinc-900/30",
+    border: "border-zinc-200 dark:border-zinc-700",
+    text: "text-zinc-700 dark:text-zinc-300",
+    icon: "bg-zinc-100 dark:bg-zinc-800/50",
   },
 } as const;
 
@@ -71,7 +71,7 @@ const getTransactionIcon = (type: string, points: number): React.ReactNode => {
   return type === "earned" || points > 0 ? (
     <Plus className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
   ) : (
-    <Minus className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+    <Minus className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
   );
 };
 
@@ -196,7 +196,7 @@ const PointsOverview: React.FC<PointsOverviewProps> = ({ transactions }) => {
         />
         <StatCard
           icon={
-            <TrendingDown className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+            <TrendingDown className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
           }
           value={`${stats.totalRedeemed.toLocaleString()}`}
           label="Redeemed"

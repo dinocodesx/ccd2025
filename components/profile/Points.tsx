@@ -54,6 +54,27 @@ const Points: React.FC<PointsProps> = async ({ goodies, transactions }) => {
   const redeemedGoodies: RedemptionResult = await fetchRedeemedGoodies();
   return (
     <div className="w-full space-y-6">
+         <div className="mb-6">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                  <div className="flex-1">
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                    Points
+                    </h1>
+                    <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
+                      Participate in events, earn points and redeem them for awesome rewards!
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0 flex justify-center md:justify-end hidden md:block">
+                    <img
+                      src="/images/elements/2025-black.svg"
+                      alt="CCD 2025"
+                      className="h-8 md:h-10 dark:invert"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <hr className="mb-6" />
       {/* Tabs Navigation and Content */}
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="flex flex-row gap-2 sm:gap-3 bg-transparent p-0 mb-6 sm:mb-8">
