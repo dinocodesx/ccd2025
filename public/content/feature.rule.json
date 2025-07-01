@@ -2,12 +2,26 @@
   "navbar": {
     "navShowProfile": true
   },
-  "disabledCommunityPartners": [],
+  "disabledCommunityPartners": [
+    "OSSDC",
+    "IEI Student Chapter CSE",
+    "IEI Student Chapter ECE",
+    "DevDotCom",
+    "Bengal Institute of Technology",
+    "FrostHacks",
+    "GDG SILIGURI",
+    "BBIT",
+    "CodeNest"
+  ],
   "home": {
     "showCommunityPartners": true
   },
   "profile": {
     "edit": false,
-    "editTshirt": true
+    "editTshirt": true,
+    "points":true,
+    "redeem":false,
+    "notTakingRequestsMessage":"Currently unavailable"
   }
+
 }
