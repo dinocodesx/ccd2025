@@ -42,7 +42,7 @@ const Apply: React.FC = () => {
               {
                 step: "Step 3: Purchase Your Ticket",
                 content:
-                  "Once you receive the confirmation email, you will have 72 hours to purchase your ticket. Don't delay - pay for and secure your ticket as soon as possible.",
+                  "In Phase 2 of ticketing, Once you receive the confirmation email, you must grab your ticket as soon as possible.  Don't delay - pay for and secure your ticket as soon as possible. Note: In Phase 1, you had 72 hours to purchase your ticket after approval.",
                 icon: "🎫",
               },
               {
