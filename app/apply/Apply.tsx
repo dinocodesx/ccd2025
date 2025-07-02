@@ -48,7 +48,7 @@ const Apply: React.FC = () => {
               {
                 step: "Step 4: Access CCD Kolkata Dashboard",
                 content:
-                  "After we confirm your payment, you will receive login access to the CCD Kolkata Dashboard where you can manage your participation.",
+                  "After we confirm your payment, you will receive login access to the CCD Kolkata Dashboard where you can manage your participation. This step may take upto 24 hours after payment confirmation.",
                 icon: "🔑",
               },
               {
