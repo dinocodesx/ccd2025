@@ -46,15 +46,15 @@ export default function HomePage() {
     <div className="relative">
       {/* Hero Section */}
       <section className="min-h-screen xl:min-h-[110dvh] flex flex-col justify-center items-center text-center px-4 pt-20 pb-32 relative dark:bg-[var(--black)]">
-        {/* Background text with dynamic opacity */}
-        <div
+        {/* Background text with dynamic opacity ****Not required anymore***** */}
+        {/* <div
           className="fixed top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none z-50"
           style={{ opacity: backgroundOpacity / 100 }}
         >
           <span className="text-3xl md:text-4xl lg:text-8xl font-black text-gray-200 dark:text-gray-900 select-all">
             {CONTENT.couponCode}
           </span>
-        </div>
+        </div> */}
 
         <div className="container mx-auto z-10 relative xl:-mt-10">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-[var(--foreground)] dark:text-[var(--white)]">

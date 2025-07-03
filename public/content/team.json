@@ -142,14 +142,6 @@
           "image": "https://github.com/avirupnandi1.png"
         },
         {
-          "id": 14,
-          "title": "Debanita Roy Bhowmick",
-          "content": "Imagineer @ Fractal Analytics",
-          "linkedin": "www.linkedin.com/in/debanita-roy-bhowmick",
-          "twitter": "https://twitter.com/DebanitaRB",
-          "image": "https://github.com/debanitaroy.png"
-        },
-        {
           "id": 15,
           "title": "Sitam Meur",
           "content": "AI Engineer @ PygenML",
@@ -181,14 +173,6 @@
           "image": "https://github.com/AlianBoyz.png"
         },
         {
-          "id": 18,
-          "title": "Pratyush Pritam",
-          "content": "ITER, SOA",
-          "linkedin": "https://www.linkedin.com/in/linkwithpratyush/",
-          "twitter": "https://x.com/",
-          "image": "https://github.com/lurisan.png"
-        },
-        {
           "id": 19,
           "title": "Sarfaraz Ahmad",
           "content": "Data Engineer @ Cognizant",
@@ -216,16 +200,8 @@
           "title": "Arpan Sinha",
           "content": "Organiser @ GDGoC MAKAUT, WB",
           "linkedin": "https://www.linkedin.com/in/arpansinhaaaa/",
-          "twitter" :"https://x.com/mr_sinhaaaa",
+          "twitter": "https://x.com/mr_sinhaaaa",
           "image": "https://github.com/arpansinhaaaa.png"
-        },
-        {
-          "id": 22,
-          "title": "Aditya Seth",
-          "content": "SWE @ Techno Billion AI | Gold Microsoft LSA",
-          "linkedin": "https://adityaseth.in/linkedin",
-          "twitter": "https://adityaseth.in/twitter",
-          "image": "https://github.com/AdityaSeth777.png"
         },
         {
           "id": 23,
@@ -305,6 +281,21 @@
           "linkedin": "https://www.linkedin.com/in/sugatobagchi",
           "twitter": "https://x.com/sugatobagchi",
           "image": "https://github.com/SugatoBagchi.png"
+        }
+      ]
+    },
+    {
+      "title": "On Ground Team",
+      "description": "The event management and speed and smooth execution of the event is handled by ...",
+      "cardColor": "bg-google-blue",
+      "people": [
+        {
+          "id": 33,
+          "title": "Aditya Seth",
+          "content": "SWE @ Techno Billion AI | Gold Microsoft LSA",
+          "linkedin": "https://adityaseth.in/linkedin",
+          "twitter": "https://adityaseth.in/twitter",
+          "image": "https://github.com/AdityaSeth777.png"
         }
       ]
     }
