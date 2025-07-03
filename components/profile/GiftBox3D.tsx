@@ -1,9 +1,11 @@
 "use client"
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { Badge } from "../ui/Badge";
 import { RoundedBoxGeometry } from 'three-stdlib';
 import { useTheme } from 'next-themes';
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/Tooltip";
+import KitInfoJson from '@/public/content/kits.json'
 
 interface GiftBox3DProps {
   size: number;
@@ -15,6 +17,11 @@ interface GiftBox3DProps {
 const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
+  const animationState = useRef({ 
+    isAnimating: false, 
+    startTime: 0, 
+    type: 'bounce' 
+  });
   
   useEffect(() => {
     if (!mountRef.current) return;
@@ -68,7 +75,7 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
     });
     scene.add(model);
 
-    // --- Shadow Plane (Theme-aware) ---
+    // --- Shadow Plane ---
     const shadowColor = resolvedTheme === 'dark' ? 0x888888 : 0x000000;
     const shadowOpacity = resolvedTheme === 'dark' ? 0.3 : 0.15;
 
@@ -95,17 +102,96 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
     let frameId: number;
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
-      model.scale.lerp(targetScale, 0.08);
+      
+      if (!animationState.current.isAnimating) {
+        model.scale.lerp(targetScale, 0.08);
+      }
+      
+      // Base animations
+      let baseRotationY = initialRotation.y + Math.cos(elapsedTime * 1.5) * 0.2;
       model.position.y = Math.sin(elapsedTime * 2) * size * 0.05;
-      model.rotation.y = initialRotation.y + Math.cos(elapsedTime * 1.5) * 0.2;
+      
+      // Click-to-animate logic
+      if (animationState.current.isAnimating) {
+        const timeSinceClick = elapsedTime - animationState.current.startTime;
+        
+        switch (animationState.current.type) {
+          case 'bounce': {
+            const duration = 1.5;
+            if (timeSinceClick < duration) {
+              const progress = timeSinceClick / duration;
+              const bounceAmount = Math.exp(-progress * 4) * Math.sin(progress * 20);
+              model.scale.set(1 - bounceAmount * 0.2, 1 + bounceAmount * 0.3, 1 - bounceAmount * 0.2);
+            } else {
+              animationState.current.isAnimating = false;
+              model.scale.copy(targetScale);
+            }
+            break;
+          }
+          case 'spin': {
+            const duration = 1.0;
+            if (timeSinceClick < duration) {
+              const progress = timeSinceClick / duration;
+              const easeProgress = 0.5 * (1 - Math.cos(Math.PI * progress));
+              model.rotation.y = baseRotationY + easeProgress * Math.PI * 2;
+            } else {
+              animationState.current.isAnimating = false;
+            }
+            break;
+          }
+          case 'jiggle': {
+            const duration = 1.0;
+            if (timeSinceClick < duration) {
+              const progress = timeSinceClick / duration;
+              const jiggleAmount = Math.exp(-progress * 5) * Math.sin(progress * 30);
+              model.rotation.z = jiggleAmount * 0.4;
+            } else {
+              animationState.current.isAnimating = false;
+              model.rotation.z = 0;
+            }
+            break;
+          }
+          case 'flip': {
+            const duration = 1.2;
+            if (timeSinceClick < duration) {
+                const progress = timeSinceClick / duration;
+                const easeProgress = 0.5 * (1 - Math.cos(Math.PI * progress));
+                model.rotation.x = initialRotation.x + easeProgress * Math.PI * 2;
+            } else {
+                animationState.current.isAnimating = false;
+            }
+            break;
+          }
+        }
+      } else {
+        // Apply base animations if no click animation is active
+        model.rotation.y = baseRotationY;
+        model.rotation.x = initialRotation.x; // Ensure it returns to base X rotation
+      }
+      
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
     animate();
 
+    // --- Event Listener for Click ---
+    const animationTypes = ['bounce', 'spin', 'jiggle', 'flip']; // Added 'flip'
+    const handleClick = () => {
+        if (!animationState.current.isAnimating) {
+            const randomIndex = Math.floor(Math.random() * animationTypes.length);
+            animationState.current = {
+              isAnimating: true,
+              startTime: clock.getElapsedTime(),
+              type: animationTypes[randomIndex]
+            };
+        }
+    };
+    mount.addEventListener('click', handleClick);
+
     // --- Cleanup ---
     return () => {
       cancelAnimationFrame(frameId);
+      mount.removeEventListener('click', handleClick);
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
       }
@@ -115,22 +201,28 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div
-        ref={mountRef}
-        style={{ width: "100px", height: "100px", cursor: "pointer" }}
-        tabIndex={0}
-        aria-label="3D animated icon"
-      />
-      <Badge variant={"outline"} className="inline-block lg:hidden font-semibold capitalize text-xs">{type} Schwags Kit</Badge>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            ref={mountRef}
+            style={{ width: "100px", height: "100px", cursor: "pointer" }}
+            tabIndex={0}
+            aria-label="3D gift box"
+          />
+        </TooltipTrigger>
+        <TooltipContent sideOffset={8} className="text-center">
+          {KitInfoJson[type as keyof typeof KitInfoJson].description}
+        </TooltipContent>
+      </Tooltip>
+      <Badge variant={"outline"} className="inline-block lg:hidden font-semibold capitalize text-xs"> {KitInfoJson[type as keyof typeof KitInfoJson].label}</Badge>
     </div>
   );
 };
 
 
-// --- Model Creation Functions ---
+// --- Model Creation Functions (Unchanged) ---
 
 function createGiftBox(size: number, boxColor: number, ribbonColor: number) {
-  // Unchanged...
   const group = new THREE.Group();
   const boxGeom = new THREE.BoxGeometry(size, size, size, 10, 10, 10);
   const boxMat = new THREE.MeshStandardMaterial({ color: boxColor, roughness: 0.4, metalness: 0.1 });
@@ -166,7 +258,6 @@ function createGiftBox(size: number, boxColor: number, ribbonColor: number) {
 }
 
 function createMajesticGiftBox(size: number, boxColor: number, ribbonColor: number) {
-  // Unchanged...
   const group = new THREE.Group();
   const boxWidth = size * 1.4;
   const boxHeight = size * 0.9;
@@ -176,11 +267,10 @@ function createMajesticGiftBox(size: number, boxColor: number, ribbonColor: numb
   const boxGeom = new RoundedBoxGeometry(boxWidth, boxHeight, boxDepth, 5, borderRadius);
   const boxMat = new THREE.MeshStandardMaterial({
       color: boxColor,
-      metalness: 0.6,
+      metalness: 0.4,
       roughness: 0.2,
       // @ts-expect-error: 'clearcoat' may not exist on older @types/three versions
       clearcoat: 1.0,
-
       clearcoatRoughness: 0.1,
   });
   const box = new THREE.Mesh(boxGeom, boxMat);
@@ -225,7 +315,6 @@ function createMajesticGiftBox(size: number, boxColor: number, ribbonColor: numb
 
 function createShoppingBag(size: number, bagColor: number, handleColor: number) {
     const group = new THREE.Group();
-    // Adjusted dimensions for a wider look
     const bagWidth = size * 1.2;
     const bagHeight = size * 0.9;
     const bagDepth = size * 0.5;

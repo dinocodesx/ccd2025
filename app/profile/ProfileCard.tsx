@@ -75,28 +75,26 @@ export default function ProfileCard({
     { value: "Leaderboard", link: "?tab=Leaderboard" },
   ];
 
-  // Kit toggle state
-  // const [kit, setKit] = useState<'mini' | 'regular' | 'gold'>('regular');
+
   // const kit = 'gold'
   const kit = 'regular'
-  // const kit = 'mini'
 
   // Kit properties
   const kitProps = {
     mini: {
-      label: 'Mini Kit',
+      label: 'Mini',
       size: 2,
       color: 0x4285f4, // google-blue
       ribbonColor: 0xfaab00, // google-yellow
     },
     regular: {
-      label: 'Regular Kit',
+      label: 'Regular',
       size: 2,
       color: 0xea4336, // google-red
       ribbonColor: 0xfaab00, // google-yellow
     },
     gold: {
-      label: 'Gold Kit',
+      label: 'Gold',
       size: 2,
       color: 0xfaab00, // google-yellow
       ribbonColor: 0x4285f4, // google-blue
@@ -160,7 +158,7 @@ export default function ProfileCard({
                     <div className="flex flex-col">
                       <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate">
                         {user?.first_name} {user.last_name}
-                        <Badge className="capitalize -translate-y-1 ml-1 hidden lg:inline">{kit}</Badge>
+                        <Badge className="-translate-y-1 ml-1 hidden lg:inline">{kitProps[kit as keyof typeof kitProps].label}</Badge>
                       </h2>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <p className="text-xs sm:text-sm text-muted-foreground">
