@@ -20,17 +20,11 @@ export default function Logo({ className = "" }: LogoProps) {
   return (
     <Link href="/" className={`${className}`}>
       <Image
-        src="/images/GDGCK.png"
+        src={mounted && resolvedTheme === "dark" ? "/images/gdgck-white.svg" : "/images/gdgck-color.svg"}
         alt="GDG Cloud Kolkata"
-        width={120}
+        width={200}
         height={48}
         className="h-10 md:h-8 lg:h-12 min-h-6 w-auto mr-2"
-        style={{
-          filter:
-            mounted && resolvedTheme === "dark"
-              ? "brightness(0) saturate(100%) invert(98%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)"
-              : "none",
-        }}
       />
     </Link>
   );
