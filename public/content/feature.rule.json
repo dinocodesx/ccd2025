@@ -21,7 +21,9 @@
     "editTshirt": true,
     "points":true,
     "redeem":false,
-    "notTakingRequestsMessage":"Currently unavailable"
+    "notTakingRequestsMessage":"Currently unavailable",
+    "showEasterEgg":true,
+    "easterCount":5
   }
 
 }

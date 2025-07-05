@@ -21,7 +21,7 @@ import Coin from "@/public/images/coin.svg";
 import PointsPage from "./(Points)/Points";
 import { Suspense } from "react";
 import Loader from "@/components/Loader";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/Tooltip";
+
 import GiftBox3D from "@/components/profile/GiftBox3D";
 import { Badge } from "@/components/ui/Badge";
 
@@ -77,7 +77,7 @@ export default function ProfileCard({
 
 
   // const kit = 'gold'
-  const kit = 'regular'
+  const kit = user.goodie_tier.toLowerCase()
 
   // Kit properties
   const kitProps = {
@@ -156,9 +156,11 @@ export default function ProfileCard({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center">
                     <div className="flex flex-col">
-                      <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate">
+                      <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate flex gap-2" >
                         {user?.first_name} {user.last_name}
-                        <Badge className="-translate-y-1 ml-1 hidden lg:inline">{kitProps[kit as keyof typeof kitProps].label}</Badge>
+                        <div className="ml-1 hidden lg:inline -mt-1">
+                        <Badge>{kitProps[kit as keyof typeof kitProps].label}</Badge>
+                        </div>
                       </h2>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <p className="text-xs sm:text-sm text-muted-foreground">
@@ -180,9 +182,9 @@ export default function ProfileCard({
                     {/* Giftbox on lg only */}
                     <div className="ml-2 hidden lg:block">
                       <GiftBox3D
-                        size={kitProps[kit].size}
-                        color={kitProps[kit].color}
-                        ribbonColor={kitProps[kit].ribbonColor}
+                        size={kitProps[kit as keyof typeof kitProps].size}
+                        color={kitProps[kit as keyof typeof kitProps].color}
+                        ribbonColor={kitProps[kit as keyof typeof kitProps].ribbonColor}
                         type={kit}
                       />
                     </div>
@@ -193,9 +195,9 @@ export default function ProfileCard({
               {/* Row 2: Giftbox + Points (visible on mobile) */}
               <div className="flex justify-between items-center w-full lg:hidden">
                 <GiftBox3D
-                  size={kitProps[kit].size}
-                  color={kitProps[kit].color}
-                  ribbonColor={kitProps[kit].ribbonColor}
+                  size={kitProps[kit as keyof typeof kitProps].size}
+                  color={kitProps[kit as keyof typeof kitProps].color}
+                  ribbonColor={kitProps[kit as keyof typeof kitProps].ribbonColor}
                   type={kit}
                 />
                 <Points points={user.points} />

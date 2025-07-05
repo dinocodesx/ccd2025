@@ -5,8 +5,11 @@ import { Badge } from "../ui/Badge";
 import { RoundedBoxGeometry } from 'three-stdlib';
 import { useTheme } from 'next-themes';
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/Tooltip";
-import KitInfoJson from '@/public/content/kits.json'
 
+import Confetti from 'react-confetti';
+import KitInfoJson from '@/public/content/kits.json'
+import CongratulatoryDialog from "./CongratulatoryDialog";
+import FeatureRule from '@/public/content/feature.rule.json'
 interface GiftBox3DProps {
   size: number;
   color: number;
@@ -17,6 +20,11 @@ interface GiftBox3DProps {
 const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
+  const easterCount=FeatureRule.profile.showEasterEgg?FeatureRule.profile.easterCount:9999999999
+  // --- State and Refs for Easter Egg ---
+  const [isEasterEggVisible, setEasterEggVisible] = useState(false);
+  const clickCount = useRef(0);
+  
   const animationState = useRef({ 
     isAnimating: false, 
     startTime: 0, 
@@ -107,11 +115,9 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
         model.scale.lerp(targetScale, 0.08);
       }
       
-      // Base animations
       let baseRotationY = initialRotation.y + Math.cos(elapsedTime * 1.5) * 0.2;
       model.position.y = Math.sin(elapsedTime * 2) * size * 0.05;
       
-      // Click-to-animate logic
       if (animationState.current.isAnimating) {
         const timeSinceClick = elapsedTime - animationState.current.startTime;
         
@@ -164,9 +170,8 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
           }
         }
       } else {
-        // Apply base animations if no click animation is active
         model.rotation.y = baseRotationY;
-        model.rotation.x = initialRotation.x; // Ensure it returns to base X rotation
+        model.rotation.x = initialRotation.x;
       }
       
       renderer.render(scene, camera);
@@ -174,9 +179,19 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
     };
     animate();
 
-    // --- Event Listener for Click ---
-    const animationTypes = ['bounce', 'spin', 'jiggle', 'flip']; // Added 'flip'
+    // --- Event Listener for Click with Easter Egg logic ---
+    const animationTypes = ['bounce', 'spin', 'jiggle', 'flip'];
     const handleClick = () => {
+        // Increment click counter
+        clickCount.current += 1;
+
+        // Check for Easter Egg trigger
+        if (clickCount.current === easterCount) {
+          setEasterEggVisible(true);
+          clickCount.current = 0; // Reset counter
+        }
+
+        // Trigger random animation
         if (!animationState.current.isAnimating) {
             const randomIndex = Math.floor(Math.random() * animationTypes.length);
             animationState.current = {
@@ -200,22 +215,38 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
   }, [size, color, ribbonColor, type, resolvedTheme]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            ref={mountRef}
-            style={{ width: "100px", height: "100px", cursor: "pointer" }}
-            tabIndex={0}
-            aria-label="3D gift box"
-          />
-        </TooltipTrigger>
-        <TooltipContent sideOffset={8} className="text-center">
-          {KitInfoJson[type as keyof typeof KitInfoJson].description}
-        </TooltipContent>
-      </Tooltip>
-      <Badge variant={"outline"} className="inline-block lg:hidden font-semibold capitalize text-xs"> {KitInfoJson[type as keyof typeof KitInfoJson].label}</Badge>
-    </div>
+    <>
+      {isEasterEggVisible && (
+        <Confetti
+          recycle={false}
+          numberOfPieces={400}
+          onConfettiComplete={(confetti) => {
+            if (confetti) {
+              confetti.reset();
+            }
+          }}
+        />
+      )}
+
+      <CongratulatoryDialog open={isEasterEggVisible} setOpen={setEasterEggVisible}/>
+      
+      <div className="flex flex-col items-center justify-center">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              ref={mountRef}
+              style={{ width: "100px", height: "100px", cursor: "pointer" }}
+              tabIndex={0}
+              aria-label="3D gift box"
+            />
+          </TooltipTrigger>
+          <TooltipContent sideOffset={8} className="text-center">
+            {KitInfoJson[type as keyof typeof KitInfoJson].description}
+          </TooltipContent>
+        </Tooltip>
+        <Badge variant={"outline"} className="inline-block lg:hidden font-semibold capitalize text-xs"> {KitInfoJson[type as keyof typeof KitInfoJson].label}</Badge>
+      </div>
+    </>
   );
 };
 
