@@ -1,0 +1,14 @@
+{
+  "gold": {
+    "label": "Gold Schwags Kit",
+    "description": "You are eligible for the Gold Schwags Kit."
+  },
+  "regular": {
+    "label": "Regular Schwags Kit",
+    "description": "You are eligible for the Regular Schwags Kit."
+  },
+  "mini": {
+    "label": "Mini Schwags Kit",
+    "description": "You are eligible for the Mini Schwags Kit."
+  }
+} 

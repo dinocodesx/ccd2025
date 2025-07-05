@@ -30,6 +30,7 @@ declare module "next-auth" {
         student: boolean,
         bio: string,
         points: number,
+        unique_code:number,
         socials: {
           twitter?: string;
           github?: string;
