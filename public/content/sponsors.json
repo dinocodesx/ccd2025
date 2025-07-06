@@ -19,6 +19,13 @@
       "link": "https://wandb.ai/site/"
     }
   ],
+  "bronzeSponsors": [
+    {
+      "name": "Github",
+      "logo": "/images/sponsors/sponsors/github.png",
+      "link": "https://github.com"
+    }
+  ],
   "communityPartners": [
     {
       "name": "Women Techmakers Kolkata",

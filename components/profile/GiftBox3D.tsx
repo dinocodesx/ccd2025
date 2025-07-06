@@ -186,7 +186,7 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
         clickCount.current += 1;
 
         // Check for Easter Egg trigger
-        if (clickCount.current === easterCount) {
+        if (clickCount.current === easterCount && FeatureRule.profile.showEasterEgg) {
           setEasterEggVisible(true);
           clickCount.current = 0; // Reset counter
         }

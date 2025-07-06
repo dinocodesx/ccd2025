@@ -22,8 +22,8 @@
     "points": true,
     "redeem": false,
     "notTakingRequestsMessage": "Currently unavailable",
-    "showEasterEgg":true,
-    "easterCount":5
+    "showEasterEgg":false,
+    "easterCount":15
   },
   "showJobs":false
 }
