@@ -13,6 +13,7 @@ import Image from "next/image";
 import LeaderBoard from "../../components/profile/LeaderBoard";
 import Frame, { FrameType } from "../../components/profile/Frames";
 import Tickets from "./(Tickets)/Tickets";
+import Jobs from "./Jobs";
 import ProfileForm from "@/components/profile/ProfileForm";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -24,7 +25,7 @@ import Loader from "@/components/Loader";
 
 import GiftBox3D from "@/components/profile/GiftBox3D";
 import { Badge } from "@/components/ui/Badge";
-
+import FeatureRule from '@/public/content/feature.rule.json'
 function Points({ points }: { points: number }) {
   return <div
     className={cn(
@@ -74,7 +75,8 @@ export default function ProfileCard({
     { value: "Points", link: "?tab=Points" },
     { value: "Leaderboard", link: "?tab=Leaderboard" },
   ];
-
+if(FeatureRule.showJobs)
+  validTabs.push({value:"Jobs",link:"?tab=Jobs"})
 
   // const kit = 'gold'
   const kit = user.goodie_tier.toLowerCase()
@@ -263,6 +265,9 @@ export default function ProfileCard({
             </TabsContent>
             <TabsContent value="Leaderboard">
               <LeaderBoard />
+            </TabsContent>
+            <TabsContent value="Jobs">
+              <Jobs/>
             </TabsContent>
           </Tabs>
         </div>
