@@ -37,4 +37,7 @@ export const REDEMPTION_URL = CCD2025_BE_BASE_URL + '/redemption-requests/';
 
 
 
+export const JOBS_DJANGO_URL = CCD2025_BE_BASE_URL + '/jobs/';
+export const RECRUITERS_DJANGO_URL = CCD2025_BE_BASE_URL + '/recruiters/';
+
 

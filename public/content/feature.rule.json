@@ -24,5 +24,6 @@
     "notTakingRequestsMessage": "Currently unavailable",
     "showEasterEgg":true,
     "easterCount":5
-  }
+  },
+  "showJobs":false
 }
