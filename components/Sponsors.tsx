@@ -8,6 +8,7 @@ const Sponsors: React.FC = () => {
     description,
     titleSponsors,
     silverSponsors,
+    bronzeSponsors,
     communityPartners,
     pastSponsors,
     illustration,
@@ -114,6 +115,46 @@ const Sponsors: React.FC = () => {
                             src={sponsor.logo}
                             alt={`${sponsor.name || "Silver Sponsor"} logo`}
                             className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
+                          />
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </CardContainer>
+          </div>
+        )}
+        {/* Bronze Sponsors */}
+        {bronzeSponsors && bronzeSponsors.length > 0 && (
+          <div className="mb-8 sm:mb-12 lg:mb-16">
+            <CardContainer
+              headerTitle={
+                <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
+                  Bronze Sponsors
+                </span>
+              }
+              maxWidth="max-w-4xl"
+            >
+              <div className="grid grid-cols-1">
+                {bronzeSponsors.map((sponsor, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
+                  >
+                    <a
+                      href={sponsor.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full h-full"
+                    >
+                      <div className="relative rounded-lg overflow-hidden w-full h-full">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                        <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
+                          <img
+                            src={sponsor.logo}
+                            alt={`${sponsor.name || "Silver Sponsor"} logo`}
+                            className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity p-2"
                           />
                         </div>
                       </div>
