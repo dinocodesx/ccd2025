@@ -79,7 +79,7 @@ export default function ProfileCard({
     validTabs.push({ value: "Jobs", link: "?tab=Jobs" })
 
   // const kit = 'gold'
-  const kit = user.goodie_tier.toLowerCase()
+  const kit = user.event_role === 'volunteer' ? 'volunteer' : user.goodie_tier.toLowerCase() as FrameType || "regular";
 
   // Kit properties
   const kitProps = {
@@ -100,6 +100,12 @@ export default function ProfileCard({
       size: 2,
       color: 0xfaab00, // google-yellow
       ribbonColor: 0x4285f4, // google-blue
+    },
+    volunteer: {
+      label: 'Volunteer',
+      size: 2,
+      color: 0x34a853, // google-green
+      ribbonColor: 0xfaab00, // google-yellow
     },
   };
 

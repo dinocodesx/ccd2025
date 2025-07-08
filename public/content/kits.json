@@ -10,5 +10,9 @@
   "mini": {
     "label": "Mini Schwags Kit",
     "description": "You are eligible for the Mini Schwags Kit."
+  },
+  "volunteer": {
+    "label": "Volunteer Schwags Kit",
+    "description": "You are eligible for the Volunteer Schwags Kit."
   }
-} 
+}
