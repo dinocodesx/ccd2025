@@ -81,7 +81,7 @@ export default function Tickets({ session }: { session: Session }) {
     const profile = (session?.user as any)?.profile;
     const uniqueCode = profile?.unique_code || "-1000";
     const firstName: string | undefined = profile?.first_name || "";
-    const lastName: string | undefined = profile?.last_name[0] === '.' ? '' : profile?.last_name[0] || "";
+    const lastName: string | undefined = profile?.last_name === '.' ? '' : profile?.last_name || "";
     let fullName = `${firstName} ${lastName}`.trim()
     if (fullName.length > 28 && lastName)
       fullName = `${firstName} ${lastName.charAt(0).toUpperCase()}.`.trim()

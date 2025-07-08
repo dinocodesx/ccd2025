@@ -106,7 +106,7 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: user?.first_name || "",
-      lastName: user?.last_name[0] === '.' ? "" : user?.last_name[0] || "",
+      lastName: user?.last_name === '.' ? "" : user?.last_name || "",
       email: session.user.email || "",
       company: user.company || "",
       role: user?.role || "",
@@ -132,7 +132,7 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
       FeatureRuleContent.profile.edit ?
         {
           first_name: values.firstName || "",
-          last_name: values.lastName[0] === '.' ? "" : values.lastName[0] || "",
+          last_name: values.lastName === '.' ? "" : values.lastName || "",
           email: values.email || "",
           company: values.company,
           role: values.role || "",

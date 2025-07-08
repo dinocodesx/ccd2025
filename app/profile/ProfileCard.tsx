@@ -135,7 +135,7 @@ export default function ProfileCard({
                     />
                     <AvatarFallback>
                       {user?.first_name[0] || "A"}
-                      {user?.last_name[0] === '.' ? "" : user?.last_name[0] || "W"}
+                      {user?.last_name === '.' ? "" : user?.last_name || "W"}
                     </AvatarFallback>
                   </Avatar>
                   <Image
@@ -159,7 +159,7 @@ export default function ProfileCard({
                   <div className="flex items-center">
                     <div className="flex flex-col">
                       <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate flex gap-2" >
-                        {user?.first_name} {user?.last_name[0] === '.' ? '' : user?.last_name[0]}
+                        {user?.first_name} {user?.last_name === '.' ? '' : user?.last_name}
                         <div className="ml-1 hidden lg:inline -mt-1">
                           <Badge>{kitProps[kit as keyof typeof kitProps].label}</Badge>
                         </div>
