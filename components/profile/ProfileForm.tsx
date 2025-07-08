@@ -32,7 +32,7 @@ import type { UserProfile } from "@/types/login";
 import type { Session } from "next-auth";
 
 // FormValues type
- type FormValues = {
+type FormValues = {
   firstName: string;
   lastName: string;
   email?: string;
@@ -70,7 +70,7 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
     course: z.string().optional(),
     graduation_year: z.number().optional(),
     student: z.boolean().default(false),
-    tsize:z.string().optional(),
+    tsize: z.string().optional(),
     twitter: z
       .string()
       .trim()
@@ -106,7 +106,7 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: user?.first_name || "",
-      lastName: user?.last_name || "",
+      lastName: user?.last_name[0] === '.' ? "" : user?.last_name[0] || "",
       email: session.user.email || "",
       company: user.company || "",
       role: user?.role || "",
@@ -132,7 +132,7 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
       FeatureRuleContent.profile.edit ?
         {
           first_name: values.firstName || "",
-          last_name: values.lastName || "",
+          last_name: values.lastName[0] === '.' ? "" : values.lastName[0] || "",
           email: values.email || "",
           company: values.company,
           role: values.role || "",
@@ -417,36 +417,36 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
                   T-shirt Size
                 </FormLabel>
                 <FormControl>
-                <Select
-                  disabled={!FeatureRuleContent.profile.editTshirt}
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your t-shirt size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {[
-                        {
-                          value: "S",
-                          display_name: "Small",
-                        },
-                        { value: "M", display_name: "Medium" },
-                        { value: "L", display_name: "Large" },
-                        { value: "XL", display_name: "X-Large" },
-                        { value: "2XL", display_name: "2X-Large" },
-                        { value: "3XL", display_name: "3X-Large" },
-                        { value: "4XL", display_name: "4X-Large" },
-                        { value: "5XL", display_name: "5X-Large" },
-                      ].map((e) => (
-                        <SelectItem key={e.value} value={e.value}>
-                          {e.display_name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  <Select
+                    disabled={!FeatureRuleContent.profile.editTshirt}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your t-shirt size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {[
+                          {
+                            value: "S",
+                            display_name: "Small",
+                          },
+                          { value: "M", display_name: "Medium" },
+                          { value: "L", display_name: "Large" },
+                          { value: "XL", display_name: "X-Large" },
+                          { value: "2XL", display_name: "2X-Large" },
+                          { value: "3XL", display_name: "3X-Large" },
+                          { value: "4XL", display_name: "4X-Large" },
+                          { value: "5XL", display_name: "5X-Large" },
+                        ].map((e) => (
+                          <SelectItem key={e.value} value={e.value}>
+                            {e.display_name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage className="text-xs text-red-500" />
               </FormItem>
@@ -524,9 +524,9 @@ export default function ProfileForm({ user, session }: { user: UserProfile; sess
             disabled={isSubmitting}
             className="bg-primary hover:bg-primary/90 text-white dark:text-black px-6 sm:px-8 text-sm sm:text-base flex items-center gap-2"
           >
-            <GeminiIcon className="dark:invert"/>
+            <GeminiIcon className="dark:invert" />
             {isSubmitting ? "Saving..." : "Save"}
-            <GeminiIcon className="dark:invert ml-0"/>
+            <GeminiIcon className="dark:invert ml-0" />
           </Button>
         </div>
       </form>

@@ -75,8 +75,8 @@ export default function ProfileCard({
     { value: "Points", link: "?tab=Points" },
     { value: "Leaderboard", link: "?tab=Leaderboard" },
   ];
-if(FeatureRule.showJobs)
-  validTabs.push({value:"Jobs",link:"?tab=Jobs"})
+  if (FeatureRule.showJobs)
+    validTabs.push({ value: "Jobs", link: "?tab=Jobs" })
 
   // const kit = 'gold'
   const kit = user.goodie_tier.toLowerCase()
@@ -135,7 +135,7 @@ if(FeatureRule.showJobs)
                     />
                     <AvatarFallback>
                       {user?.first_name[0] || "A"}
-                      {user?.last_name[0] || "W"}
+                      {user?.last_name[0] === '.' ? "" : user?.last_name[0] || "W"}
                     </AvatarFallback>
                   </Avatar>
                   <Image
@@ -159,9 +159,9 @@ if(FeatureRule.showJobs)
                   <div className="flex items-center">
                     <div className="flex flex-col">
                       <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate flex gap-2" >
-                        {user?.first_name} {user.last_name}
+                        {user?.first_name} {user?.last_name[0] === '.' ? '' : user?.last_name[0]}
                         <div className="ml-1 hidden lg:inline -mt-1">
-                        <Badge>{kitProps[kit as keyof typeof kitProps].label}</Badge>
+                          <Badge>{kitProps[kit as keyof typeof kitProps].label}</Badge>
                         </div>
                       </h2>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -267,7 +267,7 @@ if(FeatureRule.showJobs)
               <LeaderBoard />
             </TabsContent>
             <TabsContent value="Jobs">
-              <Jobs/>
+              <Jobs />
             </TabsContent>
           </Tabs>
         </div>
