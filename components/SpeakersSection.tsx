@@ -4,7 +4,7 @@ import { ChevronsDown, ChevronsUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 import { getSpeakers } from "@/lib/speakers";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import SpeakerDialog from "@/components/SpeakerDialog";
 import Image from "next/image";
 
 interface Speaker {
@@ -238,39 +238,11 @@ const SpeakersSection: React.FC = () => {
         </div>
       )}
 
-      <Dialog
+      <SpeakerDialog
         open={!!selectedSpeaker}
         onOpenChange={() => setSelectedSpeaker(null)}
-      >
-        <DialogContent className="max-w-2xl z-999 max-h-[700px] md:h-auto">
-          {selectedSpeaker && (
-            <>
-              <DialogHeader>
-                <div className="flex flex-col items-center">
-                  <div
-                    className="size-32 rounded-lg bg-gray-200 bg-center bg-cover border-2 border-black/80 mb-4"
-                    style={{
-                      backgroundImage: `url(${selectedSpeaker.profilePicture})`,
-                      backgroundSize: "cover",
-                    }}
-                  />
-                  <DialogTitle className="text-xl font-bold text-center">
-                    {selectedSpeaker.fullName}
-                  </DialogTitle>
-                  <p className="text-base mb-2 text-center">
-                    {selectedSpeaker.tagLine}
-                  </p>
-                </div>
-              </DialogHeader>
-              <div className="my-2">
-                <div className="text-center whitespace-pre-line scroll-auto mb-2">
-                  {selectedSpeaker.bio}
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+        speaker={selectedSpeaker}
+      />
     </section>
   );
 };

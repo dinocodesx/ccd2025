@@ -1,6 +1,6 @@
 {
   "title": "Sponsors",
-  "description": "We extend our heartfelt gratitude to all our sponsors who are going to contribute to making CCD 2024 Kolkata an unforgettable experience and helping us create a remarkable footprint in the tech industry. If you're interested in becoming a sponsor, please reach out to us for more information.",
+  "description": "We extend our heartfelt gratitude to all our sponsors who are going to contribute to making CCD 2025 Kolkata an unforgettable experience and helping us create a remarkable footprint in the tech industry. If you're interested in becoming a sponsor, please reach out to us for more information.",
   "illustration": {
     "src": "/images/elements/blocks-red.svg",
     "alt": "Sponsors Illustration",
@@ -24,6 +24,20 @@
       "name": "Github",
       "logo": "/images/sponsors/sponsors/github.png",
       "link": "https://github.com"
+    }
+  ],
+  "placementPartners": [
+    {
+      "name": "Flow Community",
+      "logo": "/images/sponsors/sponsors/flow.png",
+      "link": "https://withflow.co/"
+    }
+  ],
+  "mediaPartners": [
+    {
+      "name": "Oh Kolkata!",
+      "logo": "/images/sponsors/sponsors/ohkolkata.png",
+      "link": "https://www.instagram.com/ohkolkata?igsh=MTNvcXJhY2p2ZHBkMg=="
     }
   ],
   "communityPartners": [
