@@ -28,9 +28,16 @@
   ],
   "placementPartners": [
     {
-      "name": "Github",
+      "name": "Flow Community",
       "logo": "/images/sponsors/sponsors/flow.png",
       "link": "https://withflow.co/"
+    }
+  ],
+  "mediaPartners": [
+    {
+      "name": "Oh Kolkata!",
+      "logo": "/images/sponsors/sponsors/ohkolkata.png",
+      "link": "https://www.instagram.com/ohkolkata?igsh=MTNvcXJhY2p2ZHBkMg=="
     }
   ],
   "communityPartners": [

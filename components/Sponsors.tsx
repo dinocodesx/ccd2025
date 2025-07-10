@@ -10,6 +10,7 @@ const Sponsors: React.FC = () => {
     silverSponsors,
     bronzeSponsors,
     placementPartners,
+    mediaPartners, // <-- Add this line
     communityPartners,
     pastSponsors,
     illustration,
@@ -195,7 +196,47 @@ const Sponsors: React.FC = () => {
                           <img
                             src={sponsor.logo}
                             alt={`${sponsor.name || "Placement Partner"} logo`}
-                            className="h-auto w-auto max-h-24 sm:max-h-20 object-cover hover:opacity-80 transition-opacity p-2"
+                            className="h-auto w-auto max-h-24 sm:max-h-20 object-cover hover:opacity-80 transition-opacity p-2 "
+                          />
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </CardContainer>
+          </div>
+        )}
+        {/* Media Partners */}
+        {mediaPartners && mediaPartners.length > 0 && (
+          <div className="mb-8 sm:mb-12 lg:mb-16">
+            <CardContainer
+              headerTitle={
+                <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
+                  Media Partner
+                </span>
+              }
+              maxWidth="max-w-4xl"
+            >
+              <div className="grid grid-cols-1">
+                {mediaPartners.map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
+                  >
+                    <a
+                      href={partner.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full h-full"
+                    >
+                      <div className="relative rounded-lg overflow-hidden w-full h-full">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                        <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
+                          <img
+                            src={partner.logo}
+                            alt={`${partner.name || "Media Partner"} logo`}
+                            className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
                           />
                         </div>
                       </div>
