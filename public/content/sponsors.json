@@ -26,6 +26,13 @@
       "link": "https://github.com"
     }
   ],
+  "placementPartners": [
+    {
+      "name": "Github",
+      "logo": "/images/sponsors/sponsors/flow.png",
+      "link": "https://withflow.co/"
+    }
+  ],
   "communityPartners": [
     {
       "name": "Women Techmakers Kolkata",
