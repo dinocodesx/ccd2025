@@ -1,11 +1,19 @@
 {
-    "title": "Meet the speakers",
-    "description": "The passionate and expert speakers behind Cloud Community Day Kolkata 2025.",
-    "illustration": {
-        "src": "/images/elements/green_block_full.png",
-        "alt": "Privacy Policy Illustration",
-        "width": 300,
-        "height": 300
-      }
-  }
-  
+  "title": "Meet the speakers",
+  "description": "The passionate and expert speakers behind Cloud Community Day Kolkata 2025.",
+  "illustration": {
+    "src": "/images/elements/green_block_full.png",
+    "alt": "Privacy Policy Illustration",
+    "width": 300,
+    "height": 300
+  },
+  "guestOfHonor": [
+    {
+      "name": "Tom Reiner",
+      "designation": "Regional Director IGCC East India",
+      "bio":"Tom Reiner is the Regional Director of the Indo-German Chamber of Commerce, East India, a position he has held for the past two years. With over nine years of experience working in India, Tom brings a wealth of expertise in fostering Indo-German trade and industry relations. Prior to his current role, he served as the National Manager for a prominent German company in the construction and building materials sector, where he was responsible for strategic operations across India. \n\nOriginally from Berlin, Germany, Tom's international career includes professional stints in Australia and Finland, enriching his global business perspective. In his capacity as Regional Director, he represents the interests of the German industry in India, facilitating business development, partnerships, and economic collaboration between the two nations.",
+      "image": "https://indien.ahk.de/var/site/storage/images/_aliases/image_480/1/0/4/4/6344401-1-eng-GB/800703bbf5f1-Tom.jpg",
+       "linkedin": "https://www.linkedin.com/in/tom-reiner"
+    }
+  ]
+}
