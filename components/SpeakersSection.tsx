@@ -14,6 +14,7 @@ interface Speaker {
   bio: string;
   profilePicture: string;
   links?: { title: string; url: string; linkType: string }[];
+  questionAnswers?: { question: string; answer: string | null }[];
 }
 
 const socialIcon = (type: string) => {
@@ -21,6 +22,28 @@ const socialIcon = (type: string) => {
   if (type === "Twitter" || type === "X") return "/images/socials/x.svg";
   return null;
 };
+
+// Helper to get social link from links or questionAnswers
+function getSocialLink(speaker: Speaker, type: 'LinkedIn' | 'Twitter' | 'X'): string | null {
+  // 1. Check links array
+  if (speaker.links && speaker.links.length > 0) {
+    const found = speaker.links.find(
+      l => l.linkType === type || (type === 'Twitter' && l.linkType === 'X')
+    );
+    if (found && found.url) return found.url;
+  }
+  // 2. Check questionAnswers
+  if (speaker.questionAnswers && speaker.questionAnswers.length > 0) {
+    let questionKey = '';
+    if (type === 'LinkedIn') questionKey = 'Linkedin Profile';
+    if (type === 'Twitter' || type === 'X') questionKey = 'Twitter Profile';
+    const found = speaker.questionAnswers.find(
+      qa => qa.question && qa.question.toLowerCase().includes(questionKey.toLowerCase()) && qa.answer
+    );
+    if (found && found.answer) return found.answer;
+  }
+  return null;
+}
 
 const SpeakersSection: React.FC = () => {
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
@@ -148,29 +171,29 @@ const SpeakersSection: React.FC = () => {
                     </div>
                     {/* Mobile social icons (with border) - below tagline, above bio */}
                     <div className="flex flex-row items-center gap-2 mt-1 mb-2 justify-center md:hidden">
-                      {speaker.links &&
-                        speaker.links.map((link) =>
-                          link.linkType === "LinkedIn" ||
-                            link.linkType === "Twitter" ||
-                            link.linkType === "X" ? (
-                            <a
-                              key={link.url}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center border-2 border-black/80 rounded-full p-1"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Image
-                                src={socialIcon(link.linkType) || ""}
-                                alt={link.linkType}
-                                width={16}
-                                height={16}
-                                className="w-4 h-4"
-                              />
-                            </a>
-                          ) : null
-                        )}
+                      {/* Render social icons from links or questionAnswers */}
+                      {['LinkedIn', 'Twitter'].map((type) => {
+                        const url = getSocialLink(speaker, type as 'LinkedIn' | 'Twitter');
+                        if (!url) return null;
+                        return (
+                          <a
+                            key={type}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center border-2 border-black/80 rounded-full p-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Image
+                              src={socialIcon(type) || ''}
+                              alt={type}
+                              width={16}
+                              height={16}
+                              className="w-4 h-4"
+                            />
+                          </a>
+                        );
+                      })}
                     </div>
                     {/* Mobile bio section (sm and below) */}
                     <div className="md:hidden bg-gray-200 p-4 px-4 flex flex-col items-center justify-between rounded-t-xl">
@@ -206,29 +229,29 @@ const SpeakersSection: React.FC = () => {
                     </div>
                     {/* Desktop social icons (no border) - always below bio */}
                     <div className="hidden md:flex flex-row items-center gap-2 mt-1 mb-4">
-                      {speaker.links &&
-                        speaker.links.map((link) =>
-                          link.linkType === "LinkedIn" ||
-                            link.linkType === "Twitter" ||
-                            link.linkType === "X" ? (
-                            <a
-                              key={link.url}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Image
-                                src={socialIcon(link.linkType) || ""}
-                                alt={link.linkType}
-                                width={16}
-                                height={16}
-                                className="w-4 h-4"
-                              />
-                            </a>
-                          ) : null
-                        )}
+                      {/* Render social icons from links or questionAnswers */}
+                      {['LinkedIn', 'Twitter'].map((type) => {
+                        const url = getSocialLink(speaker, type as 'LinkedIn' | 'Twitter');
+                        if (!url) return null;
+                        return (
+                          <a
+                            key={type}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Image
+                              src={socialIcon(type) || ''}
+                              alt={type}
+                              width={16}
+                              height={16}
+                              className="w-4 h-4"
+                            />
+                          </a>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

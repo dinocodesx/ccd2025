@@ -33,11 +33,19 @@
       "link": "https://withflow.co/"
     }
   ],
+
   "mediaPartners": [
     {
       "name": "Oh Kolkata!",
       "logo": "/images/sponsors/sponsors/ohkolkata.png",
       "link": "https://www.instagram.com/ohkolkata?igsh=MTNvcXJhY2p2ZHBkMg=="
+    }
+  ],
+  "digitalPartners": [
+    {
+      "name": "Teamology",
+      "logo": "/images/sponsors/sponsors/teamology.png",
+      "link": "https://theteamology.com/"
     }
   ],
   "communityPartners": [

@@ -20,7 +20,30 @@ interface SpeakerDialogProps {
     profilePicture?: string; // for speaker
     links?: { title: string; url: string; linkType: string }[];
     linkedin?: string; // for guest
+    questionAnswers?: { question: string; answer: string | null }[];
   } | null;
+}
+
+// Helper to get social link from links or questionAnswers
+function getSocialLink(speaker: any, type: 'LinkedIn' | 'Twitter' | 'X'): string | null {
+  // 1. Check links array
+  if (speaker.links && speaker.links.length > 0) {
+    const found = speaker.links.find(
+      (l: any) => l.linkType === type || (type === 'Twitter' && l.linkType === 'X')
+    );
+    if (found && found.url) return found.url;
+  }
+  // 2. Check questionAnswers
+  if (speaker.questionAnswers && speaker.questionAnswers.length > 0) {
+    let questionKey = '';
+    if (type === 'LinkedIn') questionKey = 'Linkedin Profile';
+    if (type === 'Twitter' || type === 'X') questionKey = 'Twitter Profile';
+    const found = speaker.questionAnswers.find(
+      (qa: any) => qa.question && qa.question.toLowerCase().includes(questionKey.toLowerCase()) && qa.answer
+    );
+    if (found && found.answer) return found.answer;
+  }
+  return null;
 }
 
 const SpeakerDialog: React.FC<SpeakerDialogProps> = ({ open, onOpenChange, speaker }) => {
@@ -50,25 +73,28 @@ const SpeakerDialog: React.FC<SpeakerDialogProps> = ({ open, onOpenChange, speak
             </DialogTitle>
             <p className="text-base mb-2 text-center">{displayTag}</p>
             <div className="flex flex-row items-center gap-2 mt-1 mb-2 justify-center">
-              {links.map((link) =>
-                link.linkType === "LinkedIn" || link.linkType === "Twitter" || link.linkType === "X" ? (
+              {/* Render social icons from links or questionAnswers */}
+              {['LinkedIn', 'Twitter'].map((type) => {
+                const url = getSocialLink(speaker, type as 'LinkedIn' | 'Twitter');
+                if (!url) return null;
+                return (
                   <a
-                    key={link.url}
-                    href={link.url}
+                    key={type}
+                    href={url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center border-2 border-black/80 rounded-full p-1"
                   >
                     <Image
-                      src={socialIcon(link.linkType) || ""}
-                      alt={link.linkType}
+                      src={socialIcon(type) || ''}
+                      alt={type}
                       width={20}
                       height={20}
                       className="w-5 h-5"
                     />
                   </a>
-                ) : null
-              )}
+                );
+              })}
             </div>
           </div>
         </DialogHeader>
