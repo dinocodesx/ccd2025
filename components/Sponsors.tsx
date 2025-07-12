@@ -1,7 +1,7 @@
 import React from "react";
 import CardContainer from "./ui/CardContainer";
 import sponsorsData from "../public/content/sponsors.json";
-import FeatureRule from '../public/content/feature.rule.json'
+import FeatureRule from "../public/content/feature.rule.json";
 const Sponsors: React.FC = () => {
   const {
     title,
@@ -10,7 +10,8 @@ const Sponsors: React.FC = () => {
     silverSponsors,
     bronzeSponsors,
     placementPartners,
-    mediaPartners, // <-- Add this line
+    mediaPartners,
+    digitalPartners,
     communityPartners,
     pastSponsors,
     illustration,
@@ -167,84 +168,134 @@ const Sponsors: React.FC = () => {
             </CardContainer>
           </div>
         )}
-        {/* Placement Partner */}
-        {placementPartners && placementPartners.length > 0 && (
-          <div className="mb-8 sm:mb-12 lg:mb-16">
-            <CardContainer
-              headerTitle={
-                <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
-                  Placement Partner
-                </span>
-              }
-              maxWidth="max-w-4xl"
-            >
-              <div className="grid grid-cols-1">
-                {placementPartners.map((sponsor, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
-                  >
-                    <a
-                      href={sponsor.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full h-full"
-                    >
-                      <div className="relative rounded-lg overflow-hidden w-full h-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
-                        <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
-                          <img
-                            src={sponsor.logo}
-                            alt={`${sponsor.name || "Placement Partner"} logo`}
-                            className="h-auto w-auto max-h-24 sm:max-h-20 object-cover hover:opacity-80 transition-opacity p-2 "
-                          />
-                        </div>
+        {/* Partners Grid - Placement, Media, Digital */}
+        {(placementPartners?.length > 0 ||
+          mediaPartners?.length > 0 ||
+          digitalPartners?.length > 0) && (
+          <div className="mb-8 sm:mb-12 lg:mb-16 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              {/* Placement Partner */}
+              {placementPartners && placementPartners.length > 0 && (
+                <CardContainer
+                  className="p-4 lg:px-0 lg:py-4"
+                  headerTitle={
+                    <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
+                      Placement Partner
+                    </span>
+                  }
+                  maxWidth="max-w-4xl"
+                >
+                  <div className="grid grid-cols-1">
+                    {placementPartners.map((sponsor, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
+                      >
+                        <a
+                          href={sponsor.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full h-full"
+                        >
+                          <div className="relative rounded-lg overflow-hidden w-full h-full">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                            <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
+                              <img
+                                src={sponsor.logo}
+                                alt={`${
+                                  sponsor.name || "Placement Partner"
+                                } logo`}
+                                className="h-auto w-auto max-h-24 sm:max-h-20 object-cover hover:opacity-80 transition-opacity p-2 "
+                              />
+                            </div>
+                          </div>
+                        </a>
                       </div>
-                    </a>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContainer>
-          </div>
-        )}
-        {/* Media Partners */}
-        {mediaPartners && mediaPartners.length > 0 && (
-          <div className="mb-8 sm:mb-12 lg:mb-16">
-            <CardContainer
-              headerTitle={
-                <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
-                  Media Partner
-                </span>
-              }
-              maxWidth="max-w-4xl"
-            >
-              <div className="grid grid-cols-1">
-                {mediaPartners.map((partner, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
-                  >
-                    <a
-                      href={partner.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full h-full"
-                    >
-                      <div className="relative rounded-lg overflow-hidden w-full h-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
-                        <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
-                          <img
-                            src={partner.logo}
-                            alt={`${partner.name || "Media Partner"} logo`}
-                            className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
-                          />
-                        </div>
+                </CardContainer>
+              )}
+              {/* Media Partners */}
+              {mediaPartners && mediaPartners.length > 0 && (
+                <CardContainer
+                  className="p-4 lg:px-0 lg:py-4"
+                  headerTitle={
+                    <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
+                      Media Partner
+                    </span>
+                  }
+                  maxWidth="max-w-4xl"
+                >
+                  <div className="grid grid-cols-1">
+                    {mediaPartners.map((partner, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
+                      >
+                        <a
+                          href={partner.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full h-full"
+                        >
+                          <div className="relative rounded-lg overflow-hidden w-full h-full">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                            <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
+                              <img
+                                src={partner.logo}
+                                alt={`${partner.name || "Media Partner"} logo`}
+                                className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
+                              />
+                            </div>
+                          </div>
+                        </a>
                       </div>
-                    </a>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContainer>
+                </CardContainer>
+              )}
+              {/* Digital Partners */}
+              {digitalPartners && digitalPartners.length > 0 && (
+                <CardContainer
+                  className="p-4 lg:px-0 lg:py-4"
+                  headerTitle={
+                    <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
+                      Digital Partner
+                    </span>
+                  }
+                  maxWidth="max-w-4xl"
+                >
+                  <div className="grid grid-cols-1">
+                    {digitalPartners.map((partner, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
+                      >
+                        <a
+                          href={partner.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full h-full"
+                        >
+                          <div className="relative rounded-lg overflow-hidden w-full h-full">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                            <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
+                              <img
+                                src={partner.logo}
+                                alt={`${
+                                  partner.name || "Digital Partner"
+                                } logo`}
+                                className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
+                              />
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </CardContainer>
+              )}
+            </div>
           </div>
         )}
 
@@ -258,75 +309,75 @@ const Sponsors: React.FC = () => {
             }
             maxWidth="max-w-4xl"
           >
-
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
-
               {communityPartners
                 .filter(
                   (partner) =>
-                    !(FeatureRule.disabledCommunityPartners as string[]).includes(
-                      partner.name 
-                    )
+                    !(
+                      FeatureRule.disabledCommunityPartners as string[]
+                    ).includes(partner.name)
                 )
                 .map((partner, index) => (
                   <div
                     key={index}
                     className="flex flex-col items-center justify-center h-40 sm:h-32 p-3"
                   >
-
-
-                  {partner.logo ? (
-                    // If logo is available, will be displayed with gradient border
-                    <a
-                      href={partner.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex flex-col items-center w-full h-full"
-                    >
-                      <div className="relative rounded-lg overflow-hidden w-full h-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
-                        <div className="absolute inset-[1px] bg-white rounded-lg p-2.5 flex items-center justify-center">
-                          <img
-                            src={partner.logo}
-                            alt={`${partner.name || "Community Partner"} logo`}
-                            className={`h-auto w-auto max-h-28 sm:max-h-24 object-contain hover:opacity-80 transition-opacity ${partner.logo.includes("cv.png") ? "invert" : ""}`}
-                          />
+                    {partner.logo ? (
+                      // If logo is available, will be displayed with gradient border
+                      <a
+                        href={partner.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-col items-center w-full h-full"
+                      >
+                        <div className="relative rounded-lg overflow-hidden w-full h-full">
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                          <div className="absolute inset-[1px] bg-white rounded-lg p-2.5 flex items-center justify-center">
+                            <img
+                              src={partner.logo}
+                              alt={`${
+                                partner.name || "Community Partner"
+                              } logo`}
+                              className={`h-auto w-auto max-h-28 sm:max-h-24 object-contain hover:opacity-80 transition-opacity ${
+                                partner.logo.includes("cv.png") ? "invert" : ""
+                              }`}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </a>
-                  ) : (
-                    // If no logo, created placeholder with GDGoC image and partner name with gradient border
-                    <a
-                      href={partner.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex flex-col items-center w-full h-full"
-                    >
-                      <div className="relative rounded-lg overflow-hidden w-full h-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
-                        <div className="absolute inset-[1px] bg-white rounded-lg p-2.5 flex flex-col items-center justify-center text-center">
-                          <img
-                            src="/images/elements/GDGoC.png"
-                            alt="GDG On Campus"
-                            className="lg:h-16 sm:h-24 object-contain mb-1"
-                          />
-                          <div className="flex items-center justify-center">
-                            <span className="text-[12px] text-google-blue font-medium">
-                              On Campus
-                            </span>
-                            <div className="flex items-center justify-center ml-1">
-                              <div className="w-1 h-1 rounded-full bg-google-blue mx-1"></div>
-                              <span className="text-[12px] text-gray-800 dark:text-gray-500 font-medium line-clamp-1">
-                                {partner.name}
+                      </a>
+                    ) : (
+                      // If no logo, created placeholder with GDGoC image and partner name with gradient border
+                      <a
+                        href={partner.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-col items-center w-full h-full"
+                      >
+                        <div className="relative rounded-lg overflow-hidden w-full h-full">
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                          <div className="absolute inset-[1px] bg-white rounded-lg p-2.5 flex flex-col items-center justify-center text-center">
+                            <img
+                              src="/images/elements/GDGoC.png"
+                              alt="GDG On Campus"
+                              className="lg:h-16 sm:h-24 object-contain mb-1"
+                            />
+                            <div className="flex items-center justify-center">
+                              <span className="text-[12px] text-google-blue font-medium">
+                                On Campus
                               </span>
+                              <div className="flex items-center justify-center ml-1">
+                                <div className="w-1 h-1 rounded-full bg-google-blue mx-1"></div>
+                                <span className="text-[12px] text-gray-800 dark:text-gray-500 font-medium line-clamp-1">
+                                  {partner.name}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </a>
-                  )}
-                </div>
-              ))}
+                      </a>
+                    )}
+                  </div>
+                ))}
             </div>
           </CardContainer>
         </div>
