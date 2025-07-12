@@ -173,11 +173,11 @@ const Sponsors: React.FC = () => {
           mediaPartners?.length > 0 ||
           digitalPartners?.length > 0) && (
           <div className="mb-8 sm:mb-12 lg:mb-16 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div className="flex flex-wrap gap-4 sm:gap-6 items-center justify-between px-0">
               {/* Placement Partner */}
               {placementPartners && placementPartners.length > 0 && (
                 <CardContainer
-                  className="p-4 lg:px-0 lg:py-4"
+                  className="p-4 lg:px-0 lg:py-4 w-full md:w-[48%] mx-auto"
                   headerTitle={
                     <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
                       Placement Partner
@@ -218,7 +218,7 @@ const Sponsors: React.FC = () => {
               {/* Media Partners */}
               {mediaPartners && mediaPartners.length > 0 && (
                 <CardContainer
-                  className="p-4 lg:px-0 lg:py-4"
+                  className="p-4 lg:px-0 lg:py-4 w-full md:w-[48%] mx-auto"
                   headerTitle={
                     <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
                       Media Partner
@@ -257,7 +257,7 @@ const Sponsors: React.FC = () => {
               {/* Digital Partners */}
               {digitalPartners && digitalPartners.length > 0 && (
                 <CardContainer
-                  className="p-4 lg:px-0 lg:py-4"
+                  className="p-4 lg:px-0 lg:py-4 w-full md:w-[48%] mx-auto"
                   headerTitle={
                     <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
                       Digital Partner

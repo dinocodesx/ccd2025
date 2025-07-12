@@ -42,6 +42,7 @@ export async function getSpeakers(): Promise<Speaker[]> {
       bio: s.bio,
       profilePicture: s.profilePicture,
       links: s.links,
+      questionAnswers: s.questionAnswers, // <-- add this line
     }));
 
     // Update cache
