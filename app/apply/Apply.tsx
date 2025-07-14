@@ -4,19 +4,37 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { SubHeader } from "@/components/ui/SubHeader";
 import HrWithImage from "@/components/ui/HrWithImage";
 import { ArrowRight } from "lucide-react";
+import featureRule from "../../public/content/feature.rule.json";
 
 const Apply: React.FC = () => {
+  if (featureRule.ticketsSoldOut) {
+    return (
+      <div className="container mx-auto px-4 md:px-12 py-14 relative z-10">
+        <div className="min-h-screen overflow-hidden flex flex-col items-center justify-center">
+          <PageHeader>Tickets Sold Out</PageHeader>
+          <ContentParagraph className="text-lg md:text-xl py-4 text-muted-foreground text-center">
+            All tickets for Cloud Community Day Kolkata 2025 have been sold out. Thank you for your interest!
+          </ContentParagraph>
+          <button
+            className="bg-gray-400 text-white px-8 py-3 rounded-full font-medium text-lg inline-flex items-center cursor-not-allowed opacity-70 mt-8"
+            disabled
+          >
+            <ArrowRight className="inline-block mr-2 w-5 h-5" />
+            Tickets Sold Out
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto px-4 md:px-12 py-14 relative z-10">
       <div className="min-h-screen overflow-hidden">
         <div className="max-w-4xl mx-auto">
           <PageHeader>Apply for Tickets</PageHeader>
-
           <ContentParagraph className="text-lg md:text-xl py-4 text-muted-foreground">
             Follow these steps to secure your ticket for Cloud Community Day
             Kolkata 2025:
           </ContentParagraph>
-
           <HrWithImage
             src="/images/elements/2025-black.svg"
             alt="CCD 2025"
@@ -24,7 +42,6 @@ const Apply: React.FC = () => {
             height={100}
             className="dark:brightness-0 dark:invert"
           />
-
           <div className="space-y-12 mt-12">
             {[
               {
@@ -74,7 +91,6 @@ const Apply: React.FC = () => {
               </section>
             ))}
           </div>
-
           <div className="mt-16 flex justify-center">
             <a
               href="https://www.commudle.com/communities/gdg-cloud-kolkata/events/cloud-community-days-kolkata-2025"
