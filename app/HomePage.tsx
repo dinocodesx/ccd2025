@@ -5,6 +5,7 @@ import HeroSection2 from "@/components/HeroSection2";
 import SvgBand from "@/components/SvgBand";
 import React, { useState, useEffect } from "react";
 import CONTENT from "../public/content/home.json";
+import featureRule from "../public/content/feature.rule.json";
 import AboutFrame from "@/components/AboutFrame";
 import Highlights from "@/components/Highlights";
 import Link from "next/link";
@@ -12,6 +13,7 @@ import Sponsors from "@/components/Sponsors";
 import CompanyLogos from "@/components/SpeakerCompanies";
 import SpeakerCompaniesSection from "@/components/SpeakerCompanies";
 import { useTheme } from "next-themes";
+import GeminiIcon from "@/components/GeminiIcon";
 
 export default function HomePage() {
   const [backgroundOpacity, setBackgroundOpacity] = useState(0);
@@ -84,22 +86,33 @@ export default function HomePage() {
             </Link>
           </p>
 
-          <Link
-            href="/apply"
-            className="bg-[var(--black)] text-[var(--white)] dark:bg-[var(--white)] dark:text-[var(--black)] px-8 py-3 rounded-full font-medium text-lg inline-flex items-center"
-          >
-            <img
-              src="/images/elements/gemini.svg"
-              className="mr-4 dark:invert block"
-              alt={"gemini"}
-            />
-            Apply for Tickets
-            <img
-              src="/images/elements/gemini.svg"
-              className="ml-4 dark:invert block"
-              alt={"gemini"}
-            />
-          </Link>
+          {featureRule.ticketsSoldOut ? (
+            <button
+              className="bg-google-red text-white px-8 py-3 rounded-full font-medium text-lg inline-flex items-center cursor-not-allowed "
+              disabled
+            >
+              <GeminiIcon/>
+              Tickets Sold Out
+             <GeminiIcon/>
+            </button>
+          ) : (
+            <Link
+              href="/apply"
+              className="bg-[var(--black)] text-[var(--white)] dark:bg-[var(--white)] dark:text-[var(--black)] px-8 py-3 rounded-full font-medium text-lg inline-flex items-center"
+            >
+              <img
+                src="/images/elements/gemini.svg"
+                className="mr-4 dark:invert block"
+                alt={"gemini"}
+              />
+              Apply for Tickets
+              <img
+                src="/images/elements/gemini.svg"
+                className="ml-4 dark:invert block"
+                alt={"gemini"}
+              />
+            </Link>
+          )}
         </div>
 
         {/* City Skyline Image */}

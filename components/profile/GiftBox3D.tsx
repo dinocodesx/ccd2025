@@ -5,11 +5,11 @@ import { Badge } from "../ui/Badge";
 import { RoundedBoxGeometry } from 'three-stdlib';
 import { useTheme } from 'next-themes';
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/Tooltip";
-
 import Confetti from 'react-confetti';
 import KitInfoJson from '@/public/content/kits.json'
 import CongratulatoryDialog from "./CongratulatoryDialog";
 import FeatureRule from '@/public/content/feature.rule.json'
+
 interface GiftBox3DProps {
   size: number;
   color: number;
@@ -20,8 +20,13 @@ interface GiftBox3DProps {
 const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
-  const easterCount = FeatureRule.profile.showEasterEgg ? FeatureRule.profile.easterCount : 9999999999
-  // --- State and Refs for Easter Egg ---
+  let easterCount = 9999999999;
+  if (FeatureRule.profile.showEasterEgg) {
+    const min = FeatureRule.profile.easterCountMin || 1;
+    const max = FeatureRule.profile.easterCountMax || min;
+    easterCount = Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
   const [isEasterEggVisible, setEasterEggVisible] = useState(false);
   const clickCount = useRef(0);
 
@@ -103,6 +108,8 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
     // --- Animation ---
     const initialRotation = new THREE.Euler(0.25, -0.5, 0);
     model.rotation.copy(initialRotation);
+    const initialPosition = new THREE.Vector3(0, 0, 0);
+    model.position.copy(initialPosition);
 
     model.scale.set(0, 0, 0);
     const targetScale = new THREE.Vector3(1, 1, 1);
@@ -118,7 +125,7 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
       }
 
       let baseRotationY = initialRotation.y + Math.cos(elapsedTime * 1.5) * 0.2;
-      model.position.y = Math.sin(elapsedTime * 2) * size * 0.05;
+      let basePositionY = initialPosition.y + Math.sin(elapsedTime * 2) * size * 0.05;
 
       if (animationState.current.isAnimating) {
         const timeSinceClick = elapsedTime - animationState.current.startTime;
@@ -170,10 +177,55 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
             }
             break;
           }
+          case 'launch': {
+            const totalDuration = 2.5;
+            if (timeSinceClick < totalDuration) {
+                const shakeEnd = 0.4;
+                const launchEnd = 1.2;
+                const fallEnd = 1.8;
+                
+                // Phase 1: Pre-launch shake
+                if (timeSinceClick < shakeEnd) {
+                    model.position.x = initialPosition.x + (Math.random() - 0.5) * size * 0.1;
+                    model.position.z = initialPosition.z + (Math.random() - 0.5) * size * 0.1;
+                } 
+                // Phase 2 & 3: Launch and Fall
+                else if (timeSinceClick < fallEnd) {
+                    const flightProgress = (timeSinceClick - shakeEnd) / (fallEnd - shakeEnd);
+                    // Using a parabola (-x^2 + 1) to go up and come down smoothly
+                    const launchHeight = -4 * (flightProgress * flightProgress - flightProgress);
+                    model.position.y = basePositionY + launchHeight * size * 2.5; // Reduced height
+                    shadowPlane.material.opacity = shadowOpacity * (1 - launchHeight);
+                }
+                // Phase 4: Landing Ripples
+                else {
+                    const rippleProgress = (timeSinceClick - fallEnd) / (totalDuration - fallEnd);
+                    const rippleAmount = Math.exp(-rippleProgress * 5) * Math.sin(rippleProgress * 30);
+                    model.scale.x = 1 + rippleAmount * 0.2;
+                    model.scale.z = 1 + rippleAmount * 0.2;
+                }
+
+            } else {
+                animationState.current.isAnimating = false;
+                model.position.copy(initialPosition);
+                model.scale.copy(targetScale);
+                shadowPlane.material.opacity = shadowOpacity;
+            }
+            break;
+          }
         }
-      } else {
-        model.rotation.y = baseRotationY;
+      } 
+      
+      if (!animationState.current.isAnimating) {
+        // Apply base animations if no click animation is active
         model.rotation.x = initialRotation.x;
+        model.rotation.z = 0; // Ensure z rotation is reset
+        model.rotation.y = baseRotationY;
+        model.position.y = basePositionY;
+        model.position.x = initialPosition.x;
+        model.position.z = initialPosition.z;
+        shadowPlane.material.opacity = shadowOpacity;
+        model.visible = true;
       }
 
       renderer.render(scene, camera);
@@ -181,19 +233,13 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
     };
     animate();
 
-    // --- Event Listener for Click with Easter Egg logic ---
-    const animationTypes = ['bounce', 'spin', 'jiggle', 'flip'];
+    const animationTypes = ['bounce', 'spin', 'jiggle', 'flip', 'launch'];
     const handleClick = () => {
-      // Increment click counter
       clickCount.current += 1;
-
-      // Check for Easter Egg trigger
       if (clickCount.current === easterCount && FeatureRule.profile.showEasterEgg) {
         setEasterEggVisible(true);
-        clickCount.current = 0; // Reset counter
+        clickCount.current = 0;
       }
-
-      // Trigger random animation
       if (!animationState.current.isAnimating) {
         const randomIndex = Math.floor(Math.random() * animationTypes.length);
         animationState.current = {
@@ -205,7 +251,6 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
     };
     mount.addEventListener('click', handleClick);
 
-    // --- Cleanup ---
     return () => {
       cancelAnimationFrame(frameId);
       mount.removeEventListener('click', handleClick);
@@ -214,7 +259,7 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
       }
       renderer.dispose();
     };
-  }, [size, color, ribbonColor, type, resolvedTheme]);
+  }, [size, color, ribbonColor, type, resolvedTheme, easterCount]);
 
   return (
     <>
@@ -223,15 +268,11 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
           recycle={false}
           numberOfPieces={400}
           onConfettiComplete={(confetti) => {
-            if (confetti) {
-              confetti.reset();
-            }
+            if (confetti) confetti.reset();
           }}
         />
       )}
-
       <CongratulatoryDialog open={isEasterEggVisible} setOpen={setEasterEggVisible} />
-
       <div className="flex flex-col items-center justify-center">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -243,10 +284,12 @@ const GiftBox3D: React.FC<GiftBox3DProps> = ({ size, color, ribbonColor, type })
             />
           </TooltipTrigger>
           <TooltipContent sideOffset={8} className="text-center">
-            {KitInfoJson[type as keyof typeof KitInfoJson].description}
+            {KitInfoJson[type as keyof typeof KitInfoJson]?.description || "Schwag Kit"}
           </TooltipContent>
         </Tooltip>
-        <Badge variant={"outline"} className="inline-block lg:hidden font-semibold capitalize text-xs"> {KitInfoJson[type as keyof typeof KitInfoJson].label}</Badge>
+        <Badge variant={"outline"} className="inline-block lg:hidden font-semibold capitalize text-xs">
+          {KitInfoJson[type as keyof typeof KitInfoJson]?.label || `${type} Schwags Kit`}
+        </Badge>
       </div>
     </>
   );

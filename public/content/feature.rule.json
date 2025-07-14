@@ -22,8 +22,10 @@
     "points": true,
     "redeem": false,
     "notTakingRequestsMessage": "Currently unavailable",
-    "showEasterEgg":false,
-    "easterCount":15
+    "showEasterEgg":true,
+    "easterCountMin":20,
+    "easterCountMax":25
   },
-  "showJobs":false
+  "showJobs":false,
+  "ticketsSoldOut": false
 }
