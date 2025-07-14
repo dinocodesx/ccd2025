@@ -4,8 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { LoadingContextProvider } from "./loading-provider";
 
+
+
 import { NextAuthProvider } from "./session-provider";
 import { Toaster } from "@/components/ui/sonner"
+import Script from "next/script";
 const googleSans = localFont({
   src: [
     {
@@ -70,6 +73,18 @@ export default function RootLayout({
       <body
         className={`${googleSans.className}  antialiased min-h-screen`}
       >
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-4MCWY97MMG`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-4MCWY97MMG');
+          `}
+        </Script>
         <LoadingContextProvider>
           <NextAuthProvider>
             <ThemeProvider
@@ -83,6 +98,8 @@ export default function RootLayout({
             </ThemeProvider>
           </NextAuthProvider>
         </LoadingContextProvider>
+
+
       </body>
     </html>
   );
