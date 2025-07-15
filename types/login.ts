@@ -92,9 +92,11 @@ export type UserProfile = {
     college: string | null;
     course: string | null;
     graduation_year: number | null;
+    is_checked_in:boolean,
     company: string | null;
     role: string;
     points:number;
+    unique_code:number;
     goodie_tier:string;
     socials: {
       github: string;

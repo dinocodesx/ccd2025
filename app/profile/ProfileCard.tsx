@@ -75,11 +75,12 @@ export default function ProfileCard({
     { value: "Points", link: "?tab=Points" },
     { value: "Leaderboard", link: "?tab=Leaderboard" },
   ];
-  if (FeatureRule.showJobs)
+  if (FeatureRule.showJobs && user.is_checked_in)
     validTabs.push({ value: "Jobs", link: "?tab=Jobs" })
 
   // const kit = 'gold'
   const kit = user.event_role === 'volunteer' ? 'volunteer' : user.goodie_tier.toLowerCase() as FrameType || "regular";
+
 
   // Kit properties
   const kitProps = {
@@ -113,7 +114,7 @@ export default function ProfileCard({
     <div className="min-h-screen p-2 sm:p-4 w-full mx-auto">
       <CardContainer
         headerTitle={
-          <span className="text-white font-medium text-lg">My Profile</span>
+          <span className="text-white font-medium text-lg">My Profile # <strong>{user.unique_code}</strong> </span>
         }
         maxWidth="max-w-5xl"
       >
@@ -141,7 +142,7 @@ export default function ProfileCard({
                     />
                     <AvatarFallback>
                       {user?.first_name[0] || "A"}
-                      {user?.last_name === '.' ? "" : user?.last_name || "W"}
+                      {user?.last_name === '.' ? "" : user?.last_name[0] || "W"}
                     </AvatarFallback>
                   </Avatar>
                   <Image
