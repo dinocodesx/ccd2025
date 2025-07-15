@@ -26,6 +26,6 @@
     "easterCountMin":20,
     "easterCountMax":25
   },
-  "showJobs":true,
+  "showJobs":false,
   "ticketsSoldOut": true
 }
