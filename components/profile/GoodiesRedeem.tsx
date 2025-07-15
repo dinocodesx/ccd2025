@@ -36,9 +36,9 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
   const router = useRouter()
   // console.log(item.name,FeatureRule.profile.redeem, !isAvailable, isRedeemed, isOutOfStock)
   // // console.log("showing for ",item.id,item)
-  useEffect(() => {
-    setLoading(prev => !prev)
-  }, [redeemedItem])
+  // useEffect(() => {
+  //   setLoading(prev => !prev)
+  // }, [redeemedItem])
 
   const redeemGoodie = async () => {
     if (isDisabled) {
