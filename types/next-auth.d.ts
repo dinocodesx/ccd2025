@@ -27,6 +27,7 @@ declare module "next-auth" {
         event_role:string
         tsize: string,
         profile_lock: boolean,
+        is_checked_in:boolean,
         student: boolean,
         bio: string,
         points: number,

@@ -92,6 +92,7 @@ export type UserProfile = {
     college: string | null;
     course: string | null;
     graduation_year: number | null;
+    is_checked_in:boolean,
     company: string | null;
     role: string;
     points:number;
