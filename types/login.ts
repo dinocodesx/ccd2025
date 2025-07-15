@@ -95,6 +95,7 @@ export type UserProfile = {
     company: string | null;
     role: string;
     points:number;
+    unique_code:number;
     goodie_tier:string;
     socials: {
       github: string;

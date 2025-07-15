@@ -113,7 +113,7 @@ export default function ProfileCard({
     <div className="min-h-screen p-2 sm:p-4 w-full mx-auto">
       <CardContainer
         headerTitle={
-          <span className="text-white font-medium text-lg">My Profile</span>
+          <span className="text-white font-medium text-lg">My Profile # <strong>{user.unique_code}</strong> </span>
         }
         maxWidth="max-w-5xl"
       >

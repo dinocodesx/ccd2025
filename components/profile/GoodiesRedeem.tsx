@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, { useEffect } from "react";
 import { Gift } from "lucide-react";
 import { GoodiesResult, Goodie, RedemptionResult, RedemptionRequest } from "@/types/goodies";
 import Button from "../ui/Button";
@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import FeatureRule from '@/public/content/feature.rule.json'
 import GeminiIcon from "../GeminiIcon";
 import { AlertTriangle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface RedeemItem {
   id: number;
@@ -29,13 +30,18 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
   const [loading, setLoading] = React.useState(false);
   const isAvailable = item.status === 'available' && totalPoints >= item.points;
   const isRequested = redeemedItem ? true : false;
-  const isRedeemed = redeemedItem?.is_approved;
+  const isRedeemed = redeemedItem?.is_approved || false;
   const isOutOfStock = item.status === 'out_of_stock';
   const isDisabled = !FeatureRule.profile.redeem || !isAvailable || isRedeemed || isOutOfStock;
-  console.log("showing for ",item.id,redeemedItem)
+  const router = useRouter()
+  // console.log(item.name,FeatureRule.profile.redeem, !isAvailable, isRedeemed, isOutOfStock)
+  // // console.log("showing for ",item.id,item)
+  useEffect(() => {
+    setLoading(prev => !prev)
+  }, [redeemedItem])
 
   const redeemGoodie = async () => {
-    if(isDisabled){
+    if (isDisabled) {
       return;
     }
 
@@ -49,20 +55,21 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
       const data = await res.json();
       if (res.ok) {
         toast.success(data.message || "Goodie redeem request registered successfully!");
+        router.refresh()
+
       } else {
         toast.error(data.message || "Failed to redeem goodie.");
       }
     } catch (error) {
       toast.error("An error occurred while redeeming the goodie.");
     } finally {
-      setLoading(false);
     }
   };
   return (
     <div
       className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300  ${item.available
-          ? "border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 bg-background hover:shadow-lg hover:scale-[1.02]"
-          : "border-gray-300 bg-gray-50 dark:bg-gray-800/50 opacity-60"
+        ? "border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 bg-background hover:shadow-lg hover:scale-[1.02]"
+        : "border-gray-300 bg-gray-50 dark:bg-gray-800/50 opacity-60"
         }`}
     >
       <div className="p-6 text-center">
@@ -83,18 +90,17 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
         <h4 className="font-bold text-foreground mb-2">{item.name}</h4>
         <p className="text-sm text-muted-foreground mb-6">{item.description}</p>
         <Button
-          disabled={isDisabled}
-          onClick={!FeatureRule.profile.redeem && isAvailable ? redeemGoodie : undefined}
-          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-            isRedeemed
+          disabled={isDisabled || loading}
+          onClick={(FeatureRule.profile.redeem && isAvailable && !loading) ? redeemGoodie : undefined}
+          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${isRedeemed
               ? "bg-green-200 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default"
               : isAvailable
-              ? "bg-google-blue hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
-              : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-          }`}
+                ? "bg-google-blue hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
+                : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+            }`}
         >
           {loading ? (
-            <span>Processing...</span>
+            <span>{isRedeemed?"Redeemed":"Processing..."}</span>
           ) : isRedeemed ? (
             "Redeemed"
           ) : isRequested ? (
@@ -104,17 +110,17 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
           ) : totalPoints < item.points ? (
             "Insufficient Points"
           ) : (
-            FeatureRule.profile.redeem?
-            <>
-              <img
-                src="/images/profile/prize.svg"
-                alt="Points"
-                className="w-5 h-5"
-              />
-              <span>{item.points.toLocaleString()}</span>
-              <span>points</span>
-            </>
-            :<>{FeatureRule.profile.notTakingRequestsMessage}</>
+            FeatureRule.profile.redeem ?
+              <>
+                <img
+                  src="/images/profile/prize.svg"
+                  alt="Points"
+                  className="w-5 h-5"
+                />
+                <span>{item.points.toLocaleString()}</span>
+                <span>points</span>
+              </>
+              : <>{FeatureRule.profile.notTakingRequestsMessage}</>
           )}
         </Button>
       </div>
@@ -134,6 +140,9 @@ export interface GoodiesRedeemProps {
 }
 
 const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, redeemedGoodies }) => {
+
+  // console.log(goodies, redeemedGoodies)
+
   // Map goodie id to redemption status
   const redemptionMap: Record<number, 'requested' | 'redeemed'> = {};
   redeemedGoodies?.results?.forEach((r: RedemptionRequest) => {
@@ -162,6 +171,8 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
       status,
     };
   }) || [];
+
+
   return (
     <div className="space-y-6">
       <div className="text-left">
@@ -193,8 +204,8 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
           })
         )}
       </div>
-      
-      
+
+
     </div>
   );
 };
