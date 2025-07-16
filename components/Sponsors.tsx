@@ -15,6 +15,7 @@ const Sponsors: React.FC = () => {
     communityPartners,
     pastSponsors,
     illustration,
+    digialMediaPartners,
   } = sponsorsData;
 
   return (
@@ -171,7 +172,8 @@ const Sponsors: React.FC = () => {
         {/* Partners Grid - Placement, Media, Digital */}
         {(placementPartners?.length > 0 ||
           mediaPartners?.length > 0 ||
-          digitalPartners?.length > 0) && (
+          digitalPartners?.length > 0 ||
+          digialMediaPartners?.length > 0) && (
           <div className="mb-8 sm:mb-12 lg:mb-16 max-w-4xl mx-auto">
             <div className="flex flex-wrap gap-4 sm:gap-6 items-center justify-between px-0">
               {/* Placement Partner */}
@@ -285,6 +287,45 @@ const Sponsors: React.FC = () => {
                                 alt={`${
                                   partner.name || "Digital Partner"
                                 } logo`}
+                                className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
+                              />
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </CardContainer>
+              )}
+              {/* Digital Media Partners */}
+              {digialMediaPartners && digialMediaPartners.length > 0 && (
+                <CardContainer
+                  className="p-4 lg:px-0 lg:py-4 w-full md:w-[48%] mx-auto"
+                  headerTitle={
+                    <span className="text-[14px] sm:text-lg lg:text-xl font-bold text-white dark:text-white">
+                      Digital Media Partner
+                    </span>
+                  }
+                  maxWidth="max-w-4xl"
+                >
+                  <div className="grid grid-cols-1">
+                    {digialMediaPartners.map((partner, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center justify-center h-32 sm:h-28 p-2"
+                      >
+                        <a
+                          href={partner.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full h-full"
+                        >
+                          <div className="relative rounded-lg overflow-hidden w-full h-full">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#ea4336] via-[#4285f4] to-[#34a853] rounded-lg"></div>
+                            <div className="absolute inset-[1px] bg-white rounded-lg p-2 flex items-center justify-center">
+                              <img
+                                src={partner.logo}
+                                alt={`${partner.name || "Digital Media Partner"} logo`}
                                 className="h-auto w-auto max-h-24 sm:max-h-20 object-contain hover:opacity-80 transition-opacity"
                               />
                             </div>
