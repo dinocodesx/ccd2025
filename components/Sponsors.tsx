@@ -207,7 +207,7 @@ const Sponsors: React.FC = () => {
                                 alt={`${
                                   sponsor.name || "Placement Partner"
                                 } logo`}
-                                className="h-auto w-auto max-h-24 sm:max-h-20 object-cover hover:opacity-80 transition-opacity p-2 "
+                                className="h-auto w-auto max-h-24 sm:max-h-24 object-cover hover:opacity-80 transition-opacity p-2 "
                               />
                             </div>
                           </div>

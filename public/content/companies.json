@@ -8,6 +8,10 @@
       "logo": "/images/logos/microsoft.webp"
     },
     {
+      "name": "AHK",
+      "logo": "/images/logos/ahk.jpg"
+    },
+    {
       "name": "Grafana Labs",
       "logo": "/images/logos/grafana.webp"
     },
@@ -62,5 +66,9 @@
     {
       "name": "NVIDIA",
       "logo": "/images/logos/nvidia.webp"
+    },
+    {
+      "name": "Flow community",
+      "logo": "/images/sponsors/sponsors/flow.png"
     }
   ]
