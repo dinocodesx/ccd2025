@@ -6,21 +6,21 @@ import {
   Transaction as ServerTransaction,
   RedemptionResult,
 } from "@/types/goodies";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PointsOverview from "./PointsOverview";
 import GoodiesRedeem from "./GoodiesRedeem";
+import Link from "next/link";
 
 import bkFetch from "@/services/backend.services";
 import { REDEMPTION_URL } from "@/lib/constants/be";
 import CouponRedemptionDialogTrigger from "./CouponRedemptionDialogTrigger";
-import FeatureRule from '@/public/content/feature.rule.json'
+import FeatureRule from "@/public/content/feature.rule.json";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 interface PointsProps {
   goodies: GoodiesResult;
   transactions: TransactionResult;
-  searchParams: Promise<{ active: string }>;
+  searchParams: { active?: string };
 }
 
 const fetchRedeemedGoodies = async () => {
@@ -30,11 +30,18 @@ const fetchRedeemedGoodies = async () => {
 };
 
 // Main Component
-const Points: React.FC<PointsProps> = async ({ goodies, transactions, searchParams }) => {
-
+const Points: React.FC<PointsProps> = async ({
+  goodies,
+  transactions,
+  searchParams,
+}) => {
   const session = await getServerSession(authOptions);
-  const resolvedSearchParams = await searchParams;
-  
+  // Remove: const resolvedSearchParams = await searchParams;
+  // Use directly:
+  const defaultTab = searchParams?.active || "overview";
+  console.log(`resolvedSearchParams: ${defaultTab}`);
+  console.log(`searchParams: ${JSON.stringify(searchParams)}`);
+
   // Map server transactions to UI Transaction type
   const transactionData =
     transactions?.results?.map((t: ServerTransaction) => ({
@@ -64,10 +71,10 @@ const Points: React.FC<PointsProps> = async ({ goodies, transactions, searchPara
   };
 
   const redeemedGoodies: RedemptionResult = await fetchRedeemedGoodies();
-  
+
   // Get default tab from search params or use "overview"
-  const defaultTab = resolvedSearchParams?.active || "overview";
-  
+  // const defaultTab = resolvedSearchParams?.active || "overview";
+
   return (
     <div className="w-full space-y-6">
       <div className="mb-6">
@@ -77,11 +84,13 @@ const Points: React.FC<PointsProps> = async ({ goodies, transactions, searchPara
               Points
             </h1>
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-              Participate in events, earn points and redeem them for awesome rewards!
+              Participate in events, earn points and redeem them for awesome
+              rewards!
             </p>
-            {FeatureRule.showRedemptionForm && session?.user.profile?.is_checked_in && (
-              <CouponRedemptionDialogTrigger />
-            )}
+            {FeatureRule.showRedemptionForm &&
+              session?.user.profile?.is_checked_in && (
+                <CouponRedemptionDialogTrigger />
+              )}
           </div>
           <div className="flex-shrink-0 justify-center md:justify-end hidden md:block">
             <img
@@ -93,48 +102,64 @@ const Points: React.FC<PointsProps> = async ({ goodies, transactions, searchPara
         </div>
       </div>
       <hr className="mb-6" />
-      
+
       {/* Tabs Navigation and Content */}
-      <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="flex flex-row gap-2 sm:gap-3 bg-transparent p-0 mb-6 sm:mb-8">
-          <TabsTrigger
-            value="overview"
-            className={
-              "flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 " +
-              "data-[state=active]:bg-blue-600 data-[state=active]:hover:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-md sm:data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/25 " +
-              "data-[state=inactive]:border data-[state=inactive]:border-gray-200 dark:data-[state=inactive]:border-gray-700 " +
-              "data-[state=inactive]:bg-gray-100 data-[state=inactive]:hover:bg-gray-200 dark:data-[state=inactive]:bg-gray-800 dark:data-[state=inactive]:hover:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300"
-            }
+      <div className="w-full">
+        <div className="flex flex-row gap-2 sm:gap-3 bg-transparent p-0 mb-6 sm:mb-8 justify-center items-center">
+          <Link
+            href="/profile?tab=Points&active=overview"
+            scroll={false}
+            className="block"
           >
-            <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>Overview</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="redeem"
-            className={
-              "flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 " +
-              "data-[state=active]:bg-blue-600 data-[state=active]:hover:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-md sm:data-[state=active]:shadow-lg data-[state=active]:shadow-blue-600/25 " +
-              "data-[state=inactive]:border data-[state=inactive]:border-gray-200 dark:data-[state=inactive]:border-gray-700 " +
-              "data-[state=inactive]:bg-gray-100 data-[state=inactive]:hover:bg-gray-200 dark:data-[state=inactive]:bg-gray-800 dark:data-[state=inactive]:hover:bg-gray-700 data-[state=inactive]:text-gray-700 dark:data-[state=inactive]:text-gray-300"
-            }
+            <button
+              className={
+                "flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 " +
+                (defaultTab === "overview"
+                  ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md sm:shadow-lg shadow-blue-600/25"
+                  : "border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300")
+              }
+            >
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>Overview</span>
+            </button>
+          </Link>
+          <Link
+            href="/profile?tab=Points&active=redeem"
+            scroll={false}
+            className="block"
           >
-            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>
-              Redeem<span className="hidden sm:inline"> Rewards</span>
-            </span>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4 sm:space-y-6">
-          <PointsOverview transactions={transactions} />
-        </TabsContent>
-        <TabsContent value="redeem" className="space-y-4 sm:space-y-6">
-          <GoodiesRedeem
-            goodies={goodies}
-            totalPoints={stats.totalPoints}
-            redeemedGoodies={redeemedGoodies}
-          />
-        </TabsContent>
-      </Tabs>
+            <button
+              className={
+                "flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 " +
+                (defaultTab === "redeem"
+                  ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md sm:shadow-lg shadow-blue-600/25"
+                  : "border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300")
+              }
+            >
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>
+                Redeem<span className="hidden sm:inline"> Rewards</span>
+              </span>
+            </button>
+          </Link>
+        </div>
+
+        {defaultTab === "overview" && (
+          <div className="space-y-4 sm:space-y-6">
+            <PointsOverview transactions={transactions} />
+          </div>
+        )}
+
+        {defaultTab === "redeem" && (
+          <div className="space-y-4 sm:space-y-6">
+            <GoodiesRedeem
+              goodies={goodies}
+              totalPoints={stats.totalPoints}
+              redeemedGoodies={redeemedGoodies}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
