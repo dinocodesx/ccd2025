@@ -9,20 +9,32 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import PointsOverview from "./PointsOverview";
 import GoodiesRedeem from "./GoodiesRedeem";
+
 import bkFetch from "@/services/backend.services";
 import { REDEMPTION_URL } from "@/lib/constants/be";
+import CouponRedemptionDialogTrigger from "./CouponRedemptionDialogTrigger";
+import FeatureRule from '@/public/content/feature.rule.json'
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 interface PointsProps {
   goodies: GoodiesResult;
   transactions: TransactionResult;
+  searchParams: Promise<{ active: string }>;
 }
+
 const fetchRedeemedGoodies = async () => {
   const res = await bkFetch(REDEMPTION_URL, { method: "GET" });
   const data = await res.json();
   return data;
 };
+
 // Main Component
-const Points: React.FC<PointsProps> = async ({ goodies, transactions }) => {
+const Points: React.FC<PointsProps> = async ({ goodies, transactions, searchParams }) => {
+
+  const session = await getServerSession(authOptions);
+  const resolvedSearchParams = await searchParams;
+  
   // Map server transactions to UI Transaction type
   const transactionData =
     transactions?.results?.map((t: ServerTransaction) => ({
@@ -52,31 +64,38 @@ const Points: React.FC<PointsProps> = async ({ goodies, transactions }) => {
   };
 
   const redeemedGoodies: RedemptionResult = await fetchRedeemedGoodies();
+  
+  // Get default tab from search params or use "overview"
+  const defaultTab = resolvedSearchParams?.active || "overview";
+  
   return (
     <div className="w-full space-y-6">
-         <div className="mb-6">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                  <div className="flex-1">
-                    <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                    Points
-                    </h1>
-                    <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                      Participate in events, earn points and redeem them for awesome rewards!
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0 flex justify-center md:justify-end hidden md:block">
-                    <img
-                      src="/images/elements/2025-black.svg"
-                      alt="CCD 2025"
-                      className="h-8 md:h-10 dark:invert"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <hr className="mb-6" />
+      <div className="mb-6">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+              Points
+            </h1>
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
+              Participate in events, earn points and redeem them for awesome rewards!
+            </p>
+            {FeatureRule.showRedemptionForm && session?.user.profile?.is_checked_in && (
+              <CouponRedemptionDialogTrigger />
+            )}
+          </div>
+          <div className="flex-shrink-0 justify-center md:justify-end hidden md:block">
+            <img
+              src="/images/elements/2025-black.svg"
+              alt="CCD 2025"
+              className="h-8 md:h-10 dark:invert"
+            />
+          </div>
+        </div>
+      </div>
+      <hr className="mb-6" />
+      
       {/* Tabs Navigation and Content */}
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs defaultValue={defaultTab} className="w-full">
         <TabsList className="flex flex-row gap-2 sm:gap-3 bg-transparent p-0 mb-6 sm:mb-8">
           <TabsTrigger
             value="overview"

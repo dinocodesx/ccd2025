@@ -72,7 +72,7 @@ export default function ProfileCard({
     { value: "My Profile", link: "?tab=My%20Profile" },
     { value: "Frame Studio", link: "?tab=Frame%20Studio" },
     { value: "Tickets", link: "?tab=Tickets" },
-    { value: "Points", link: "?tab=Points" },
+    { value: "Points", link: "?tab=Points&active=overview" },
     { value: "Leaderboard", link: "?tab=Leaderboard" },
   ];
   if (FeatureRule.showJobs && user.is_checked_in)

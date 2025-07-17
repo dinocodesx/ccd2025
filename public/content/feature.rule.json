@@ -20,12 +20,13 @@
     "edit": false,
     "editTshirt": false,
     "points": true,
-    "redeem": false,
+    "redeem": true,
     "notTakingRequestsMessage": "Currently unavailable",
     "showEasterEgg":true,
     "easterCountMin":20,
     "easterCountMax":25
   },
-  "showJobs":false,
-  "ticketsSoldOut": true
+  "showJobs":true,
+  "ticketsSoldOut": true,
+  "showRedemptionForm": true
 }

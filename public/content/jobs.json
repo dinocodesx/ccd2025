@@ -1,0 +1,108 @@
+[
+    {
+        "title": "Python Developer (Django)",
+        "link": "",
+        "experience_level": "mid",
+        "location": "onsite",
+        "type": "full_time",
+        "recruiter": 3
+    },
+    {
+        "title": "Python Developer (AI/ML)",
+        "link": "",
+        "experience_level": "senior",
+        "location": "onsite",
+        "type": "full_time",
+        "recruiter": 3
+    },
+    {
+        "title": "Business Developer",
+        "link": "",
+        "experience_level": "mid",
+        "location": "onsite",
+        "type": "full_time",
+        "recruiter": 3
+    },
+    {
+        "title": "AI Engineer",
+        "link": "https://www.linkedin.com/jobs/view/4259161946",
+        "experience_level": "mid",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 4
+    },
+    {
+        "title": "Specialist Quality Engineer",
+        "link": "https://r.ripplehire.com/s/c3vJN",
+        "experience_level": "senior",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 5
+    },
+    {
+        "title": "AWS Data Architect ",
+        "link": "https://r.ripplehire.com/s/c3vLD",
+        "experience_level": "senior",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 5
+    },
+    {
+        "title": "SFMC Campaign Ops Architect",
+        "link": "https://r.ripplehire.com/s/c3vNf",
+        "experience_level": "senior",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 5
+    },
+    {
+        "title": "Associate Principal - Package Implementation",
+        "link": "https://r.ripplehire.com/s/c3vN8",
+        "experience_level": "senior",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 5
+    },
+    {
+        "title": "Specialist Data Engineering ",
+        "link": "https://r.ripplehire.com/s/c3vPC",
+        "experience_level": "senior",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 5
+    },
+    {																											
+        "title": "Software Developer",
+        "link": "https://www.linkedin.com/posts/abhik-sarkar-677a44265_hiring-jobs-finance-activity-7348059196652732417--pNv?utm_source=share&utm_medium=member_ios&rcm=ACoAAEEdqrsBbZBgdSsi4046dTUNAjBt__T7AvI",
+        "experience_level": "fresher",
+        "location": "onsite",
+        "type": "full_time",
+        "recruiter": 6
+    },
+    {
+        "title": "Wipro's Work Integrated Learning Program (WILP)",
+        "link": "Wipro's Work Integrated Learning Program (WILP)",
+        "experience_level": "fresher",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 7
+    }
+    ,
+
+    {																												
+        "title": "PHP Developer",
+        "link": "https://www.linkedin.com/posts/sonali-ghosh-263509210_phpdeveloper-mysql-jquery-activity-7348363623460741120-7Chs?utm_source=share&utm_medium=member_ios&rcm=ACoAADV3-isB5gP3476buP2Bm6eHNWfOEJwwijA",
+        "experience_level": "fresher",
+        "location": "onsite",
+        "type": "full_time",
+        "recruiter": 8
+    },
+    {																											 																											
+        "title": "Multiple Roles",
+        "link": "https://www.indusnet.co.in/career/",
+        "experience_level": "mid",
+        "location": "hybrid",
+        "type": "full_time",
+        "recruiter": 9
+    }
+]
