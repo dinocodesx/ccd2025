@@ -5,9 +5,10 @@ import { GoodiesResult, Goodie, RedemptionResult, RedemptionRequest } from "@/ty
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import FeatureRule from '@/public/content/feature.rule.json'
-import GeminiIcon from "../GeminiIcon";
+
 import { AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
+
 
 interface RedeemItem {
   id: number;
@@ -17,28 +18,25 @@ interface RedeemItem {
   description: string;
   available: boolean;
   status: 'available' | 'requested' | 'redeemed' | 'out_of_stock';
+  quantity: number; // Add quantity for badge logic
 }
 
 interface RedeemCardProps {
   item: RedeemItem;
   totalPoints: number;
   redeemedItem: RedemptionRequest | undefined | null;
-
+  onRedeemSuccess: () => Promise<void>; // Add callback for successful redemption
 }
 
-const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem }) => {
+const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem, onRedeemSuccess }) => {
   const [loading, setLoading] = React.useState(false);
   const isAvailable = item.status === 'available' && totalPoints >= item.points;
   const isRequested = redeemedItem ? true : false;
   const isRedeemed = redeemedItem?.is_approved || false;
   const isOutOfStock = item.status === 'out_of_stock';
+
   const isDisabled = !FeatureRule.profile.redeem || !isAvailable || isRedeemed || isOutOfStock;
   const router = useRouter()
-  // console.log(item.name,FeatureRule.profile.redeem, !isAvailable, isRedeemed, isOutOfStock)
-  // // console.log("showing for ",item.id,item)
-  // useEffect(() => {
-  //   setLoading(prev => !prev)
-  // }, [redeemedItem])
 
   const redeemGoodie = async () => {
     if (isDisabled) {
@@ -55,16 +53,18 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
       const data = await res.json();
       if (res.ok) {
         toast.success(data.message || "Goodie redeem request registered successfully!");
+        await onRedeemSuccess(); // Wait for data to be fetched before removing loading
         router.refresh()
-
       } else {
-        toast.error(data.message || "Failed to redeem goodie.");
+        toast.error(data.message || data.goodie|| "Failed to redeem goodie.");
       }
     } catch (error) {
       toast.error("An error occurred while redeeming the goodie.");
     } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div
       className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300  ${item.available
@@ -72,9 +72,21 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
         : "border-gray-300 bg-gray-50 dark:bg-gray-800/50 opacity-60"
         }`}
     >
+      {/* Low stock badge */}
+      {item.status === 'available' && item.quantity < 25 && (
+        <div className="absolute top-4 right-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full z-10">
+          Low stock available
+        </div>
+      )}
+      {/* Out of stock badge */}
+      {item.status === 'out_of_stock' && (
+        <div className="absolute top-4 right-4 bg-red-500 text-white text-xs px-2 py-1 rounded-full z-10">
+          Sold Out
+        </div>
+      )}
       <div className="p-6 text-center">
         {/* <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center p-3"> */}
-        <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-black to-[#151515] dark:from-google-blue dark:to-google-blue/50 rounded-2xl flex items-center justify-center p-2">
+        <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-r from-[#252525] to-[#151515] dark:from-google-blue dark:to-google-blue/50 rounded-2xl flex items-center justify-center p-2">
           <img
             src={item.image}
             alt={item.name}
@@ -89,9 +101,11 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
         </div>
         <h4 className="font-bold text-foreground mb-2">{item.name}</h4>
         <p className="text-sm text-muted-foreground mb-6">{item.description}</p>
+      
         <Button
           disabled={isDisabled || loading}
           onClick={(FeatureRule.profile.redeem && isAvailable && !loading) ? redeemGoodie : undefined}
+
           className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${isRedeemed
               ? "bg-green-200 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default"
               : isAvailable
@@ -99,6 +113,7 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
                 : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
             }`}
         >
+
           {loading ? (
             <span>{isRedeemed?"Redeemed":"Processing..."}</span>
           ) : isRedeemed ? (
@@ -108,7 +123,15 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
           ) : isOutOfStock ? (
             "Out of Stock"
           ) : totalPoints < item.points ? (
-            "Insufficient Points"
+            <>
+            <img
+              src="/images/profile/prize.svg"
+              alt="Points"
+              className="w-5 h-5"
+            />
+            <span>{item.points.toLocaleString()}</span>
+            <span>points</span>
+          </>
           ) : (
             FeatureRule.profile.redeem ?
               <>
@@ -123,12 +146,9 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
               : <>{FeatureRule.profile.notTakingRequestsMessage}</>
           )}
         </Button>
+
+        {(item.status=="available" && item.quantity<25)&&  <p className="text-sm text-yellow-600 dark:text-google-yellow mt-2">Goodie may run out soon. Please verify availability before redeeming!</p>}
       </div>
-      {isOutOfStock && (
-        <div className="absolute top-4 right-4 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-          Sold Out
-        </div>
-      )}
     </div>
   );
 };
@@ -139,20 +159,47 @@ export interface GoodiesRedeemProps {
   redeemedGoodies: RedemptionResult;
 }
 
-const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, redeemedGoodies }) => {
+const GoodiesRedeem: React.FC<GoodiesRedeemProps & { enablePolling?: boolean }> = ({ goodies, totalPoints, redeemedGoodies, enablePolling = false }) => {
+  const [goodiesState, setGoodiesState] = React.useState(goodies);
+  const [redeemedGoodiesState, setRedeemedGoodiesState] = React.useState(redeemedGoodies);
+
+  // Function to fetch fresh data
+  const fetchGoodiesData = async () => {
+    try {
+      const [goodiesRes, redeemedRes] = await Promise.all([
+        fetch('/api/goodies'),
+        fetch('/api/goodies/redeem'),
+      ]);
+      if (goodiesRes.ok) {
+        setGoodiesState(await goodiesRes.json());
+      }
+      if (redeemedRes.ok) {
+        setRedeemedGoodiesState(await redeemedRes.json());
+      }
+    } catch (e) {
+      console.error('Error fetching goodies data:', e);
+    }
+  };
+
+  // Polling logic
+  useEffect(() => {
+    if (!enablePolling) return;
+    const interval = setInterval(fetchGoodiesData, 15000);
+    return () => clearInterval(interval);
+  }, [enablePolling]);
 
   // console.log(goodies, redeemedGoodies)
 
   // Map goodie id to redemption status
   const redemptionMap: Record<number, 'requested' | 'redeemed'> = {};
-  redeemedGoodies?.results?.forEach((r: RedemptionRequest) => {
+  redeemedGoodiesState?.results?.forEach((r: RedemptionRequest) => {
     if (r.is_approved) {
       redemptionMap[r.goodie] = 'redeemed';
     } else {
       redemptionMap[r.goodie] = 'requested';
     }
   });
-  const redeemItems = goodies?.results?.map((g: Goodie) => {
+  const redeemItems = goodiesState?.results?.map((g: Goodie) => {
     let status: 'available' | 'requested' | 'redeemed' | 'out_of_stock' = 'available';
     if (g.quantity_available <= 0) {
       status = 'out_of_stock';
@@ -169,12 +216,13 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
       description: g.description,
       available: g.quantity_available > 0,
       status,
+      quantity: g.quantity_available, // Pass quantity for badge
     };
-  }) || [];
-
+  }).sort((a, b) => a.id - b.id) || []; // Sort by goodie ID in ascending order
 
   return (
     <div className="space-y-6">
+      {/* Remove coupon code redemption form UI */}
       <div className="text-left">
         <h3 className="text-xl font-bold text-foreground">Redeem Your Points</h3>
         <p className="text-muted-foreground">Request to exchange your points for awesome rewards</p>
@@ -187,8 +235,20 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
           <AlertTriangle className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-500 dark:text-yellow-300 ml-1" />
         </span>
         <p className="text-yellow-900 dark:text-yellow-200 font-semibold gap-y-4">
-          <span className="block mb-1">Images shown are for representation purposes only. Actual products may vary.</span>
-          <span className="block">All goodies must be collected in person at the event venue on the event day. Uncollected items cannot be claimed or collected at a later date.</span>
+          <span className="block">Images shown are for representation purposes only. Actual products may vary.</span>
+          <span className="block my-2">All goodies must be collected in person at the event venue on the event day. Uncollected items cannot be claimed or collected at a later date.</span>
+        </p>
+       
+      </div>
+      {/* Disclaimer Section */}
+      <div className=" flex-col md:flex-row bg-yellow-100 dark:bg-yellow-900/40 border-2 border-yellow-500 dark:border-yellow-400 p-4 rounded-lg mb-4 flex items-start gap-3">
+        <span className="flex-shrink-0 flex items-center">
+          {/* <GeminiIcon className="w-6 h-6 sm:w-7 sm:h-7 drop-shadow-md invert dark:invert-0" /> */}
+          <AlertTriangle className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-500 dark:text-yellow-300 ml-1" />
+        </span>
+        <p className="text-yellow-900 dark:text-yellow-200 font-semibold gap-y-4">
+          
+          <span className="block">If an item is marked as low stock, it may run out quickly. Please visit the redemption counter to check availability before redeeming your points.</span>
         </p>
       </div>
 
@@ -197,17 +257,22 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps> = ({ goodies, totalPoints, red
           <div className="text-muted-foreground">No goodies available.</div>
         ) : (
           redeemItems.map((item) => {
-            const redeemItem = redeemedGoodies.results.find(g => g.goodie == item.id)
+            const redeemItem = redeemedGoodiesState.results.find(g => g.goodie == item.id)
             return (
-              <RedeemCard key={item.id} item={item} totalPoints={totalPoints} redeemedItem={redeemItem} />
+              <RedeemCard 
+                key={item.id} 
+                item={item} 
+                totalPoints={totalPoints} 
+                redeemedItem={redeemItem} 
+                onRedeemSuccess={fetchGoodiesData}
+              />
             )
           })
         )}
       </div>
 
-
     </div>
   );
 };
 
-export default GoodiesRedeem; 
+export default GoodiesRedeem;

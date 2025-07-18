@@ -15,23 +15,32 @@ export const metadata: Metadata = {
   description: "Manage your Cloud Community Day Kolkata 2025 account profile",
 };
 
-const Page = async ({ searchParams }: { searchParams: Promise<{ tab: string }> }) => {
-  const {tab}= await searchParams;
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab: string; active?: string }>;
+}) => {
+  const { tab } = await searchParams;
   const session = await getServerSession(authOptions);
   if (!session?.access) redirect("/login");
   const response = await bkFetch(USERS_DJANGO_URL, {
     method: "GET",
-    cache: 'no-store',
-});
-const user = await response.json();
+    cache: "no-store",
+  });
+  const user = await response.json();
 
   return (
     <Layout>
-    <section className="min-h-[calc(100vh-4rem)] w-full container mx-auto py-20 relative">
-      <Suspense fallback={<Loader name="profile"/>}>
-        <ProfileCard user={user} session={session} activeTab={tab||"My Profile"}/>
-      </Suspense>
-    </section>
+      <section className="min-h-[calc(100vh-4rem)] w-full container mx-auto py-20 relative">
+        <Suspense fallback={<Loader name="profile" />}>
+          <ProfileCard
+            user={user}
+            session={session}
+            activeTab={tab || "My Profile"}
+            searchParams={searchParams}
+          />
+        </Suspense>
+      </section>
     </Layout>
   );
 };

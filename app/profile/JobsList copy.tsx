@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Card, { CardBody, CardHeader } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { ExternalLink, MapPin, Clock, Briefcase, Calendar, Building2, Search, X, ChevronLeft, ChevronRight, Filter as FilterIcon } from "lucide-react";
+import { ExternalLink, MapPin, Clock, Briefcase, Calendar, Building2, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import GeminiIcon from "@/components/GeminiIcon";
@@ -56,217 +56,208 @@ const typeColors = {
   internship: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
 };
 
-// Add a simple dropdown for filters
-function FiltersDropdown({
-  locationOptions,
-  experienceOptions,
-  locationFilter,
-  setLocationFilter,
-  experienceFilter,
-  setExperienceFilter,
-  sortBy,
-  setSortBy,
-  clearFilters,
-  count,
-}: {
-  locationOptions: string[];
-  experienceOptions: string[];
-  locationFilter: string;
-  setLocationFilter: (v: string) => void;
-  experienceFilter: string;
-  setExperienceFilter: (v: string) => void;
-  sortBy: string;
-  setSortBy: (v: string) => void;
-  clearFilters: () => void;
-  count:number
-}) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative w-full sm:w-auto">
-      <Button
-        type="button"
-        className="min-w-14 flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-sm font-semibold"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-haspopup="listbox"
-      >
-        <FilterIcon className="w-4 h-4 text-google-blue" /> {count>0&&<span className="text-google-blue">{typeof count === 'number' ? count : 0}</span>}
-      </Button>
-      {open && (
-        <div className="absolute left-0 mt-2 z-20 w-full sm:w-64 bg-white dark:bg-[#23272F] border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-3 flex flex-col gap-2 text-sm">
-          <div>
-            <label htmlFor="location-filter" className="block text-xs font-medium text-muted-foreground mb-1">Location</label>
-            <select
-              id="location-filter"
-              value={locationFilter}
-              onChange={e => setLocationFilter(e.target.value)}
-              className="w-full px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-[--google-blue]"
-            >
-              <option value="">All</option>
-              {locationOptions.map(loc => (
-                <option key={loc} value={loc}>{loc.charAt(0).toUpperCase() + loc.slice(1)}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="experience-filter" className="block text-xs font-medium text-muted-foreground mb-1">Experience</label>
-            <select
-              id="experience-filter"
-              value={experienceFilter}
-              onChange={e => setExperienceFilter(e.target.value)}
-              className="w-full px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-[--google-blue]"
-            >
-              <option value="">All</option>
-              {experienceOptions.map(exp => (
-                <option key={exp} value={exp}>{exp.charAt(0).toUpperCase() + exp.slice(1)}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="sort-by" className="block text-xs font-medium text-muted-foreground mb-1">Sort by</label>
-            <select
-              id="sort-by"
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-              className="w-full px-2 py-1 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-[--google-blue]"
-            >
-              <option value="date_desc">Newest First</option>
-              <option value="date_asc">Oldest First</option>
-              <option value="title_asc">Title (A-Z)</option>
-              <option value="title_desc">Title (Z-A)</option>
-            </select>
-          </div>
-          <Button
-            type="button"
-            className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 mt-1 py-1 text-xs"
-            onClick={() => { clearFilters(); setOpen(false); }}
-          >
-            Clear Filters
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function JobsList() {
-  const [allJobs, setAllJobs] = useState<Job[]>([]); // Store all jobs for filtering and pagination
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [count, setCount] = useState(0); // Track total jobs count
+  const [allJobs, setAllJobs] = useState<Job[]>([]); // Store all jobs for filtering
   const [recruiters, setRecruiters] = useState<Record<number, Recruiter>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [locationFilter, setLocationFilter] = useState<string>("");
-  const [experienceFilter, setExperienceFilter] = useState<string>("");
-  const [sortBy, setSortBy] = useState<string>("title_asc");
-  const [pageSize, setPageSize] = useState<number>(25); // Default to 25 for mobile
+  const [nextPage, setNextPage] = useState<string | null>(null);
+  const [previousPage, setPreviousPage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : undefined;
   const topRef = useRef<HTMLDivElement>(null);
 
-  // Fetch all jobs and recruiters
-  async function fetchData() {
-    setLoading(true);
-    setError(null);
+  // Add filter state
+  const [locationFilter, setLocationFilter] = useState<string>("");
+  const [experienceFilter, setExperienceFilter] = useState<string>("");
+
+  // Unique options for filters (from jobs data)
+  const locationOptions = Array.from(new Set(jobs.map(j => j.location))).filter(Boolean);
+  const experienceOptions = Array.from(new Set(jobs.map(j => j.experience_level))).filter(Boolean);
+
+  const PAGE_SIZE = 20;
+
+  // Fetch all recruiters in one go
+  const fetchAllRecruiters = async () => {
     try {
-      const [jobsRes, recruitersRes] = await Promise.all([
-        fetch("/api/jobs"),
-        fetch("/api/recruiters")
-      ]);
-      if (!jobsRes.ok) throw new Error("Failed to fetch jobs");
-      if (!recruitersRes.ok) throw new Error("Failed to fetch recruiters");
-      const jobsData: JobsResponse = await jobsRes.json();
-      const recruitersData = await recruitersRes.json();
-      setAllJobs(jobsData.results);
+      const response = await fetch("/api/recruiters", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch recruiters");
+      }
+      const data = await response.json();
       // Map recruiters by id
       const recruiterMap: Record<number, Recruiter> = {};
-      recruitersData.results.forEach((rec: Recruiter) => {
+      data.results.forEach((rec: Recruiter) => {
         recruiterMap[rec.id] = rec;
       });
       setRecruiters(recruiterMap);
+    } catch (err) {
+      // Optionally handle recruiter fetch error
+      setRecruiters({});
+    }
+  };
+
+  const fetchJobs = async (page = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+      // Build URL with only the page param
+      let url = "/api/jobs";
+      if (page > 1) {
+        url += `?page=${page}`;
+      }
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch jobs");
+      }
+      const data: JobsResponse = await response.json();
+      setCount(data.count);
+      setJobs(data.results);
+      setAllJobs(data.results); // Store all jobs for filtering
+      setNextPage(data.next);
+      setPreviousPage(data.previous);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       toast.error("Failed to load jobs");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // Unique options for filters (from jobs data)
-  const locationOptions = Array.from(new Set(allJobs.map(j => j.location))).filter(Boolean);
-  const experienceOptions = Array.from(new Set(allJobs.map(j => j.experience_level))).filter(Boolean);
-
-  // Filtering and searching
+  // Filter jobs based on search query and filters
   const filteredJobs = allJobs.filter(job => {
-    // Respect all filters and search query together
-    const query = searchQuery.trim().toLowerCase();
+    if (!searchQuery.trim() && !locationFilter && !experienceFilter) return true;
+
+    const query = searchQuery.toLowerCase();
     const recruiter = recruiters[job.recruiter];
 
-    // Search logic: match if any field matches the query
-    let matchesSearch = true;
-    if (query) {
-      matchesSearch = (
-        job.title.toLowerCase().includes(query) ||
-        recruiter?.company_name?.toLowerCase().includes(query) ||
-        recruiter?.name?.toLowerCase().includes(query) ||
-        job.experience_level.toLowerCase().includes(query) ||
-        job.location.toLowerCase().includes(query) ||
-        job.type.toLowerCase().includes(query)
-      );
-    }
+    // Search in job title
+    if (searchQuery && job.title.toLowerCase().includes(query)) return true;
+    // Search in company name
+    if (searchQuery && recruiter?.company_name.toLowerCase().includes(query)) return true;
+    // Search in recruiter name
+    if (searchQuery && recruiter?.name?.toLowerCase().includes(query)) return true;
+    // Search in experience level
+    if (searchQuery && job.experience_level.toLowerCase().includes(query)) return true;
+    // Search in location
+    if (searchQuery && job.location.toLowerCase().includes(query)) return true;
+    // Search in job type
+    if (searchQuery && job.type.toLowerCase().includes(query)) return true;
 
-    // Filter logic: must match all selected filters
-    let matchesLocation = !locationFilter || job.location === locationFilter;
-    let matchesExperience = !experienceFilter || job.experience_level === experienceFilter;
+    // Filter by location
+    if (locationFilter && job.location !== locationFilter) return false;
+    // Filter by experience
+    if (experienceFilter && job.experience_level !== experienceFilter) return false;
 
-    return matchesSearch && matchesLocation && matchesExperience;
+    // If no search, but filters match
+    if (!searchQuery && (!locationFilter || job.location === locationFilter) && (!experienceFilter || job.experience_level === experienceFilter)) return true;
+
+    return false;
   });
 
-  // Count active filters (search, location, experience)
-  const activeFiltersCount = [
-    searchQuery.trim() ? 1 : 0,
-    locationFilter ? 1 : 0,
-    experienceFilter ? 1 : 0
-  ].reduce((a, b) => a + b, 0);
-
-  // Sorting
-  const sortedJobs = [...filteredJobs].sort((a, b) => {
-    if (sortBy === "date_desc") {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    } else if (sortBy === "date_asc") {
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    } else if (sortBy === "title_asc") {
-      return a.title.localeCompare(b.title);
-    } else if (sortBy === "title_desc") {
-      return b.title.localeCompare(a.title);
+  // On mount, set state from URL params and fetch jobs for that page
+  useEffect(() => {
+    const pageParam = searchParams?.get("page");
+    const searchParam = searchParams?.get("search");
+    const locationParam = searchParams?.get("location");
+    const experienceParam = searchParams?.get("experience");
+    let initialPage = 1;
+    if (pageParam) {
+      setCurrentPage(Number(pageParam));
+      initialPage = Number(pageParam);
     }
-    return 0;
-  });
+    if (searchParam) setSearchQuery(searchParam);
+    if (locationParam) setLocationFilter(locationParam);
+    if (experienceParam) setExperienceFilter(experienceParam);
+    fetchAllRecruiters();
+    fetchJobs(initialPage);
+  }, []);
 
-  // Pagination
-  const totalPages = Math.ceil(sortedJobs.length / pageSize);
-  const paginatedJobs = sortedJobs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  // Update URL params when page, search, or filters change
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (currentPage > 1) {
+      params.set("page", String(currentPage));
+    } else {
+      params.delete("page");
+    }
+    if (searchQuery) {
+      params.set("search", searchQuery);
+    } else {
+      params.delete("search");
+    }
+    if (locationFilter) {
+      params.set("location", locationFilter);
+    } else {
+      params.delete("location");
+    }
+    if (experienceFilter) {
+      params.set("experience", experienceFilter);
+    } else {
+      params.delete("experience");
+    }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+  }, [currentPage, searchQuery, locationFilter, experienceFilter]);
 
-  // Handlers
+  // Reset to first page on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [locationFilter, experienceFilter]);
+
+  // Helper to extract page number from a URL
+  const getPageFromUrl = (url: string | null): number | undefined => {
+    if (!url) return undefined;
+    try {
+      const u = new URL(url, window.location.origin);
+      const page = u.searchParams.get("page");
+      return page ? parseInt(page, 10) : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
+  // Pagination handlers
+  const handlePageChange = (targetUrl: string | null, pageOverride?: number) => {
+    let page = pageOverride;
+    if (!page && targetUrl) {
+      page = getPageFromUrl(targetUrl);
+    }
+    if (typeof page === 'number' && !isNaN(page)) {
+      setCurrentPage(page);
+      fetchJobs(page);
+      // Scroll to top of jobs list after page change
+      setTimeout(() => {
+        topRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(count / PAGE_SIZE);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    // Reset to first page on new search
     setCurrentPage(1);
   };
+
   const clearSearch = () => {
     setSearchQuery("");
-    setCurrentPage(1);
-  };
-  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(1);
-  };
-  const handlePageChange = (pageNum: number) => {
-    setCurrentPage(pageNum);
-    setTimeout(() => {
-      topRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
   };
 
   const formatDate = (dateString: string) => {
@@ -291,7 +282,7 @@ export default function JobsList() {
     ).join(" ");
   };
 
-  if (loading && allJobs.length === 0) {
+  if (loading && jobs.length === 0) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-center py-12">
@@ -304,7 +295,7 @@ export default function JobsList() {
     );
   }
 
-  if (error && allJobs.length === 0) {
+  if (error && jobs.length === 0) {
     return (
       <div className="space-y-4">
         <Card>
@@ -324,7 +315,7 @@ export default function JobsList() {
                 {error}
               </p>
               <Button
-                onClick={() => fetchData()}
+                onClick={() => fetchJobs()}
                 className="bg-primary hover:bg-primary/90 text-white dark:text-black"
               >
                 Try Again
@@ -345,12 +336,12 @@ export default function JobsList() {
          
           <p className="text-muted-foreground">
             Discover exciting career opportunities in the tech industry.
-            <p className="mt-1 flex items-center gap-2">
+            <div className="mt-1 flex items-center gap-2">
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200 border border-blue-100 dark:border-blue-800">
               <svg className="w-3 h-3 mr-1 text-blue-400 dark:text-blue-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 016 6c0 3.866-3.582 7.418-5.293 8.995a1 1 0 01-1.414 0C7.582 15.418 4 11.866 4 8a6 6 0 016-6zm0 8a2 2 0 100-4 2 2 0 000 4z" /></svg>
-              Available jobs: {allJobs.length}
+              Available jobs: {count}
             </span>
-          </p>
+          </div>
           </p> 
         </div>
         <div className="flex items-center gap-2">
@@ -365,7 +356,7 @@ export default function JobsList() {
       </div>
 
       {/* Search Bar */}
-      <div className="relative mb-2">
+      <div className="relative">
         <label htmlFor="location-filter" className="block text-xs font-medium text-muted-foreground mb-1">Search</label>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -391,47 +382,46 @@ export default function JobsList() {
           </div>
         )}
       </div>
-      <div className="flex  items-center justify-end gap-4">
-      <div className="mb-4 flex items-center gap-2">
-        <FiltersDropdown
-          locationOptions={locationOptions}
-          experienceOptions={experienceOptions}
-          locationFilter={locationFilter}
-          setLocationFilter={setLocationFilter}
-          experienceFilter={experienceFilter}
-          setExperienceFilter={setExperienceFilter}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          clearFilters={() => { setLocationFilter(""); setExperienceFilter(""); setSortBy("date_desc"); }}
-          count={activeFiltersCount}
-        />
-        
-      </div>
 
-      {/* Sort and Page Size Controls */}
-      <div className="flex flex-col sm:flex-row :items-center justify-between gap-3 mb-4">
-        <div className="flex flex-row gap-2 w-full sm:w-auto items-center justify-center">
-          <label className="text-sm text-muted-foreground font-medium mb-1 sm:mb-0 sm:mr-2" htmlFor="page-size">Page Size:</label>
+      {/* Filters - always side by side, wrap on small screens */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-2 mb-4 max-w-2xl">
+        <div className="max-w-sm">
+          <label htmlFor="location-filter" className="block text-xs font-medium text-muted-foreground mb-1">Location</label>
           <select
-            id="page-size"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="w-full sm:w-auto px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[--google-blue]"
+            id="location-filter"
+            value={locationFilter}
+            onChange={e => setLocationFilter(e.target.value)}
+            className="w-full  px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[--google-blue]"
           >
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
+            <option value="">All</option>
+            {locationOptions.map(loc => (
+              <option key={loc} value={loc}>{getLocationDisplay(loc)}</option>
+            ))}
+          </select>
+        </div>
+        <div className="max-w-sm">
+          <label htmlFor="experience-filter" className="block text-xs font-medium text-muted-foreground mb-1">Experience</label>
+          <select
+            id="experience-filter"
+            value={experienceFilter}
+            onChange={e => setExperienceFilter(e.target.value)}
+            className="w-full  px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#131313] text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[--google-blue]"
+          >
+            <option value="">All</option>
+            {experienceOptions.map(exp => (
+              <option key={exp} value={exp}>{getExperienceLevelDisplay(exp)}</option>
+            ))}
           </select>
         </div>
       </div>
-</div>
+
       {/* Jobs List */}
       <div className="space-y-4">
-        {paginatedJobs.map((job) => {
+        {filteredJobs.map((job) => {
           const recruiter = recruiters[job.recruiter];
 
           return (
-            <Card key={job.id} className="hover:shadow-lg transition-shadow rounded-xl p-2 sm:p-0">
+            <Card key={job.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="border-0">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                   <div className="flex-1">
@@ -469,18 +459,18 @@ export default function JobsList() {
                     </div>
                     <div className="flex flex-wrap gap-2 mb-3">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-xs font-medium ${experienceLevelColors[job.experience_level as keyof typeof experienceLevelColors] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"}`}
+                        className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs sm:text-xs font-medium ${experienceLevelColors[job.experience_level as keyof typeof experienceLevelColors] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"}`}
                       >
                         {getExperienceLevelDisplay(job.experience_level)}
                       </span>
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-xs font-medium ${locationColors[job.location as keyof typeof locationColors] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"}`}
+                        className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs sm:text-xs font-medium ${locationColors[job.location as keyof typeof locationColors] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"}`}
                       >
                         <MapPin className="w-3 h-3 mr-1" />
                         {getLocationDisplay(job.location)}
                       </span>
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-xs font-medium ${typeColors[job.type as keyof typeof typeColors] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"}`}
+                        className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-xs sm:text-xs font-medium ${typeColors[job.type as keyof typeof typeColors] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"}`}
                       >
                         <Briefcase className="w-3 h-3 mr-1" />
                         {getTypeDisplay(job.type)}
@@ -492,7 +482,7 @@ export default function JobsList() {
                       href={job.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center rounded-md font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2  bg-foreground text-background w-full sm:w-auto text-base py-4 sm:py-2 px-4 shadow-lg ring-0"
+                      className="inline-flex items-center justify-center rounded-md font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2  bg-foreground text-background w-full sm:w-auto text-sm sm:text-base py-3 sm:py-2 px-4 shadow-lg ring-0"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Apply
@@ -542,15 +532,15 @@ export default function JobsList() {
       {!searchQuery && totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between pt-4 gap-2">
           <div className="text-sm text-muted-foreground mb-2 sm:mb-0">
-            Showing page {currentPage} of {totalPages} ({sortedJobs.length} job{sortedJobs.length !== 1 ? 's' : ''})
+            Showing page {currentPage} of {totalPages} ({count} job{count !== 1 ? 's' : ''})
           </div>
           <div className="flex items-center gap-2 ">
             {/* Previous page button with arrow */}
-            {currentPage > 1 && (
+            {previousPage && (
               <Button
                 variant="outline"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={loading}
+                onClick={() => handlePageChange(previousPage)}
+                disabled={loading || currentPage === 1}
                 className="flex items-center gap-2 px-2"
                 aria-label="Previous page"
               >
@@ -561,7 +551,7 @@ export default function JobsList() {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
               <Button
                 key={pageNum}
-                onClick={() => handlePageChange(pageNum)}
+                onClick={() => handlePageChange(null, pageNum)}
                 disabled={loading || pageNum === currentPage}
                 className={`px-3 py-1 rounded border text-sm font-medium transition-colors
                   ${pageNum === currentPage
@@ -574,11 +564,11 @@ export default function JobsList() {
               </Button>
             ))}
             {/* Next page button with arrow */}
-            {currentPage < totalPages && (
+            {nextPage && (
               <Button
                 variant="outline"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={loading}
+                onClick={() => handlePageChange(nextPage)}
+                disabled={loading || currentPage === totalPages}
                 className="flex items-center gap-2 px-2"
                 aria-label="Next page"
               >
@@ -590,7 +580,7 @@ export default function JobsList() {
       )}
 
       {/* Empty State - Only show when not searching */}
-      {!loading && !searchQuery && allJobs.length === 0 && (
+      {!loading && !searchQuery && jobs.length === 0 && (
         <Card>
           <CardBody>
             <div className="flex flex-col items-center justify-center py-12 text-center">

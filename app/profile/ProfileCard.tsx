@@ -25,85 +25,92 @@ import Loader from "@/components/Loader";
 
 import GiftBox3D from "@/components/profile/GiftBox3D";
 import { Badge } from "@/components/ui/Badge";
-import FeatureRule from '@/public/content/feature.rule.json'
+import FeatureRule from "@/public/content/feature.rule.json";
 function Points({ points }: { points: number }) {
-  return <div
-    className={cn(
-      "border text-foreground px-3 sm:px-4 py-2 flex items-center gap-3 text-sm sm:text-base rounded-3xl font-bold",
-      points < 20 &&
-      "border-google-red bg-google-red/20 text-google-red",
-      points >= 20 &&
-      points < 100 &&
-      "border-google-yellow bg-google-yellow/20 text-google-yellow",
-      points >= 100 &&
-      "border-google-green bg-google-green/20 text-google-green"
-    )}
-    style={{ minWidth: 110 }}
-  >
-    <Image
-      src={Coin}
-      alt="coin"
-      width={24}
-      height={24}
-      className="flex-shrink-0"
-    />
-    <div className="flex flex-col">
-      <span className="text-sm font-medium opacity-80 leading-tight capitalize flex gap-0.5">
-        <span className="hidden lg:flex">Available</span> Points
-      </span>
-      <span className="font-bold leading-tight">
-        {points.toLocaleString()}
-      </span>
+  return (
+    <div
+      className={cn(
+        "border text-foreground px-3 sm:px-4 py-2 flex items-center gap-3 text-sm sm:text-base rounded-3xl font-bold",
+        points < 20 && "border-google-red bg-google-red/20 text-google-red",
+        points >= 20 &&
+          points < 100 &&
+          "border-google-yellow bg-google-yellow/20 text-google-yellow",
+        points >= 100 &&
+          "border-google-green bg-google-green/20 text-google-green"
+      )}
+      style={{ minWidth: 110 }}
+    >
+      <Image
+        src={Coin}
+        alt="coin"
+        width={24}
+        height={24}
+        className="flex-shrink-0"
+      />
+      <div className="flex flex-col">
+        <span className="text-sm font-medium opacity-80 leading-tight capitalize flex gap-0.5">
+          <span className="hidden lg:flex">Available</span> Points
+        </span>
+        <span className="font-bold leading-tight">
+          {points.toLocaleString()}
+        </span>
+      </div>
     </div>
-  </div>
-
+  );
 }
 
-export default function ProfileCard({
+export default async function ProfileCard({
   user,
   session,
   activeTab,
+  searchParams,
 }: {
   user: UserProfile;
   session: Session;
   activeTab: string;
+  searchParams: Promise<{ tab: string; active?: string }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const validTabs = [
     { value: "My Profile", link: "?tab=My%20Profile" },
     { value: "Frame Studio", link: "?tab=Frame%20Studio" },
     { value: "Tickets", link: "?tab=Tickets" },
-    { value: "Points", link: "?tab=Points" },
-    { value: "Leaderboard", link: "?tab=Leaderboard" },
+    { value: "Points", link: "?tab=Points&active=overview" },
+    
   ];
   if (FeatureRule.showJobs && user.is_checked_in)
-    validTabs.push({ value: "Jobs", link: "?tab=Jobs" })
+    validTabs.push({ value: "Jobs", link: "?tab=Jobs" });
 
+  if(FeatureRule.showLeaderboard && user.is_checked_in)
+    validTabs.push({ value: "Leaderboard", link: "?tab=Leaderboard" })
   // const kit = 'gold'
-  const kit = user.event_role === 'volunteer' ? 'volunteer' : user.goodie_tier.toLowerCase() as FrameType || "regular";
-
+  const kit =
+    user.event_role === "volunteer"
+      ? "volunteer"
+      : (user.goodie_tier.toLowerCase() as FrameType) || "regular";
 
   // Kit properties
   const kitProps = {
     mini: {
-      label: 'Mini',
+      label: "Mini",
       size: 2,
       color: 0x4285f4, // google-blue
       ribbonColor: 0xfaab00, // google-yellow
     },
     regular: {
-      label: 'Regular',
+      label: "Regular",
       size: 2,
       color: 0xea4336, // google-red
       ribbonColor: 0xfaab00, // google-yellow
     },
     gold: {
-      label: 'Gold',
+      label: "Gold",
       size: 2,
       color: 0xfaab00, // google-yellow
       ribbonColor: 0x4285f4, // google-blue
     },
     volunteer: {
-      label: 'Volunteer',
+      label: "Volunteer",
       size: 2,
       color: 0x34a853, // google-green
       ribbonColor: 0xfaab00, // google-yellow
@@ -114,7 +121,9 @@ export default function ProfileCard({
     <div className="min-h-screen p-2 sm:p-4 w-full mx-auto">
       <CardContainer
         headerTitle={
-          <span className="text-white font-medium text-lg">My Profile # <strong>{user.unique_code}</strong> </span>
+          <span className="text-white font-medium text-lg">
+            My Profile # <strong>{user.unique_code}</strong>{" "}
+          </span>
         }
         maxWidth="max-w-5xl"
       >
@@ -124,36 +133,38 @@ export default function ProfileCard({
           <div className="mb-6 sm:mb-8 flex flex-col gap-4">
             {/* Outer container: column on mobile, row on lg */}
             <div className="flex flex-col lg:flex-row items-center  gap-4 w-full">
-
               {/* Row 1: Avatar + Info (Side-by-side on sm, stacked on xs) */}
               <div className="flex w-full items-center justify-between lg:justify-start gap-4">
-
                 <div className="relative flex-shrink-0">
                   <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
                     <AvatarImage
                       src={
                         user.socials?.github &&
-                        `https://github.com/${extractGithubUsername(user.socials?.github)}.png`
+                        `https://github.com/${extractGithubUsername(
+                          user.socials?.github
+                        )}.png`
                       }
                       alt={
                         (user.socials?.github &&
-                          extractGithubUsername(user.socials?.github)) || "avatar"
+                          extractGithubUsername(user.socials?.github)) ||
+                        "avatar"
                       }
                     />
                     <AvatarFallback>
                       {user?.first_name[0] || "A"}
-                      {user?.last_name === '.' ? "" : user?.last_name[0] || "W"}
+                      {user?.last_name === "." ? "" : user?.last_name[0] || "W"}
                     </AvatarFallback>
                   </Avatar>
                   <Image
-                    src={`/images/cfs/smile${user.event_role === "attendee"
-                      ? "b"
-                      : user.event_role === "organizer"
+                    src={`/images/cfs/smile${
+                      user.event_role === "attendee"
+                        ? "b"
+                        : user.event_role === "organizer"
                         ? "r"
                         : user.event_role === "volunteer"
-                          ? "g"
-                          : ""
-                      }.svg`}
+                        ? "g"
+                        : ""
+                    }.svg`}
                     alt="Smile"
                     width={24}
                     height={24}
@@ -161,19 +172,23 @@ export default function ProfileCard({
                   />
                 </div>
 
-
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center">
                     <div className="flex flex-col">
-                      <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate flex gap-2" >
-                        {user?.first_name} {user?.last_name === '.' ? '' : user?.last_name}
+                      <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate flex gap-2">
+                        {user?.first_name}{" "}
+                        {user?.last_name === "." ? "" : user?.last_name}
                         <div className="ml-1 hidden lg:inline -mt-1">
-                          <Badge>{kitProps[kit as keyof typeof kitProps].label}</Badge>
+                          <Badge>
+                            {kitProps[kit as keyof typeof kitProps].label}
+                          </Badge>
                         </div>
                       </h2>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <p className="text-xs sm:text-sm text-muted-foreground">
-                          {session.user.profile?.student ? "Student" : "Professional"}
+                          {session.user.profile?.student
+                            ? "Student"
+                            : "Professional"}
                         </p>
                         <div className="size-1 rounded-full bg-muted-foreground dark:bg-white hidden sm:block"></div>
                         <p className="text-xs sm:text-sm text-muted-foreground truncate max-w-[200px] sm:max-w-xs">
@@ -193,7 +208,9 @@ export default function ProfileCard({
                       <GiftBox3D
                         size={kitProps[kit as keyof typeof kitProps].size}
                         color={kitProps[kit as keyof typeof kitProps].color}
-                        ribbonColor={kitProps[kit as keyof typeof kitProps].ribbonColor}
+                        ribbonColor={
+                          kitProps[kit as keyof typeof kitProps].ribbonColor
+                        }
                         type={kit}
                       />
                     </div>
@@ -206,7 +223,9 @@ export default function ProfileCard({
                 <GiftBox3D
                   size={kitProps[kit as keyof typeof kitProps].size}
                   color={kitProps[kit as keyof typeof kitProps].color}
-                  ribbonColor={kitProps[kit as keyof typeof kitProps].ribbonColor}
+                  ribbonColor={
+                    kitProps[kit as keyof typeof kitProps].ribbonColor
+                  }
                   type={kit}
                 />
                 <Points points={user.points} />
@@ -215,18 +234,21 @@ export default function ProfileCard({
               {/* Points on lg */}
               <div className="hidden lg:flex items-end justify-end w-full ml-auto">
                 <Points points={user.points} />
-
               </div>
             </div>
           </div>
-
 
           {/* Navigation tabs */}
           <Tabs value={activeTab || "My Profile"}>
             <div className="mb-6 sm:mb-8">
               <TabsList className="h-auto flex flex-wrap bg-transparent p-0 items-start justify-start gap-2 w-full">
                 {validTabs.map((tab) => (
-                  <LoadLink href={tab.link} scroll={false} className="block" key={tab.value}>
+                  <LoadLink
+                    href={tab.link}
+                    scroll={false}
+                    className="block"
+                    key={tab.value}
+                  >
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
@@ -242,12 +264,11 @@ export default function ProfileCard({
                             ? user.event_role == "attendee"
                               ? "var(--google-blue)"
                               : user.event_role == "organizer"
-                                ? "var(--google-red)"
-                                : "var(--google-green)"
+                              ? "var(--google-red)"
+                              : "var(--google-green)"
                             : "",
                       }}
                     >
-
                       {tab.value}
                     </TabsTrigger>
                   </LoadLink>
@@ -267,12 +288,16 @@ export default function ProfileCard({
             </TabsContent>
             <TabsContent value="Points">
               <Suspense fallback={<Loader name="points" />}>
-                <PointsPage />
+                <PointsPage searchParams={resolvedSearchParams} />
               </Suspense>
             </TabsContent>
+            {
+              FeatureRule.showLeaderboard &&
+            
             <TabsContent value="Leaderboard">
               <LeaderBoard />
             </TabsContent>
+            }
             <TabsContent value="Jobs">
               <Jobs />
             </TabsContent>
