@@ -14,6 +14,7 @@ import CompanyLogos from "@/components/SpeakerCompanies";
 import SpeakerCompaniesSection from "@/components/SpeakerCompanies";
 import { useTheme } from "next-themes";
 import GeminiIcon from "@/components/GeminiIcon";
+import Button from "@/components/ui/Button";
 
 export default function HomePage() {
   const [backgroundOpacity, setBackgroundOpacity] = useState(0);
@@ -85,8 +86,18 @@ export default function HomePage() {
               {CONTENT.venue}
             </Link>
           </p>
+          {featureRule.guidelines.showGuidelines ?
+          <Link href={featureRule.guidelines.guidlinesLink} target="_blank" rel="noreferrer noopener">
+          <Button
+              className="bg-google-blue hover:bg-blue-600 transition-all duration-200 text-white px-8 py-3 rounded-full font-medium text-lg inline-flex items-center cursor-pointer"
 
-          {featureRule.ticketsSoldOut ? (
+            >
+              <GeminiIcon/>
+            {featureRule.guidelines.guidelinesText}
+             <GeminiIcon/>
+            </Button>
+          </Link>
+:featureRule.ticketsSoldOut? (
             <button
               className="bg-google-red text-white px-8 py-3 rounded-full font-medium text-lg inline-flex items-center cursor-not-allowed "
               disabled
