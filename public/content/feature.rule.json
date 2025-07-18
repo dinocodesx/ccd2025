@@ -28,5 +28,6 @@
   },
   "showJobs":true,
   "ticketsSoldOut": true,
-  "showRedemptionForm": true
+  "showRedemptionForm": true,
+  "showLeaderboard":true
 }

@@ -39,5 +39,6 @@ export const EARLYBIRD_URL = CCD2025_BE_BASE_URL+'/users/redeem-early-bird/'
 
 export const JOBS_DJANGO_URL = CCD2025_BE_BASE_URL + '/jobs/';
 export const RECRUITERS_DJANGO_URL = CCD2025_BE_BASE_URL + '/recruiters/';
+export const LEADERBOARD_URL = CCD2025_BE_BASE_URL + '/leaderboard/';
 
 
