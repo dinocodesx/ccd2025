@@ -22,7 +22,7 @@
     "points": true,
     "redeem": false,
     "notTakingRequestsMessage": "Currently unavailable",
-    "showEasterEgg":true,
+    "showEasterEgg":false,
     "easterCountMin":20,
     "easterCountMax":25
   },
