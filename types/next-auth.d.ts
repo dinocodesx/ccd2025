@@ -28,6 +28,7 @@ declare module "next-auth" {
         tsize: string,
         profile_lock: boolean,
         is_checked_in:boolean,
+        early_bird_redeemed:boolean,
         student: boolean,
         bio: string,
         points: number,
@@ -54,6 +55,7 @@ declare module "next-auth" {
         active_role: string;
         event_role:string;
         points:number;
+        early_bird_redeemed:boolean;
         active_organization: {
           id: number;
           name: string;
@@ -63,8 +65,46 @@ declare module "next-auth" {
       };
     },
   }
-
+ interface Profile {
+    pronoun: string
+    first_name: string
+    last_name: string
+    settings: Settings
+    country_code: string
+    unique_code: string
+    is_checked_in: boolean
+    phone: string
+    college: string
+    course: string
+    graduation_year: number
+    company: string
+    role: string
+    socials: Socials
+    tsize: string
+    student: boolean
+    event_role: string
+    attempts: number
+    no_show: number
+    points: number
+    early_bird_redeemed: boolean
+    goodie_tier: string
+  }
+  
+  export interface Settings {
+    foo: string
+  }
+  
+  export interface Socials {
+    github: string
+    twitter: string
+    website: string
+    linkedin: string
+    instagram: string
+  }
+  
 }
+
+
 
 declare module "next-auth/jwt" {
   interface JWT {

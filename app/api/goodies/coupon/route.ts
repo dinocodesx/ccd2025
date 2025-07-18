@@ -1,20 +1,27 @@
-import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
 
-export async function POST(req: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user?.profile?.is_checked_in) {
-      return NextResponse.json({ message: "You must be checked in to redeem a coupon code." }, { status: 403 });
+import { EARLYBIRD_URL } from "@/lib/constants/be";
+import bkFetch from "@/services/backend.services";
+
+import { NextRequest, NextResponse, userAgent } from "next/server";
+
+
+export async function POST(req:NextRequest): Promise<NextResponse> {
+    try {
+        const {couponCode}= await req.json()
+
+        const res = await bkFetch(EARLYBIRD_URL, {
+            method: "POST",
+            body:JSON.stringify({
+                coupon_code:couponCode
+            })
+        });
+        const data = await res.json();
+        return NextResponse.json(data, { status: res.status || 200 });
+    } catch (error) {
+        console.error('Error redeeming goodies:', error);
+        return NextResponse.json(
+            { error: 'Failed to redeem goodies', details: error instanceof Error ? error.message : String(error) },
+            { status: 500 }
+        );
     }
-    const { code } = await req.json();
-    if (!code || typeof code !== "string") {
-      return NextResponse.json({ message: "Coupon code is required." }, { status: 400 });
-    }
-    // Mock: Always succeed
-    return NextResponse.json({ message: "Coupon code redeemed! Points will be added to your account." }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ message: "An error occurred while redeeming the coupon code." }, { status: 500 });
-  }
-} 
+}

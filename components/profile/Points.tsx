@@ -11,10 +11,10 @@ import GoodiesRedeem from "./GoodiesRedeem";
 import Link from "next/link";
 
 import bkFetch from "@/services/backend.services";
-import { REDEMPTION_URL } from "@/lib/constants/be";
+import { REDEMPTION_URL, USERS_DJANGO_URL } from "@/lib/constants/be";
 import CouponRedemptionDialogTrigger from "./CouponRedemptionDialogTrigger";
 import FeatureRule from "@/public/content/feature.rule.json";
-import { getServerSession } from "next-auth";
+import { getServerSession, Profile } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 interface PointsProps {
@@ -36,11 +36,9 @@ const Points: React.FC<PointsProps> = async ({
   searchParams,
 }) => {
   const session = await getServerSession(authOptions);
-  // Remove: const resolvedSearchParams = await searchParams;
-  // Use directly:
+
   const defaultTab = searchParams?.active || "overview";
-  console.log(`resolvedSearchParams: ${defaultTab}`);
-  console.log(`searchParams: ${JSON.stringify(searchParams)}`);
+  
 
   // Map server transactions to UI Transaction type
   const transactionData =
@@ -74,6 +72,8 @@ const Points: React.FC<PointsProps> = async ({
 
   // Get default tab from search params or use "overview"
   // const defaultTab = resolvedSearchParams?.active || "overview";
+  const userRes= await bkFetch(USERS_DJANGO_URL,{method:"GET"})
+  const user=await userRes.json()
 
   return (
     <div className="w-full space-y-6">
@@ -87,9 +87,10 @@ const Points: React.FC<PointsProps> = async ({
               Participate in events, earn points and redeem them for awesome
               rewards!
             </p>
+
             {FeatureRule.showRedemptionForm &&
-              session?.user.profile?.is_checked_in && (
-                <CouponRedemptionDialogTrigger />
+              user?.is_checked_in && !user?.early_bird_redeemed && (
+                <CouponRedemptionDialogTrigger user={user as Profile}/>
               )}
           </div>
           <div className="flex-shrink-0 justify-center md:justify-end hidden md:block">
