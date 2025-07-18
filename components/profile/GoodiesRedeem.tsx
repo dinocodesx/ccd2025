@@ -5,10 +5,10 @@ import { GoodiesResult, Goodie, RedemptionResult, RedemptionRequest } from "@/ty
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import FeatureRule from '@/public/content/feature.rule.json'
-import GeminiIcon from "../GeminiIcon";
+
 import { AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+
 
 interface RedeemItem {
   id: number;
@@ -25,18 +25,18 @@ interface RedeemCardProps {
   item: RedeemItem;
   totalPoints: number;
   redeemedItem: RedemptionRequest | undefined | null;
-
+  onRedeemSuccess: () => Promise<void>; // Add callback for successful redemption
 }
 
-const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem }) => {
+const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem, onRedeemSuccess }) => {
   const [loading, setLoading] = React.useState(false);
   const isAvailable = item.status === 'available' && totalPoints >= item.points;
   const isRequested = redeemedItem ? true : false;
   const isRedeemed = redeemedItem?.is_approved || false;
   const isOutOfStock = item.status === 'out_of_stock';
+
   const isDisabled = !FeatureRule.profile.redeem || !isAvailable || isRedeemed || isOutOfStock;
   const router = useRouter()
-
 
   const redeemGoodie = async () => {
     if (isDisabled) {
@@ -53,16 +53,17 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
       const data = await res.json();
       if (res.ok) {
         toast.success(data.message || "Goodie redeem request registered successfully!");
-        router.refresh()
-
+        await onRedeemSuccess(); // Wait for data to be fetched before removing loading
       } else {
-        toast.error(data.message || "Failed to redeem goodie.");
+        toast.error(data.message || data.goodie|| "Failed to redeem goodie.");
       }
     } catch (error) {
       toast.error("An error occurred while redeeming the goodie.");
     } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div
       className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300  ${item.available
@@ -103,6 +104,7 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
         <Button
           disabled={isDisabled || loading}
           onClick={(FeatureRule.profile.redeem && isAvailable && !loading) ? redeemGoodie : undefined}
+
           className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${isRedeemed
               ? "bg-green-200 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default"
               : isAvailable
@@ -110,6 +112,7 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
                 : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
             }`}
         >
+
           {loading ? (
             <span>{isRedeemed?"Redeemed":"Processing..."}</span>
           ) : isRedeemed ? (
@@ -151,26 +154,28 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps & { enablePolling?: boolean }> 
   const [goodiesState, setGoodiesState] = React.useState(goodies);
   const [redeemedGoodiesState, setRedeemedGoodiesState] = React.useState(redeemedGoodies);
 
+  // Function to fetch fresh data
+  const fetchGoodiesData = async () => {
+    try {
+      const [goodiesRes, redeemedRes] = await Promise.all([
+        fetch('/api/goodies'),
+        fetch('/api/goodies/redeem'),
+      ]);
+      if (goodiesRes.ok) {
+        setGoodiesState(await goodiesRes.json());
+      }
+      if (redeemedRes.ok) {
+        setRedeemedGoodiesState(await redeemedRes.json());
+      }
+    } catch (e) {
+      console.error('Error fetching goodies data:', e);
+    }
+  };
 
   // Polling logic
   useEffect(() => {
     if (!enablePolling) return;
-    const interval = setInterval(async () => {
-      try {
-        const [goodiesRes, redeemedRes] = await Promise.all([
-          fetch('/api/goodies'),
-          fetch('/api/goodies/redeem'),
-        ]);
-        if (goodiesRes.ok) {
-          setGoodiesState(await goodiesRes.json());
-        }
-        if (redeemedRes.ok) {
-          setRedeemedGoodiesState(await redeemedRes.json());
-        }
-      } catch (e) {
-        // Optionally handle error
-      }
-    }, 15000);
+    const interval = setInterval(fetchGoodiesData, 15000);
     return () => clearInterval(interval);
   }, [enablePolling]);
 
@@ -204,8 +209,7 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps & { enablePolling?: boolean }> 
       status,
       quantity: g.quantity_available, // Pass quantity for badge
     };
-  }) || [];
-
+  }).sort((a, b) => a.id - b.id) || []; // Sort by goodie ID in ascending order
 
   return (
     <div className="space-y-6">
@@ -237,7 +241,6 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps & { enablePolling?: boolean }> 
           
           <span className="block">If an item is marked as low stock, it may run out quickly. Please visit the redemption counter to check availability before redeeming your points.</span>
         </p>
-       
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -247,15 +250,20 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps & { enablePolling?: boolean }> 
           redeemItems.map((item) => {
             const redeemItem = redeemedGoodiesState.results.find(g => g.goodie == item.id)
             return (
-              <RedeemCard key={item.id} item={item} totalPoints={totalPoints} redeemedItem={redeemItem} />
+              <RedeemCard 
+                key={item.id} 
+                item={item} 
+                totalPoints={totalPoints} 
+                redeemedItem={redeemItem} 
+                onRedeemSuccess={fetchGoodiesData}
+              />
             )
           })
         )}
       </div>
 
-
     </div>
   );
 };
 
-export default GoodiesRedeem; 
+export default GoodiesRedeem;
