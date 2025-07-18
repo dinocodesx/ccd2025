@@ -3,6 +3,9 @@ import { GOODIES_URL, TRANSACTION_URL } from "@/lib/constants/be";
 import bkFetch from "@/services/backend.services";
 import { GoodiesResult, TransactionResult } from "@/types/goodies";
 import FeatureRule from "@/public/content/feature.rule.json";
+import { Suspense } from "react";
+import GeminiIcon from "@/components/GeminiIcon";
+
 export default async function PointsPage({
   searchParams,
 }: {
@@ -22,11 +25,13 @@ export default async function PointsPage({
     ]);
 
     return (
-      <Points
-        goodies={goodies as GoodiesResult}
-        transactions={transactions as TransactionResult}
-        searchParams={searchParams}
-      />
+      <Suspense fallback={<div className="py-8 flex items-center justify-center text-center text-muted-foreground"><GeminiIcon className="animate-spin mr-2"/>Loading points...</div>}>
+        <Points
+          goodies={goodies as GoodiesResult}
+          transactions={transactions as TransactionResult}
+          searchParams={searchParams}
+        />
+      </Suspense>
     );
   }
   return (

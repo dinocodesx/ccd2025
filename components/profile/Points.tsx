@@ -110,7 +110,7 @@ const Points: React.FC<PointsProps> = async ({
           <Link
             href="/profile?tab=Points&active=overview"
             scroll={false}
-            className="block"
+            className="block cursor-pointer"
           >
             <button
               className={
@@ -127,7 +127,7 @@ const Points: React.FC<PointsProps> = async ({
           <Link
             href="/profile?tab=Points&active=redeem"
             scroll={false}
-            className="block"
+            className="block cursor-pointer"
           >
             <button
               className={
