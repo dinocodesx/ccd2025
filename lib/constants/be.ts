@@ -34,10 +34,11 @@ export const EVENT_ATTENDEE_CONTEST_AUTH_TOKEN_URL = ATTENDEES_DJANGO_URL + 'get
 export const GOODIES_URL = CCD2025_BE_BASE_URL + '/goodies/';
 export const TRANSACTION_URL = CCD2025_BE_BASE_URL + '/point-transactions/';
 export const REDEMPTION_URL = CCD2025_BE_BASE_URL + '/redemption-requests/';
-
+export const EARLYBIRD_URL = CCD2025_BE_BASE_URL+'/users/redeem-early-bird/'
 
 
 export const JOBS_DJANGO_URL = CCD2025_BE_BASE_URL + '/jobs/';
 export const RECRUITERS_DJANGO_URL = CCD2025_BE_BASE_URL + '/recruiters/';
+export const LEADERBOARD_URL = CCD2025_BE_BASE_URL + '/leaderboard/';
 
 

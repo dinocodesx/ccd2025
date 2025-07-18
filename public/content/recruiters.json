@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Shreyashi Chatterjee",
+        "email": "hr15@webskitters.com",
+        "phone": "0000",
+        "company_name": "Webskitters Technology Solutions Pvt Ltd"
+    },
+    {
+        "name": "Triya Halder",
+        "email": "thalder@steorasystems.com",
+        "phone": "0000",
+        "company_name": "Steora"
+    },
+    {
+        "name": "Arti Agarwal",
+        "email": "arti.agarwal@ltimindtree.com",
+        "phone": "0000",
+        "company_name": "Ltimindtree Pvt Ltd"
+    },
+    {
+        "name": "Abhik Sarkar",
+        "email": "ceo@thesuttle.com",
+        "phone": "0000",
+        "company_name": "Suttle Technology Private Limited"
+    },
+    {
+        "name": "KAUSHIK MITRA",
+        "email": "KAUSHIK.MITRA5@WIPRO.COM",
+        "phone": "0000",
+        "company_name": "Wipro technologies"
+    },
+    {
+        "name": "Sonali Ghosh",
+        "email": "gsonali7044@gmail.com",
+        "phone": "0000",
+        "company_name": "DCG datacore systems (India) private limited"
+    },
+    {
+        "name": "Ankur Ghosh",
+        "email": "ankur.ghosh@intglobal.com",
+        "phone": "0000",
+        "company_name": "Indusnet Technologies"
+    }
+]

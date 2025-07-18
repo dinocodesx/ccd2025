@@ -34,5 +34,6 @@
     "guidelinesText":"Event Guidelines"
   },
 
-  "showRedemptionForm": true
+  "showRedemptionForm": true,
+  "showLeaderboard":false
 }
