@@ -26,6 +26,13 @@
     "easterCountMin":20,
     "easterCountMax":25
   },
-  "showJobs":false,
-  "ticketsSoldOut": true
+  "showJobs":true,
+  "ticketsSoldOut": true,
+  "guidelines":{
+    "showGuidelines":true,
+    "guidlinesLink":"https://go.gdgcloudkol.org/ccd25-guide",
+    "guidelinesText":"Event Guidelines"
+  },
+
+  "showRedemptionForm": true
 }
