@@ -54,6 +54,7 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
       if (res.ok) {
         toast.success(data.message || "Goodie redeem request registered successfully!");
         await onRedeemSuccess(); // Wait for data to be fetched before removing loading
+        router.refresh()
       } else {
         toast.error(data.message || data.goodie|| "Failed to redeem goodie.");
       }
@@ -122,7 +123,15 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
           ) : isOutOfStock ? (
             "Out of Stock"
           ) : totalPoints < item.points ? (
-            "Insufficient Points"
+            <>
+            <img
+              src="/images/profile/prize.svg"
+              alt="Points"
+              className="w-5 h-5"
+            />
+            <span>{item.points.toLocaleString()}</span>
+            <span>points</span>
+          </>
           ) : (
             FeatureRule.profile.redeem ?
               <>
