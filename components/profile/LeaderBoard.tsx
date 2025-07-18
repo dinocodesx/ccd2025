@@ -364,50 +364,6 @@ const LeaderBoardData = () => {
         </div>
       </div>
 
-      {/* Current User Status (if not in top 20) */}
-      {!userRanked && userFirstName && (
-        <div className="mb-8">
-          <div className="text-center mb-4">
-            <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-500" />
-              Your Current Standing
-            </h3>
-          </div>
-          <div className="flex justify-center">
-            <Table className="w-auto rounded-xl overflow-hidden min-w-[350px] border-2 border-blue-500 ">
-              <TableBody>
-                <TableRow className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 font-semibold">
-                  <TableCell className="text-center text-lg font-bold text-blue-600">
-                    Unranked
-                  </TableCell>
-                  <TableCell className="flex items-center gap-3 min-w-[140px]">
-                    <Avatar className="h-10 w-10 border-2 border-blue-500">
-                      <AvatarFallback className="text-base font-bold bg-blue-500 text-white">
-                        {getInitials(userFirstName, userLastName)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="truncate text-blue-700 dark:text-blue-300">
-                      {userFirstName} {userLastName === "." ? "" : userLastName}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border-2 text-sm font-semibold border-blue-500 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
-                      <Image src={Coin} alt="points" width={18} height={18} />
-                      {userScore.toLocaleString()}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-          <div className="text-center mt-3">
-            <p className="text-sm text-muted-foreground">
-              🚀 Keep participating to climb into the top 20 rankings!
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Full Rankings Table */}
       <motion.div
         initial="hidden"
@@ -471,8 +427,7 @@ const LeaderBoardData = () => {
                       </div>
                     ) : (
                       <span className="text-muted-foreground font-medium">
-                        {currentRank}
-                        {getRankSuffix(currentRank)}
+                        {currentRank}<sup>{getRankSuffix(currentRank)}</sup>
                       </span>
                     )}
                   </TableCell>
@@ -504,6 +459,37 @@ const LeaderBoardData = () => {
                 </motion.tr>
               );
             })}
+            {/* Render unranked user at the bottom if not ranked */}
+            {!userRanked && userFirstName && (
+              <motion.tr
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + participants.length * 0.03 }}
+                className={cn(
+                  "font-semibold border-2 border-blue-500 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30"
+                )}
+              >
+                <TableCell className="text-center text-lg font-bold text-blue-600 p-2 sm:p-3">
+                  Unranked
+                </TableCell>
+                <TableCell className="flex items-center gap-3 min-w-[140px] p-2 sm:p-3">
+                  <Avatar className="h-10 w-10 border-2 border-blue-500">
+                    <AvatarFallback className="text-base font-bold bg-blue-500 text-white">
+                      {getInitials(userFirstName, userLastName)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="truncate text-blue-700 dark:text-blue-300">
+                    {userFirstName} {userLastName === "." ? "" : userLastName}
+                  </span>
+                </TableCell>
+                <TableCell className="text-center p-2 sm:p-3">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border-2 text-sm font-semibold border-blue-500 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                    <Image src={Coin} alt="points" width={18} height={18} />
+                    {userScore.toLocaleString()}
+                  </div>
+                </TableCell>
+              </motion.tr>
+            )}
           </TableBody>
         </Table>
       </motion.div>

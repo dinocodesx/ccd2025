@@ -76,11 +76,13 @@ export default async function ProfileCard({
     { value: "Frame Studio", link: "?tab=Frame%20Studio" },
     { value: "Tickets", link: "?tab=Tickets" },
     { value: "Points", link: "?tab=Points&active=overview" },
-    { value: "Leaderboard", link: "?tab=Leaderboard" },
+    
   ];
   if (FeatureRule.showJobs && user.is_checked_in)
     validTabs.push({ value: "Jobs", link: "?tab=Jobs" });
 
+  if(FeatureRule.showLeaderboard && user.is_checked_in)
+    validTabs.push({ value: "Leaderboard", link: "?tab=Leaderboard" })
   // const kit = 'gold'
   const kit =
     user.event_role === "volunteer"
@@ -289,9 +291,13 @@ export default async function ProfileCard({
                 <PointsPage searchParams={resolvedSearchParams} />
               </Suspense>
             </TabsContent>
+            {
+              FeatureRule.showLeaderboard &&
+            
             <TabsContent value="Leaderboard">
               <LeaderBoard />
             </TabsContent>
+            }
             <TabsContent value="Jobs">
               <Jobs />
             </TabsContent>
