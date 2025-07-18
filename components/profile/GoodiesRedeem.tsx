@@ -17,7 +17,7 @@ interface RedeemItem {
   image: string;
   description: string;
   available: boolean;
-  status: 'available' | 'requested' | 'redeemed' | 'out_of_stock';
+  status: 'available' | 'requested' | 'redeemed' | 'out_of_stock' | 'collected';
   quantity: number; // Add quantity for badge logic
 }
 
@@ -32,10 +32,11 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
   const [loading, setLoading] = React.useState(false);
   const isAvailable = item.status === 'available' && totalPoints >= item.points;
   const isRequested = redeemedItem ? true : false;
+  const isCollected= item.status=="collected"? true:false;
   const isRedeemed = redeemedItem?.is_approved || false;
   const isOutOfStock = item.status === 'out_of_stock';
 
-  const isDisabled = !FeatureRule.profile.redeem || !isAvailable || isRedeemed || isOutOfStock;
+  const isDisabled = !FeatureRule.profile.redeem || !isAvailable || isRedeemed || isOutOfStock || isCollected;
   const router = useRouter()
 
   const redeemGoodie = async () => {
@@ -106,23 +107,26 @@ const RedeemCard: React.FC<RedeemCardProps> = ({ item, totalPoints, redeemedItem
           disabled={isDisabled || loading}
           onClick={(FeatureRule.profile.redeem && isAvailable && !loading) ? redeemGoodie : undefined}
 
-          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${isRedeemed
+          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+            isRedeemed && isCollected
               ? "bg-green-200 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default"
-              : isAvailable
-                ? "bg-google-blue hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
-                : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-            }`}
+              : isRedeemed && !isCollected
+                ? "bg-google-red text-white"
+                : isAvailable
+                  ? "bg-google-blue hover:bg-blue-700 text-white hover:scale-105 shadow-lg shadow-blue-600/25"
+                  : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+          }`}
         >
 
           {loading ? (
             <span>{isRedeemed?"Redeemed":"Processing..."}</span>
-          ) : isRedeemed ? (
-            "Redeemed"
-          ) : isRequested ? (
+          ) : isRedeemed && !isCollected ? (
+            "Collect from registration"
+          ) : !isRedeemed && isRequested ? (
             "Requested"
           ) : isOutOfStock ? (
             "Out of Stock"
-          ) : totalPoints < item.points ? (
+          ) : isRedeemed&& isCollected? "Collected": totalPoints < item.points ? (
             <>
             <img
               src="/images/profile/prize.svg"
@@ -191,22 +195,30 @@ const GoodiesRedeem: React.FC<GoodiesRedeemProps & { enablePolling?: boolean }> 
   // console.log(goodies, redeemedGoodies)
 
   // Map goodie id to redemption status
-  const redemptionMap: Record<number, 'requested' | 'redeemed'> = {};
+  const redemptionMap: Record<number, 'requested' | 'redeemed' |'collected'> = {};
   redeemedGoodiesState?.results?.forEach((r: RedemptionRequest) => {
-    if (r.is_approved) {
+    if (r.is_approved && r.collected==false) {
       redemptionMap[r.goodie] = 'redeemed';
-    } else {
+    } 
+    else if (r.is_approved && r.collected)
+    {
+      redemptionMap[r.goodie] = 'collected';
+    }
+    else {
       redemptionMap[r.goodie] = 'requested';
     }
   });
   const redeemItems = goodiesState?.results?.map((g: Goodie) => {
-    let status: 'available' | 'requested' | 'redeemed' | 'out_of_stock' = 'available';
+    let status: 'available' | 'requested' | 'redeemed' | 'out_of_stock' | 'collected' = 'available';
     if (g.quantity_available <= 0) {
       status = 'out_of_stock';
     } else if (redemptionMap[g.id] === 'redeemed') {
       status = 'redeemed';
     } else if (redemptionMap[g.id] === 'requested') {
       status = 'requested';
+    }
+    else if (redemptionMap[g.id] === 'collected') {
+      status = 'collected';
     }
     return {
       id: g.id,

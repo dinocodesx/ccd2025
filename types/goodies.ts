@@ -40,6 +40,7 @@ export interface GoodiesResult {
     id: number
     requested_at: string
     is_approved: boolean
+    collected:boolean
     approved_at: any
     user: number
     goodie: number
