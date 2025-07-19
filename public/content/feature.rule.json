@@ -20,7 +20,7 @@
     "edit": false,
     "editTshirt": false,
     "points": true,
-    "redeem": false,
+    "redeem": true,
     "notTakingRequestsMessage": "Currently unavailable",
     "showEasterEgg":false,
     "easterCountMin":20,
