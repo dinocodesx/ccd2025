@@ -130,7 +130,7 @@ const Sponsors: React.FC = () => {
           </div>
         )}
         {/* Bronze Sponsors */}
-        {bronzeSponsors && bronzeSponsors.length > 0 && (
+        {/* {bronzeSponsors && bronzeSponsors.length > 0 && (
           <div className="mb-8 sm:mb-12 lg:mb-16">
             <CardContainer
               headerTitle={
@@ -168,7 +168,7 @@ const Sponsors: React.FC = () => {
               </div>
             </CardContainer>
           </div>
-        )}
+        )} */}
         {/* Partners Grid - Placement, Media, Digital */}
         {(placementPartners?.length > 0 ||
           mediaPartners?.length > 0 ||
